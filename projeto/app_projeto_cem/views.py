@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .models import Usuario
-
+from django.shortcuts import render
 # Create your views here.
 
 def home(request):
@@ -19,3 +19,5 @@ def usuarios(request):
     }
     #Retornar os dados para a página de listagem de usuarios
     return render(request, 'projeto/usuarios.html',usuarios)
+
+
