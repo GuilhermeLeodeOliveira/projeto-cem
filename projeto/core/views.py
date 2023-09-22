@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Usuario
 
 def home(request):
@@ -12,3 +12,22 @@ def salvar(request):
     Usuario.objects.create(nome=userNome)
     usuarios = Usuario.objects.all()
     return render(request, 'index.html', {'usuarios': usuarios})
+
+def editar(request, id):
+    
+    usuario = Usuario.objects.get(id_usuario=id)
+    return render(request, 'update.html', {'usuario': usuario})
+
+def update(request, id):
+    
+    userNome = request.POST.get('nome')
+    usuario = Usuario.objects.get(id_usuario=id)
+    usuario.nome = userNome
+    usuario.save()
+    return redirect(home)
+
+def delete(request, id):
+    
+    usuario = Usuario.objects.get(id_usuario=id)
+    usuario.delete()
+    return redirect(home)
