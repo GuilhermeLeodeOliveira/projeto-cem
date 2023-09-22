@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import Usuario
+from django.http import HttpResponse
 
 def home(request):
     usuarios = Usuario.objects.all()
