@@ -1,0 +1,21 @@
+h1 {
+    text-align: center;
+}
+
+.container{
+}
+
+p{
+    text-align: center;
+}
+
+.btn-proximo{
+    border-radius: 5px;
+    background-color: #276d23;
+    color: #FFF;
+    font-size: larger;
+    border: solid #000 0px;
+    text-decoration: none;
+    padding: 10px 20px 10px 20px;
+
+}

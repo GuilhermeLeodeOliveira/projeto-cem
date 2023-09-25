@@ -4,7 +4,7 @@ from django.http import HttpResponse
 
 def home(request):
     usuarios = Usuario.objects.all()
-    return render(request, 'index.html', {"usuarios": usuarios}) #Retorna uma variavel com todas os dados do banco
+    return render(request, 'index.html', {"usuarios": usuarios}) #Retorna uma variavel com todos os dados do banco
 
 
 def salvar(request):
@@ -32,3 +32,10 @@ def delete(request, id):
     usuario = Usuario.objects.get(id_usuario=id)
     usuario.delete()
     return redirect(home)
+
+def cadastro(request):
+    return render(request, 'cadastro.html')
+
+def formPerfil(request):
+    
+    return render(request, 'formPerfil.html')
