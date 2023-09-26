@@ -3,18 +3,14 @@
 
 {% block conteudo %}
   <div class="container mt-5">
-    <h1>Formulário ÚNICO de cadastramento para uso da infraestrutura das Centrais Experimentais 
-      Multiusuário da UFABC/PROPES + coleta de dados para relatório da CEM - 2022/2023
-    </h1>
-    <p class="text-success">A coleta de dados para relatório é importante para embasar futuros 
-      pedidos de reparo e novas aquisições para as CEMs. O recadastramento está condicionado ao 
-      preenchimento completo do formulário.
-    </p>
-    <p class="text-success">Obrigado por se (re)cadastrar nas 
-      Centrais Experimentais Multiusuário UFABC/PROPES.
-    </p>
-    <div class="d-flex justify-content-end">
-      <a class="btn-proximo" href="{% url 'formPerfil' %}" id="btn-proximo">Próximo</a>
+    
+    <div class="comeco" id="comeco">
+      <h1>Formulário ÚNICO de cadastramento para uso da infraestrutura das Centrais Experimentais Multiusuário da UFABC/PROPES + coleta de dados para relatório da CEM - 2022/2023</h1>
+      <p class="text-success text-center">A coleta de dados para relatório é importante para embasar futuros pedidos de reparo e novas aquisições para as CEMs. O recadastramento está condicionado ao preenchimento completo do formulário.</p>
+      <p class="text-success text-center">Obrigado por se (re)cadastrar nas Centrais Experimentais Multiusuário UFABC/PROPES.</p>
+      <div class="d-flex justify-content-end">
+        <a class="btn-proximo" id="btn-proximo" href="{% url 'formPerfil' %}">Próximo</a>
+      </div>
     </div>
   </div>
 {% endblock %}

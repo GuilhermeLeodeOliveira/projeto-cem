@@ -5,10 +5,6 @@ h1 {
 .container{
 }
 
-p{
-    text-align: center;
-}
-
 .btn-proximo{
     border-radius: 5px;
     background-color: #276d23;
@@ -18,4 +14,21 @@ p{
     text-decoration: none;
     padding: 10px 20px 10px 20px;
 
+}
+
+.comeco{
+}
+
+.forms-cadastro{
+    border: solid #000 1px;
+    padding-top: 25px;
+
+}
+
+.radio{ 
+    width: 200px;
+    display: flex;
+}
+
+.dados-pessoais{
 }

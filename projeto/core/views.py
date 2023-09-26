@@ -39,3 +39,17 @@ def cadastro(request):
 def formPerfil(request):
     
     return render(request, 'formPerfil.html')
+
+def selecionarTela(request):
+    opcao = request.POST.get('opcao')
+    if opcao == "opcao1":
+        return render(request, 'cadDocente.html')
+    elif opcao == "opcao2":
+        return render(request, 'cadPosDout.html')
+    elif opcao == "opcao3":
+        return render(request, 'cadPosGrad.html')
+    elif opcao == "opcao4":
+        return render(request, 'cadExtern.html')
+    
+def cadDocente(request):
+    return render(request, 'cadDocente.html')

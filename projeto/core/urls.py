@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
-from .views import salvar, editar, update, delete, cadastro, formPerfil
+from .views import salvar, editar, update, delete, cadastro, formPerfil, selecionarTela, cadDocente
 from . import views
 
 urlpatterns = [
@@ -11,5 +11,7 @@ urlpatterns = [
     path('delete/<int:id>', delete, name='delete'),
     path('cadastro/', cadastro, name='cadastro'),
     path('formPerfil/', formPerfil, name='formPerfil'),
+    path('selecionarTela/', selecionarTela, name='selecionarTela'),
+    path('cadDocente/', cadDocente, name='cadDocente'),
 
 ]
