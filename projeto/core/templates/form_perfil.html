@@ -3,7 +3,7 @@
 
 {% block conteudo %}
   <div class="container" id="perfilUsuario">
-    <form action="{% url 'selecionarTela' %}" method="post">
+    <form action="{% url 'selecionar_tela' %}" method="post">
       {% csrf_token %}
       <h1 class="">Perfil do(a) Usuário(a)</h1>
       <div class="forms-cadastro">
@@ -26,7 +26,7 @@
         <p class="text-success d-flex justify-content-start mt-5"> Caso o seu perfil não esteja listado, favor entrar em contato com cem@ufabc.edu.br.</p>
       </div>
       <div class="d-flex justify-content-end mt-5">
-        <input type="submit" class="btn-proximo" value="Próximo" />
+        <button type="submit" class="btn-proximo">Próximo</button>
       </div>
     </form>
   </div>

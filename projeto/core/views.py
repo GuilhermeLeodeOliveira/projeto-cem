@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Usuario
+from .models import Usuario, ProgramaPosGraduacao
 from django.http import HttpResponse
 
 def home(request):
@@ -36,14 +36,15 @@ def delete(request, id):
 def cadastro(request):
     return render(request, 'cadastro.html')
 
-def formPerfil(request):
+def form_perfil(request):
     
-    return render(request, 'formPerfil.html')
+    return render(request, 'form_perfil.html')
 
-def selecionarTela(request):
+def selecionar_tela(request):
     opcao = request.POST.get('opcao')
     if opcao == "opcao1":
-        return render(request, 'cadDocente.html')
+        programas = ProgramaPosGraduacao.objects.all()
+        return render(request, 'cad_docente.html', {'programas': programas})
     elif opcao == "opcao2":
         return render(request, 'cadPosDout.html')
     elif opcao == "opcao3":
@@ -51,5 +52,15 @@ def selecionarTela(request):
     elif opcao == "opcao4":
         return render(request, 'cadExtern.html')
     
-def cadDocente(request):
-    return render(request, 'cadDocente.html')
+def cad_docente(request):
+    return render(request, 'cad_docente.html')
+
+def form_infra(request):
+    return render(request, 'form_infra.html')
+
+def form_termo(request):
+    return render(request, 'form_termo.html')
+
+def cadastrar_docente(request):
+    return render(request, 'index.html')
+    

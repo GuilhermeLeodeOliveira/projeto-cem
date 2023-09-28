@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block conteudo %}
+  <div class="container">
+    <h1>Termo de veracidade de informações prestadas e de responsabilidade</h1>
+    <form action="{% url 'cadastrar_docente' %}" method="post" class="">
+      {% csrf_token %}
+
+      <div class="forms-cadastro p-2">
+        <p>Declaro, para fins cadastrais, que as informações aqui prestadas são expressão da verdade.</p>
+        <p class="text-success">Escolha uma das seguintes respostas:</p>
+        <div class="">
+          <div class="radio mt-3">
+            <label for="sim"><input type="radio" name="" value="opcao1" id="opcao1" required />Sim, estou de acordo que as informações declaradas acima são verídicas.</label>
+          </div>
+          <div class="radio mt-3">
+            <label for="nao"><input type="radio" name="" value="opcao2" id="opcao2" required />Não, estou mentindo.</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="forms-cadastro p-2 mt-3">
+        <p>Declaro que proverei informações acerca das atividades desenvolvida nas CEMs para relatório anual de atividades e participarei do Encontro das CEMs durante a vigência do meu cadastro (exceto mediante justificativa aceita pela coordenação das CEMs).</p>
+        <p class="text-success">Escolha uma das seguintes respostas:</p>
+        <div class="">
+          <div class="radio mt-3">
+            <label for="sim"><input type="radio" name="" value="opcao1" id="opcao1" required />Sim</label>
+          </div>
+          <div class="radio mt-3">
+            <label for="nao"><input type="radio" name="" value="opcao2" id="opcao2" required />Não</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="forms-cadastro p-2 mt-3">
+        <p>Declaro que:
+
+            1. Participarei do curso de treinamento básico do uso das facilidades experimentais;
+            
+            2. Acompanharei a realização do experimento, responsabilizando-se pelo bom uso dos equipamentos, presença e orientação aos membros do grupo de trabalho que lidera;
+            
+            3. Farei agendamentos de equipamentos de forma a otimizar a sua utilização, não provocando situações de equipamento agendado e ocioso;
+            
+            4. Usarei os equipamentos de segurança e respeitarei as normas de segurança;
+            
+            5. Prepararei as amostras com antecedência à realização dos experimentos e de acordo com as instruções dos pesquisadores responsáveis;
+            
+            6. Colaborarei na elaboração de eventual proposta de reparo de equipamento as agencias de fomento;
+            
+            7. Citarei o uso das CEMs/UFABC em trabalhos científicos produzidos com auxilio das facilidades disponíveis;
+            
+            8. Reporei imediatamente qualquer acessório ou equipamento que vier a ser danificado devido a mau uso ou imperícia;
+            
+            9. Relatarei imediatamente aos Pesquisadores Responsáveis ou à Coordenação das CEMs qualquer avaria ou falha no funcionamento dos equipamentos utilizados;
+            
+            10. Relatarei de forma de clara e concisa, no livro de anotações do laboratório, todos os procedimentos empregados durante o tempo de medida. Estas anotações serão úteis em caso de falha de funcionamento do sistema.
+            
+            11. Declaro estar ciente que caso proceda de má fé, fornecendo dados deliberadamente incorretos ou operando de modo displicente equipamentos das CEMs, perderei, por tempo indeterminado, o direito de uso das CEMs.
+            
+            12. Declaro ciência do regimento interno das CEMs (disponível em http://propes.ufabc.edu.br/cem/wp-cms/wp-content/uploads/2020/04/regimento2020.pdf) no que compete as responsabilidades do uso das CEMs.</p>
+        <p class="text-success">Escolha uma das seguintes respostas:</p>
+        <div class="">
+          <div class="radio mt-3">
+            <label for="sim"><input type="radio" name="" value="opcao1" id="opcao1" required />Sim</label>
+          </div>
+          <div class="radio mt-3">
+            <label for="nao"><input type="radio" name="" value="opcao2" id="opcao2" required />Não</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-end mt-5">
+        <button type="submit" class="btn-proximo mb-5">Próximo</button>
+      </div>
+    </form>
+  </div>
+{% endblock %}

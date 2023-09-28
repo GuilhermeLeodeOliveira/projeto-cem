@@ -16,9 +16,6 @@ h1 {
 
 }
 
-.comeco{
-}
-
 .forms-cadastro{
     border: solid #000 1px;
     padding-top: 25px;
@@ -26,9 +23,11 @@ h1 {
 }
 
 .radio{ 
-    width: 200px;
+    width: 500px;
     display: flex;
 }
 
-.dados-pessoais{
+input[type=text]{
+    height: 30px;
+    width: 350px;
 }
