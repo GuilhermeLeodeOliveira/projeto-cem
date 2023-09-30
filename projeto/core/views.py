@@ -46,7 +46,7 @@ def selecionar_tela(request):
         programas = ProgramaPosGraduacao.objects.all()
         return render(request, 'cad_docente.html', {'programas': programas})
     elif opcao == "opcao2":
-        return render(request, 'cadPosDout.html')
+        return render(request, 'cad_pos_dout.html')
     elif opcao == "opcao3":
         return render(request, 'cadPosGrad.html')
     elif opcao == "opcao4":
