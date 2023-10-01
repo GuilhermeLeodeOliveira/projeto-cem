@@ -61,6 +61,7 @@ def form_infra(request):
 def form_termo(request):
     return render(request, 'form_termo.html')
 
-def cadastrar_docente(request):
+def cadastrar_usuario(request):
+
     return render(request, 'index.html')
     

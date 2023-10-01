@@ -4,7 +4,7 @@
 {% block conteudo %}
   <div class="container">
     <h1>Pós-doutorando(a) - UFABC ou externo(a)</h1>
-    <form action="{% url 'form_termo' %}" method="post" class="">
+    <form action="{% url 'form_infra' %}" method="post" class="">
       {% csrf_token %}
       <div class="forms-cadastro p-2">
         <p>Dados pessoais</p>
@@ -55,14 +55,88 @@
       </div>
 
       <div class="forms-cadastro p-2 mt-3">
+        <p>Possui bolsa?</p>
+        <p class="text-success">Escolha uma das seguintes respostas:</p>
+        <div class="">
+          <div class="radio mt-3">
+            <label for="ufabc"><input type="radio" name="bolsa" value="ufabc" id="ufabc" required />Sim, bolsa interna UFABC</label>
+          </div>
+          <div class="radio mt-3">
+            <label for="cnpq"><input type="radio" name="bolsa" value="cnpq" id="cnpq" required />Sim, CNPq</label>
+          </div>
+          <div class="radio mt-3">
+            <label for="capes"><input type="radio" name="bolsa" value="capes" id="capes" required />Sim, CAPES</label>
+          </div>
+          <div class="radio mt-3">
+            <label for="fapesp"><input type="radio" name="bolsa" value="fapesp" id="fapesp" required />Sim, da FAPESP</label>
+          </div>
+          <div class="radio mt-3">
+            <label for="voluntario"><input type="radio" name="bolsa" value="voluntario" id="voluntario" required />Não, sou voluntário(a)</label>
+          </div>
+          <div class="radio mt-3">
+            <label for="outros"><input type="radio" name="bolsa" value="outros" id="outros" required />Outros:</label> <input type="text" name="" id="" />
+          </div>
+        </div>
+      </div>
+
+      <div class="forms-cadastro p-2 mt-3">
         <p>Programa de pós-graduação:</p>
         <p class="text-success">Escolha uma das seguintes respostas:</p>
         <div class="">
-          {% for programa in programas %}
-            <div class="radio mt-3">
-              <label for="{{ programa.nome_programa }}"><input type="checkbox" name="{{ programa.nome_programa }}" value="{{ programa.nome_programa }}" id="{{ programa.nome_programa }}" /> {{ programa.nome_programa }}</label>
-            </div>
-          {% endfor %}
+          <div class="radio mt-3">
+            <label for="biossitemas"><input type="checkbox" name="biossitemas" value="" id="" />Biossitemas</label>
+          </div>
+          <div class="radio mt-3">
+            <label for="biotecnociencia"><input type="checkbox" name="biotecnociencia" value="" id="" />Biotecnociência</label>
+          </div>
+          <div class="radio mt-3">
+            <label for="ciencia_da_computacaoo"><input type="checkbox" name="ciencia_da_computacaoo" value="" id="" />Ciência da Computação</label>
+          </div>
+          <div class="radio mt-3">
+            <label for="ciencia_e_engenharia_de_materiais"><input type="checkbox" name="ciencia_e_engenharia_de_materiais" value="" id="" />Ciência e Engenharia de Materiais</label>
+          </div>
+          <div class="radio mt-3">
+            <label for="ciencia_e_tecnologia_ambiental"><input type="checkbox" name="ciencia_e_tecnologia_ambiental" value="" id="" />Ciência e Tecnologia Ambiental</label>
+          </div>
+          <div class="radio mt-3">
+            <label for="ciencia_e_tecnologia_quimica"><input type="checkbox" name="ciencia_e_tecnologia_quimica" value="" id="" />Ciência e Tecnologia/Química</label>
+          </div>
+          <div class="radio mt-3">
+            <label for="energia"><input type="checkbox" name="energia" value="" id="" />Energia</label>
+          </div>
+          <div class="radio mt-3">
+            <label for="engenharia_biomedica"><input type="checkbox" name="engenharia_biomedica" value="" id="" />Engenharia Biomédica</label>
+          </div>
+          <div class="radio mt-3">
+            <label for="engenharia_da_informaçao"><input type="checkbox" name="engenharia_da_informaçao" value="" id="" />Engenharia da Informação</label>
+          </div>
+          <div class="radio mt-3">
+            <label for="engenharia_eletrica"><input type="checkbox" name="engenharia_eletrica" value="" id="" />Engenharia Elétrica</label>
+          </div>
+          <div class="radio mt-3">
+            <label for="engenharia_mecanica"><input type="checkbox" name="engenharia_mecanica" value="" id="" />Engenharia Mecânica</label>
+          </div>
+          <div class="radio mt-3">
+            <label for="evolucao_e_diversidade"><input type="checkbox" name="evolucao_e_diversidade" value="" id="" />Evolução e Diversidade</label>
+          </div>
+          <div class="radio mt-3">
+            <label for="fisica"><input type="checkbox" name="fisica" value="" id="" />Física</label>
+          </div>
+          <div class="radio mt-3">
+            <label for="matematica"><input type="checkbox" name="matematica" value="" id="" />Matemática</label>
+          </div>
+          <div class="radio mt-3">
+            <label for="nanociencias_e_materiais_avançados"><input type="checkbox" name="nanociencias_e_materiais_avançados" value="" id="" />Nanociências e Materiais Avançados</label>
+          </div>
+          <div class="radio mt-3">
+            <label for="neurociencia_e_cognicao"><input type="checkbox" name="neurociencia_e_cognicao" value="" id="" />Neurociência e Cognição</label>
+          </div>
+          <div class="radio mt-3">
+            <label for="planejamento_e_gestao_do_territorio"><input type="checkbox" name="planejamento_e_gestao_do_territorio" value="" id="" />Planejamento e Gestão do Território</label>
+          </div>
+          <div class="radio mt-3">
+            <label for="sem_vinculo"><input type="checkbox" name="sem_vinculo" value="" id="" />Não estou vinculado(a) à nenhum programa de pós-graduação</label>
+          </div>
           <div class="radio mt-3">
             <label for="outros"><input type="checkbox" name="outros" value="outros" id="outros" />Outros:</label> <input type="text" name="" id="" />
           </div>
@@ -73,18 +147,19 @@
         <p>Plano de Trabalho (deve conter objeto de estudo, objetivos, técnicas e principais equipamentos a serem utilizados)</p>
         <p class="text-success">Escolha uma das seguintes respostas:</p>
         <div class="">
-          <textarea name="" id="" cols="30" rows="10"></textarea>
+          <textarea name="" id=""></textarea>
         </div>
       </div>
 
       <div class="forms-cadastro p-2 mt-3">
         <p>Declaro que o(a) meu/minha supervisor(a) está ciente e aprova o meu cadastro e uso das CEMs.</p>
+        <p>(Importante: Para validação do cadastro do(a) Pós-doutorando(a), é necessário que o(a) supervisor(a) faça também o cadastro.)</p>
         <div class="">
           <div class="radio mt-3">
-            <label for="opcao1"><input type="radio" name="opcao" value="opcao1" id="opcao1" required />Sim</label>
+            <label for="sim"><input type="radio" name="escolha" value="sim" id="sim" required />Sim</label>
           </div>
           <div class="radio mt-3">
-            <label for="opcao2"><input type="radio" name="opcao" value="opcao2" id="opcao2" required />Não</label>
+            <label for="nao"><input type="radio" name="escolha" value="nao" id="nao" required />Não</label>
           </div>
         </div>
       </div>
