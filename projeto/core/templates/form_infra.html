@@ -3,8 +3,10 @@
 
 {% block conteudo %}
   <div class="container">
+    <h1>Infraestrutura em uso ou a ser usada</h1>
     <form action="{% url 'form_termo' %}" method="post" class="">
       {% csrf_token %}
+
 <!--
       <div class="forms-cadastro p-2">
         <p>CEM São Bernardo do Campo - EQUIPAMENTOS</p>

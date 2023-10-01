@@ -48,9 +48,11 @@ def selecionar_tela(request):
     elif opcao == "opcao2":
         return render(request, 'cad_pos_dout.html')
     elif opcao == "opcao3":
-        return render(request, 'cadPosGrad.html')
+        resultado_funcao1 = cad_aluno_pos_dout_ic(request)  # Chamando a função funcao1 dentro de funcao2
+        return HttpResponse(resultado_funcao1.content.decode())
+        #return render(request, 'cad_aluno_pos_dout_ic.html')
     elif opcao == "opcao4":
-        return render(request, 'cadExtern.html')
+        return render(request, 'cad_user_externo.html')
     
 def cad_docente(request):
     return render(request, 'cad_docente.html')
@@ -64,4 +66,9 @@ def form_termo(request):
 def cadastrar_usuario(request):
 
     return render(request, 'index.html')
+
+def cad_aluno_pos_dout_ic(request):
+    return render(request, 'cad_aluno_pos_dout_ic.html')
     
+def cad_user_externo(request):
+    return render(request, 'cad_user_externo.html')

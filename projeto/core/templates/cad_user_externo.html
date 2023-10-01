@@ -3,7 +3,7 @@
 
 {% block conteudo %}
   <div class="container">
-    <h1>Pós-doutorando(a) - UFABC ou externo(a)</h1>
+    <h1>Profissional da Industria / Centro de Pesquisa / Docente de outras instituições de ensino</h1>
     <form action="{% url 'form_infra' %}" method="post" class="">
       {% csrf_token %}
       <div class="forms-cadastro p-2">
@@ -13,16 +13,19 @@
             <label for="nome">Nome Completo:</label> <input type="text" name="" id="nome" required />
           </div>
           <div class="mt-3">
-            <label for="tel">Celular:</label> <input type="text" name="tel" id="tel" required />
+            <label for="tel">Instituição:</label> <input type="text" name="tel" id="tel" required />
           </div>
           <div class="mt-3">
-            <label for="tel">email-institucional:</label> <input type="text" name="email_insti" id="email_insti" required />
+            <label for="tel">Atividade principal da instituição:</label> <input type="text" name="email_insti" id="email_insti" required />
           </div>
           <div class="mt-3">
-            <label for="tel">Matrícula SIAPE:</label> <input type="text" name="mat_siape" id="mat_siape" required />
+            <label for="tel">Endereço da instituição:</label> <input type="text" name="mat_siape" id="mat_siape" required />
           </div>
           <div class="mt-3">
-            <label for="tel">Ramal/Telefone e sala do Laboratório de Pesquisa:</label> <input type="text" name="lab" id="lab" required />
+            <label for="tel">Telefone e sala do laboratório de pesquisa:</label> <input type="text" name="lab" id="lab" required />
+          </div>
+          <div class="mt-3">
+            <label for="tel">Formação acadêmica:</label> <input type="text" name="lab" id="lab" required />
           </div>
         </div>
       </div>
@@ -31,13 +34,13 @@
         <p>Centro (UFABC) ou Instituição e departamento (se externo):</p>
         <div class="">
           <div class="radio mt-3">
-            <label for="neurociencia_e_cognicao"><input type="checkbox" name="neurociencia_e_cognicao" value="" id="" />Neurociência e Cognição</label>
+            <label for="doutorando"><input type="checkbox" name="doutorando" value="" id="" />Doutorando(a)</label>
           </div>
           <div class="radio mt-3">
-            <label for="planejamento_e_gestao_do_territorio"><input type="checkbox" name="planejamento_e_gestao_do_territorio" value="" id="" />Planejamento e Gestão do Território</label>
+            <label for="mestrando"><input type="checkbox" name="mestrando" value="" id="" />Mestrando(a)</label>
           </div>
           <div class="radio mt-3">
-            <label for="sem_vinculo"><input type="checkbox" name="sem_vinculo" value="" id="" />Não estou vinculado(a) à nenhum programa de pós-graduação</label>
+            <label for="IC"><input type="checkbox" name="IC" value="" id="" />Aluno(a) de Iniciação Científica</label>
           </div>
           <div class="radio mt-3">
             <label for="outros"><input type="checkbox" name="outros" value="outros" id="outros" />Outros:</label> <input type="text" name="" id="" />
@@ -55,26 +58,19 @@
       </div>
 
       <div class="forms-cadastro p-2 mt-3">
-        <p>Possui bolsa?</p>
-        <p class="text-success">Escolha uma das seguintes respostas:</p>
+        <p>Centro:</p>
         <div class="">
           <div class="radio mt-3">
-            <label for="ufabc"><input type="radio" name="bolsa" value="ufabc" id="ufabc" required />Sim, bolsa interna UFABC</label>
+            <label for="opcao1"><input type="radio" name="opcao" value="opcao1" id="opcao1" required/>CCNH</label>
           </div>
           <div class="radio mt-3">
-            <label for="cnpq"><input type="radio" name="bolsa" value="cnpq" id="cnpq" required />Sim, CNPq</label>
+            <label for="opcao2"><input type="radio" name="opcao" value="opcao2" id="opcao2" required/>CMCC</label>
           </div>
           <div class="radio mt-3">
-            <label for="capes"><input type="radio" name="bolsa" value="capes" id="capes" required />Sim, CAPES</label>
+            <label for="opcao3"><input type="radio" name="opcao" value="opcao3" id="opcao3" required/>CECS</label>
           </div>
           <div class="radio mt-3">
-            <label for="fapesp"><input type="radio" name="bolsa" value="fapesp" id="fapesp" required />Sim, da FAPESP</label>
-          </div>
-          <div class="radio mt-3">
-            <label for="voluntario"><input type="radio" name="bolsa" value="voluntario" id="voluntario" required />Não, sou voluntário(a)</label>
-          </div>
-          <div class="radio mt-3">
-            <label for="outros"><input type="radio" name="bolsa" value="outros" id="outros" required />Outros:</label> <input type="text" name="" id="" />
+            <label for="outros"><input type="radio" name="opcao" value="opcao4" id="opcao4" required/>Outros:</label> <input type="text" name="" id="" />
           </div>
         </div>
       </div>
@@ -144,6 +140,24 @@
       </div>
 
       <div class="forms-cadastro p-2 mt-3">
+        <p>Centro:</p>
+        <div class="">
+          <div class="radio mt-3">
+            <label for="opcao1"><input type="radio" name="opcao" value="opcao1" id="opcao1" required/>Sim, da UFABC (PDPD, IC ou programa de pós-graduação)</label>
+          </div>
+          <div class="radio mt-3">
+            <label for="opcao2"><input type="radio" name="opcao" value="opcao2" id="opcao2" required/>Sim, da FAPESP</label>
+          </div>
+          <div class="radio mt-3">
+            <label for="opcao3"><input type="radio" name="opcao" value="opcao3" id="opcao3" required/>Não, sou voluntário(a)</label>
+          </div>
+          <div class="radio mt-3">
+            <label for="outros"><input type="radio" name="opcao" value="opcao4" id="opcao4" required/>Outros:</label> <input type="text" name="" id="" />
+          </div>
+        </div>
+      </div>
+
+      <div class="forms-cadastro p-2 mt-3">
         <p>Plano de Trabalho (deve conter objeto de estudo, objetivos, técnicas e principais equipamentos a serem utilizados)</p>
         <p class="text-success">Escolha uma das seguintes respostas:</p>
         <div class="">
@@ -152,7 +166,7 @@
       </div>
 
       <div class="forms-cadastro p-2 mt-3">
-        <p>Declaro que o(a) meu/minha supervisor(a) está ciente e aprova o meu cadastro e uso das CEMs.</p>
+        <p>Declaro que o(a) meu/minha orientador(a) está ciente e aprova o meu cadastro e uso das CEMs.</p>
         <p>(Importante: Para validação do cadastro do(a) Pós-doutorando(a), é necessário que o(a) supervisor(a) faça também o cadastro.)</p>
         <div class="">
           <div class="radio mt-3">
