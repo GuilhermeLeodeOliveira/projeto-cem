@@ -20,5 +20,6 @@ urlpatterns = [
     path('cadastrar_usuario/', cadastrar_usuario, name='cadastrar_usuario'),
     path('cad_aluno_pos_dout_ic/', cad_aluno_pos_dout_ic, name='cad_aluno_pos_dout_ic'),
     path('cad_user_externo/', cad_user_externo, name='cad_user_externo'),
+    path('equipamentos/', include('equipamentos.urls'), name='cad_equipamento'),
 
 ]
