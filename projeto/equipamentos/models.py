@@ -4,14 +4,14 @@ from django.db import models
 
 class Equipamento(models.Model):
     id_equipamento = models.AutoField(primary_key=True)
-    nome = models.TextField(max_length=255)
-    provider = models.TextField(max_length=255)
-    contato = models.TextField(max_length=255)
-    tipo = models.TextField(max_length=255, null=True)
-    status = models.TextField(max_length=255)
-    comentario = models.TextField(max_length=255)
-    descricao = models.TextField(max_length=255)
-    prof = models.TextField(max_length=255)
+    nome = models.CharField(max_length=255)
+    provider = models.CharField(max_length=255)
+    contato = models.CharField(max_length=255)
+    tipo = models.CharField(max_length=255, null=True)
+    status = models.CharField(max_length=255)
+    comentario = models.CharField(max_length=255)
+    descricao = models.CharField(max_length=255)
+    prof = models.CharField(max_length=255)
 
     def __str__(self):
-        return self.nome
+        return f"{self.nome} {self.provider} {self.contato} {self.tipo} {self.status} {self.comentario} {self.descricao} {self.prof}"
