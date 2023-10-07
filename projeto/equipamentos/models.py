@@ -13,5 +13,5 @@ class Equipamento(models.Model):
     descricao = models.CharField(max_length=255)
     prof = models.CharField(max_length=255)
 
-    def __str__(self):
-        return f"{self.nome} {self.provider} {self.contato} {self.tipo} {self.status} {self.comentario} {self.descricao} {self.prof}"
+ #   def __str__(self):
+  #      return f"{self.nome} {self.provider} {self.contato} {self.tipo} {self.status} {self.comentario} {self.descricao} {self.prof}"

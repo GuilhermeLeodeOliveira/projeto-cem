@@ -23,5 +23,5 @@ def cadastrar_equipamento(request):
     #Equipamento.objects.create(prof=prof)
 
     equipamento = equipamentos(request)
-    return HttpResponse("Esta é a função 2 e também chama a função 1: " + equipamento.content.decode())
+    return HttpResponse(equipamento.content.decode())
 
