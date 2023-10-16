@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block conteudo %}
+
+  <ul>
+    {% for usuario in usuarios %}
+      <li>
+        {{ usuario.id_usuario }} - {{ usuario.nome }}
+        <a href="{% url 'editar' usuario.id_usuario %}">Editar</a>
+        <a href="{% url 'delete' usuario.id_usuario %}">Deletar</a>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <form action="{% url 'salvar' %}" method="post">
+    {% csrf_token %}Nome:<input type="text" name="nome" id="" required />
+    <button type="submit">Salvar</button>
+  </form>
+
+{% endblock %}
