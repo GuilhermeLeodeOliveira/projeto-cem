@@ -2,12 +2,16 @@
 {% load static %}
 
 {% block conteudo %}
+<!--
+<h1>{{ request.session.chave }}</h1>
+-->
+
   <div class="container">
     <h1>Infraestrutura em uso ou a ser usada</h1>
     <form action="{% url 'form_termo' %}" method="post" class="">
       {% csrf_token %}
 
-<!--
+
       <div class="forms-cadastro p-2">
         <p>CEM São Bernardo do Campo - EQUIPAMENTOS</p>
         <p class="text-success">Escolha a(s) que mais se adeque(m)</p>
@@ -19,7 +23,7 @@
           {% endfor %}
         </div>
       </div>
--->
+
       <div class="d-flex justify-content-end mt-5">
         <button type="submit" class="btn-proximo mb-5">Próximo</button>
       </div>

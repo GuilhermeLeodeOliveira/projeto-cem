@@ -4,28 +4,34 @@
 {% block conteudo %}
   <div class="container">
     <h1>Profissional da Industria / Centro de Pesquisa / Docente de outras instituições de ensino</h1>
-    <form action="{% url 'form_infra' %}" method="post" class="">
+    <form action="{% url 'form_infra' %}" method="post" class="" enctype="multipart/form-data">
       {% csrf_token %}
       <div class="forms-cadastro p-2">
         <p>Dados pessoais</p>
         <div class="">
           <div class="mt-3">
-            <label for="nome">Nome Completo:</label> <input type="text" name="" id="nome" required />
+            <label for="nome">Nome Completo:</label> <input type="text" name="nome" id="nome" required />
           </div>
           <div class="mt-3">
-            <label for="tel">Instituição:</label> <input type="text" name="tel" id="tel" required />
+            <label for="instituicao">Instituição:</label> <input type="text" name="instituicao" id="instituicao" required />
           </div>
           <div class="mt-3">
-            <label for="tel">Atividade principal da instituição:</label> <input type="text" name="email_insti" id="email_insti" required />
+            <label for="atividade">Atividade principal da instituição:</label> <input type="text" name="atividade" id="atividade" required />
           </div>
           <div class="mt-3">
-            <label for="tel">Endereço da instituição:</label> <input type="text" name="mat_siape" id="mat_siape" required />
+            <label for="endereco_inst">Endereço da instituição:</label> <input type="text" name="endereco_inst" id="endereco_inst" required />
           </div>
           <div class="mt-3">
-            <label for="tel">Telefone e sala do laboratório de pesquisa:</label> <input type="text" name="lab" id="lab" required />
+            <label for="tel">Celular:</label> <input type="text" name="tel" id="tel" required />
           </div>
           <div class="mt-3">
-            <label for="tel">Formação acadêmica:</label> <input type="text" name="lab" id="lab" required />
+            <label for="email_inst">Email institucional:</label> <input type="text" name="email_inst" id="email_inst" required />
+          </div>
+          <div class="mt-3">
+            <label for="lab">Telefone e sala do laboratório de pesquisa:</label> <input type="text" name="lab" id="lab" required />
+          </div>
+          <div class="mt-3">
+            <label for="formacao">Formação acadêmica:</label> <input type="text" name="formacao" id="formacao" required />
           </div>
         </div>
       </div>
@@ -35,17 +41,17 @@
         <p class="text-success">Caso possua colaborador docente da UFABC (primeiro item), preencha o nome e centro do docente no espaço de comentário.</p>
         <div class="">
           <div class="radio mt-3">
-            <label for="opcao1"><input type="radio" name="opcao" value="opcao1" id="opcao1" required/>Pesquisador(a) externo(a) à UFABC, COM colaborador(a) interno(a) UFABC, ligado(a) a outra instituição pública de ensino superior e/ou pesquisa.</label>
+            <label for="opcao1"><input type="radio" name="classificacao" value="opcao1" id="opcao1" required/>Pesquisador(a) externo(a) à UFABC, COM colaborador(a) interno(a) UFABC, ligado(a) a outra instituição pública de ensino superior e/ou pesquisa.</label>
           </div>
           <div class="radio mt-3">
-            <label for="opcao2"><input type="radio" name="opcao" value="opcao2" id="opcao2" required/>Pesquisador(a) externo(a) à UFABC, SEM colaborador(a) interno(a), ligado(a) a outra instituição pública de ensino superior e/ou pesquisa.</label>
+            <label for="opcao2"><input type="radio" name="classificacao" value="opcao2" id="opcao2" required/>Pesquisador(a) externo(a) à UFABC, SEM colaborador(a) interno(a), ligado(a) a outra instituição pública de ensino superior e/ou pesquisa.</label>
           </div>
           <div class="radio mt-3">
-            <label for="opcao3"><input type="radio" name="opcao" value="opcao3" id="opcao3" required/>Profissional da Indústria ou de Centro de Pesquisa Privado</label>
+            <label for="opcao3"><input type="radio" name="classificacao" value="opcao3" id="opcao3" required/>Profissional da Indústria ou de Centro de Pesquisa Privado</label>
           </div>
           <div class="radio mt-3">
             <p>Por favor, coloque aqui o seu comentário:</p>
-            <input type="text" name="" id="">  
+            <input type="text" name="nome_centro_docente" id="">  
           </div>
         </div>
         <p class="text-success">Caso possua colaborador docente da UFABC (primeiro item), preencha o nome e centro do docente no espaço de comentário.</p>
@@ -56,21 +62,22 @@
         <p>Escolha uma das seguintes respostas:</p>
         <div class="">
           <div class="radio mt-3">
-            <label for="sim"><input type="radio" name="escolha" value="sim" id="sim" required />Sim</label>
+            <label for="sim_possui_projeto"><input type="radio" name="possui_projeto" value="sim_possui_projeto" id="sim_possui_projeto" required />Sim</label>
           </div>
           <div class="radio mt-3">
-            <label for="nao"><input type="radio" name="escolha" value="nao" id="nao" required />Não</label>
+            <label for="nao_possui_projeto"><input type="radio" name="possui_projeto" value="nao_possui_projeto" id="nao_possui_projeto" required />Não</label>
           </div>
         </div>
       </div>
-
       
-
       <div class="forms-cadastro p-2 mt-3">
         <p>Se sim, insira o número do projeto, título e vigência (por exemplo, CNPq-Universal xxxxx-2020, Síntese e caracterização de nano-bio-magnétos e processos de difusão destes em cavidades orgânicas instruídas por operações do tipo "machine learning", vigente até 25/12/2025).</p>
        
-        <div class="">
-          <textarea name="" id=""></textarea>
+        <div class="radio mt-3">
+          <textarea name="infos_projeto" id=""></textarea>
+        </div>
+        <div class="radio mt-3">
+          <label for="arquivo">Insira o documento de colaboração ou contrato tripartite (em formato PDF)</label><input type="file" name="arquivo" id="arquivo">
         </div>
       </div>
 
@@ -78,7 +85,7 @@
         <p>Liste as publicações (2019/2020) decorrentes da pesquisa feita com uso da infraestrutura das CEMs da UFABC (URL ou DOI):</p>
        
         <div class="">
-          <textarea name="" id=""></textarea>
+          <textarea name="publicacoes" id=""></textarea>
         </div>
       </div>
 
@@ -86,7 +93,7 @@
         <p>Plano de Trabalho (deve conter objeto de estudo, objetivos, técnicas e principais equipamentos a serem utilizados)</p>
        
         <div class="">
-          <textarea name="" id=""></textarea>
+          <textarea name="plano_trabalho" id=""></textarea>
         </div>
       </div>
 
@@ -95,10 +102,10 @@
         <p class="text-success"> Escolha a(s) que mais se adeque(m)</p>
         <div class="">
           <div class="radio mt-3">
-            <label for="sim"><input type="checkbox" name="escolha" value="sim" id="sim" required />Sim</label>
+            <label for="apoio_sim"><input type="radio" name="apoio" value="sim" id="apoio_sim" required />Sim</label>
           </div>
           <div class="radio mt-3">
-            <label for="nao"><input type="checkbox" name="escolha" value="nao" id="nao" required />Não</label>
+            <label for="apoio_nao"><input type="radio" name="apoio" value="nao" id="apoio_nao" required />Não</label>
           </div>
         </div>
       </div>

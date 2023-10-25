@@ -10,19 +10,22 @@
         <p>Dados pessoais</p>
         <div class="">
           <div class="mt-3">
-            <label for="nome">Nome Completo:</label> <input type="text" name="" id="nome" required />
+            <label for="nome">Nome Completo:</label> <input type="text" name="nome" id="nome" required />
           </div>
           <div class="mt-3">
             <label for="tel">Celular:</label> <input type="text" name="tel" id="tel" required />
           </div>
           <div class="mt-3">
-            <label for="tel">email-institucional:</label> <input type="text" name="email_insti" id="email_insti" required />
+            <label for="email_inst">email-institucional:</label> <input type="text" name="email_inst" id="email_inst" required />
           </div>
           <div class="mt-3">
-            <label for="tel">Matrícula SIAPE:</label> <input type="text" name="mat_siape" id="mat_siape" required />
+            <label for="matricula_ufabc">Matrícula SIAPE:</label> <input type="text" name="matricula_ufabc" id="matricula_ufabc" required />
           </div>
           <div class="mt-3">
-            <label for="tel">Ramal/Telefone e sala do Laboratório de Pesquisa:</label> <input type="text" name="lab" id="lab" required />
+            <label for="lab">Ramal/Telefone e sala do Laboratório de Pesquisa:</label> <input type="text" name="lab" id="lab" required />
+          </div>
+          <div class="mt-3">
+            <label for="nome_supervisor">Nome do(a) supervisor(a):</label> <input type="text" name="nome_supervisor" id="nome_supervisor" required />
           </div>
         </div>
       </div>
@@ -31,16 +34,16 @@
         <p>Centro (UFABC) ou Instituição e departamento (se externo):</p>
         <div class="">
           <div class="radio mt-3">
-            <label for="neurociencia_e_cognicao"><input type="checkbox" name="neurociencia_e_cognicao" value="" id="" />Neurociência e Cognição</label>
+            <label for="neurociencia_e_cognicao"><input type="checkbox" name="neurociencia_e_cognicao" value="" id="neurociencia_e_cognicao" />Neurociência e Cognição</label>
           </div>
           <div class="radio mt-3">
-            <label for="planejamento_e_gestao_do_territorio"><input type="checkbox" name="planejamento_e_gestao_do_territorio" value="" id="" />Planejamento e Gestão do Território</label>
+            <label for="planejamento_e_gestao_do_territorio"><input type="checkbox" name="planejamento_e_gestao_do_territorio" value="" id="planejamento_e_gestao_do_territorio" />Planejamento e Gestão do Território</label>
           </div>
           <div class="radio mt-3">
-            <label for="sem_vinculo"><input type="checkbox" name="sem_vinculo" value="" id="" />Não estou vinculado(a) à nenhum programa de pós-graduação</label>
+            <label for="sem_vinculo"><input type="checkbox" name="sem_vinculo" value="" id="sem_vinculo" />Não estou vinculado(a) à nenhum programa de pós-graduação</label>
           </div>
           <div class="radio mt-3">
-            <label for="outros"><input type="checkbox" name="outros" value="outros" id="outros" />Outros:</label> <input type="text" name="" id="" />
+            <label for="outro_centro"><input type="checkbox" name="outro_centro" value="outro_centro" id="outro_centro" />Outros:</label> <input type="text" name="input_outro_centro" id="" />
           </div>
         </div>
       </div>
@@ -49,7 +52,7 @@
         <p>Data de início do pós-doutorado:</p>
         <div class="">
           <div class="radio mt-3">
-            <label><input type="date" name="opcao" value="opcao4" id="opcao4" required /></label>
+            <label><input type="date" name="data_inicio" value="data_inicio" id="data_inicio" required /></label>
           </div>
         </div>
       </div>
@@ -147,7 +150,7 @@
         <p>Plano de Trabalho (deve conter objeto de estudo, objetivos, técnicas e principais equipamentos a serem utilizados)</p>
         <p class="text-success">Escolha uma das seguintes respostas:</p>
         <div class="">
-          <textarea name="" id=""></textarea>
+          <textarea name="plano_trabalho" id=""></textarea>
         </div>
       </div>
 
@@ -156,10 +159,10 @@
         <p>(Importante: Para validação do cadastro do(a) Pós-doutorando(a), é necessário que o(a) supervisor(a) faça também o cadastro.)</p>
         <div class="">
           <div class="radio mt-3">
-            <label for="sim"><input type="radio" name="escolha" value="sim" id="sim" required />Sim</label>
+            <label for="declaracao_supervisor"><input type="radio" name="declaracao_supervisor" value="sim" id="declaracao_supervisor" required />Sim</label>
           </div>
           <div class="radio mt-3">
-            <label for="nao"><input type="radio" name="escolha" value="nao" id="nao" required />Não</label>
+            <label for="declaracao_supervisor"><input type="radio" name="declaracao_supervisor" value="nao" id="declaracao_supervisor" required />Não</label>
           </div>
         </div>
       </div>
