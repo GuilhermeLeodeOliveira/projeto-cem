@@ -7,7 +7,7 @@ from PIL import Image
 import os
 from django.conf import settings
 from django import forms
-
+from django.core.exceptions import ObjectDoesNotExist
 
 def home(request):
     usuarios = Usuario.objects.all()
@@ -58,9 +58,7 @@ def selecionar_tela(request):
         return render(request, 'cad_pos_dout.html')
     elif opcao == "opcao3":
         request.session['perfil'] = "aluno_pos_dout_ic"
-        resultado_funcao1 = cad_aluno_pos_dout_ic(request)  # Chamando a função funcao1 dentro de funcao2
-        return HttpResponse(resultado_funcao1.content.decode())
-        #return render(request, 'cad_aluno_pos_dout_ic.html')
+        return render(request, 'cad_aluno_pos_dout_ic.html')
     elif opcao == "opcao4":
         request.session['perfil'] = "user_externo"
         return render(request, 'cad_user_externo.html')
@@ -77,6 +75,7 @@ def form_infra(request):
         novo_docente.nome = request.POST.get('nome')
         novo_docente.celular = request.POST.get('tel')
         novo_docente.email_inst = request.POST.get('email_inst')
+        novo_docente.senha = request.POST.get('senha')
         novo_docente.matricula_siape = request.POST.get('mat_siape')
         novo_docente.ramal_lab = request.POST.get('lab')
         novo_docente.centro = request.POST.get('centro')
@@ -98,6 +97,7 @@ def form_infra(request):
         novo_aluno_pos_dout.nome = request.POST.get('nome')
         novo_aluno_pos_dout.celular = request.POST.get('tel')
         novo_aluno_pos_dout.email_inst = request.POST.get('email_inst')
+        novo_aluno_pos_dout.senha = request.POST.get('senha')
         novo_aluno_pos_dout.matricula_ufabc = request.POST.get('matricula_ufabc')
         novo_aluno_pos_dout.ramal_lab = request.POST.get('lab')
         novo_aluno_pos_dout.nome_supervisor = request.POST.get('nome_supervisor')
@@ -115,6 +115,7 @@ def form_infra(request):
         novo_aluno_pos_ic.nome = request.POST.get('nome')
         novo_aluno_pos_ic.celular = request.POST.get('tel')
         novo_aluno_pos_ic.email_inst = request.POST.get('email_inst')
+        novo_aluno_pos_ic.senha = request.POST.get('senha')
         novo_aluno_pos_ic.matricula_ufabc = request.POST.get('matricula_ufabc')
         novo_aluno_pos_ic.ramal_lab = request.POST.get('lab')
         novo_aluno_pos_ic.nome_orientador = request.POST.get('nome_supervisor')
@@ -137,6 +138,7 @@ def form_infra(request):
         novo_user_externo.endereco_inst = request.POST.get('endereco_inst')
         novo_user_externo.celular = request.POST.get('tel')
         novo_user_externo.email_inst = request.POST.get('email_inst')
+        novo_user_externo.senha = request.POST.get('senha')
         novo_user_externo.telefone_sala = request.POST.get('lab')
         novo_user_externo.formacao = request.POST.get('formacao')
         novo_user_externo.classificacao = request.POST.get('classificacao')
@@ -150,7 +152,6 @@ def form_infra(request):
         novo_user_externo.save()
         request.session['chave'] = novo_user_externo.id_pre_cad_user_externo
         
-
     return render(request, 'form_infra.html')
 
 def form_termo(request):
@@ -193,6 +194,7 @@ def cadastrar_usuario(request):
         novo_docente.nome = docente.nome
         novo_docente.celular = docente.celular
         novo_docente.email_inst = docente.email_inst
+        novo_docente.senha = docente.senha
         novo_docente.matricula_siape = docente.matricula_siape
         novo_docente.ramal_lab = docente.ramal_lab
         novo_docente.centro = docente.centro
@@ -216,6 +218,7 @@ def cadastrar_usuario(request):
         novo_pos_dout.nome = pos_dout.nome
         novo_pos_dout.celular = pos_dout.celular
         novo_pos_dout.email_inst = pos_dout.email_inst
+        novo_pos_dout.senha = pos_dout.senha
         novo_pos_dout.matricula_ufabc = pos_dout.matricula_ufabc
         novo_pos_dout.ramal_lab = pos_dout.ramal_lab
         novo_pos_dout.nome_supervisor = pos_dout.nome_supervisor
@@ -240,6 +243,7 @@ def cadastrar_usuario(request):
         novo_pos_dout_ic.nome = pos_dout_ic.nome
         novo_pos_dout_ic.celular = pos_dout_ic.celular
         novo_pos_dout_ic.email_inst = pos_dout_ic.email_inst
+        novo_pos_dout_ic.senha = pos_dout_ic.senha
         novo_pos_dout_ic.matricula_ufabc = pos_dout_ic.matricula_ufabc
         novo_pos_dout_ic.ramal_lab = pos_dout_ic.ramal_lab
         novo_pos_dout_ic.nome_orientador = pos_dout_ic.nome_orientador
@@ -268,6 +272,7 @@ def cadastrar_usuario(request):
         novo_user_externo.endereco_inst = user_externo.endereco_inst
         novo_user_externo.celular = user_externo.celular
         novo_user_externo.email_inst = user_externo.email_inst
+        novo_user_externo.senha = user_externo.senha
         novo_user_externo.telefone_sala = user_externo.telefone_sala
         novo_user_externo.formacao = user_externo.formacao
         novo_user_externo.classificacao = user_externo.classificacao
@@ -282,11 +287,59 @@ def cadastrar_usuario(request):
         novo_user_externo.id_form_infra = nova_infra
         novo_user_externo.save()
 
-
-    return render(request, 'index.html')
+    return redirect('login_user')
 
 def cad_aluno_pos_dout_ic(request):
     return render(request, 'cad_aluno_pos_dout_ic.html')
     
 def cad_user_externo(request):
     return render(request, 'cad_user_externo.html')
+
+def login_user(request):
+    return render(request, 'login_user.html')
+
+def verifica_login(request):
+    
+    email = request.POST.get('email')
+    senha = request.POST.get('senha')
+
+    
+    if Docente.objects.filter(email_inst=email).exists():
+        
+        docente = Docente.objects.get(email_inst=email)
+        
+        if docente.email_inst == email and docente.senha == senha:
+            request.session['chave'] = docente.id_docente
+            return redirect('perfil_user')
+        
+    elif  PosDout.objects.filter(email_inst=email).exists():
+        
+        pos_dout = PosDout.objects.get(email_inst=email)
+
+        if pos_dout.email_inst == email and pos_dout.senha == senha:
+            request.session['chave'] = pos_dout.id_pos_dout
+            return redirect('perfil_user')
+        
+    elif AlunoPosIC.objects.filter(email_inst=email).exists():
+        
+        aluno_pos_dou_ic = AlunoPosIC.objects.get(email_inst=email)
+
+        if aluno_pos_dou_ic.email_inst == email and docente.senha == senha:
+            request.session['chave'] = aluno_pos_dou_ic.id_aluno_pos_ic
+            return redirect('perfil_user')
+        
+    elif UserExterno.objects.filter(email_inst=email).exists():
+        
+        user_externo = UserExterno.objects.get(email_inst=email)
+        
+        if user_externo.email_inst == email:
+            request.session['chave'] = user_externo.id_user_externo
+            return redirect('perfil_user')
+        
+    else:
+        return HttpResponse('Email ou senha não encontrados')
+    
+        
+    
+def perfil_user(request):
+    return render(request, 'perfil_user.html')

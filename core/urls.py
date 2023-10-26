@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from .views import salvar, editar, update, delete, cadastro, form_perfil, selecionar_tela
 from .views import cad_docente, form_infra, form_termo, cadastrar_usuario, cad_aluno_pos_dout_ic
-from .views import cad_user_externo
+from .views import cad_user_externo, login_user, verifica_login, perfil_user
 from . import views
 
 urlpatterns = [
@@ -20,6 +20,9 @@ urlpatterns = [
     path('cadastrar_usuario/', cadastrar_usuario, name='cadastrar_usuario'),
     path('cad_aluno_pos_dout_ic/', cad_aluno_pos_dout_ic, name='cad_aluno_pos_dout_ic'),
     path('cad_user_externo/', cad_user_externo, name='cad_user_externo'),
+    path('login_user/', login_user, name='login_user'),
+    path('perfil_user/', perfil_user, name='perfil_user'),
+    path('verifica_login/', verifica_login, name='verifica_login'),
     path('equipamentos/', include('equipamentos.urls'), name='cad_equipamento'),
 
 ]
