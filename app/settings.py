@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'core',
     'equipamentos',
     'django_extensions',
+    'administracao',
 ]
 
 MIDDLEWARE = [
