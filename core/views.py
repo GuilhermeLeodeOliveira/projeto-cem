@@ -212,7 +212,7 @@ def cadastrar_usuario(request):
 
         if Docente.objects.filter(email_inst=pos_dout.email_inst).exists() or PosDout.objects.filter(email_inst=pos_dout.email_inst).exists() or AlunoPosIC.objects.filter(email_inst=pos_dout.email_inst).exists() or UserExterno.objects.filter(email_inst=pos_dout.email_inst).exists():
                 # Trate o erro de e-mail duplicado, por exemplo, exiba uma mensagem de erro
-                return HttpResponse("Esse email já possui cadastro")
+            return HttpResponse("Esse email já possui cadastro")
 
         novo_pos_dout = PosDout()
         novo_pos_dout.nome = pos_dout.nome
