@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
-from .models import Adm
+from .models import Adm, Tecnico
 from django.http import HttpResponse
+
 # Create your views here.
 def login_adm(request):
     return render(request, 'login_adm.html')
@@ -16,14 +17,41 @@ def verifica_login(request):
         if adm.email == email and adm.senha == senha:
             request.session['chave'] = adm.id_adm
 
-            if 'chave' in request.session:
-                user_authenticated = True
-            else:
-                user_authenticated = False
-
-            context = {'user_authenticated': user_authenticated}
-
-            return render(request, 'dashboard.html', context)
+            return redirect('dashboard')
+        else:
+            return HttpResponse('email ou senha incorretors')
+        
+    elif Tecnico.objects.filter(email=email).exists():
+        
+        tecnico = Tecnico.objects.get(email=email)
+        
+        if tecnico.email == email and tecnico.senha == senha:
+            request.session['chave'] = tecnico.id_tecnico
+            return redirect('perfil_tecnico')
+        else:
+            return HttpResponse('Email ou senha incorretos')
+        
+    else:
+        return HttpResponse('Usuário não cadastrado')
     
 def dashboard(request):
-    return render(request, 'dashboard.html')
+    
+    if 'chave' in request.session:
+        user_authenticated = True
+    else:
+        user_authenticated = False
+        return HttpResponse('Você precisa estar logado para acessa a página')
+    
+    context = {'user_authenticated': user_authenticated}
+    return render(request, 'dashboard.html', context)
+            
+def perfil_tecnico(request):
+    
+    if 'chave' in request.session:
+        user_authenticated = True
+    else:
+        user_authenticated = False
+        return HttpResponse('Você precisa estar logado para acessa a página')
+    
+    context = {'user_authenticated': user_authenticated}
+    return render(request, 'perfil_tecnico.html', context)

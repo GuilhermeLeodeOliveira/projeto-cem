@@ -1,4 +1,5 @@
 from django.db import models
+from administracao.models import Tecnico
 
 # Create your models here.
 
@@ -19,7 +20,7 @@ class Equipamento(models.Model):
     descricao = models.CharField(max_length=255)
     coordenacao = models.CharField(max_length=100)
     prof = models.CharField(max_length=255)
-    tecnico = models.CharField(max_length=100)
+    id_tecnico = models.ForeignKey(Tecnico, on_delete=models.CASCADE, null=False)
 
     def __str__(self):
         return self.nome
