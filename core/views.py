@@ -296,9 +296,9 @@ def cad_user_externo(request):
     return render(request, 'cad_user_externo.html')
 
 def login_user(request):
-    return render(request, 'login_user.html')
+    return render(request, 'index.html')
 
-def verifica_login(request):
+def verifica_login_user(request):
     
     email = request.POST.get('email')
     senha = request.POST.get('senha')
@@ -340,6 +340,6 @@ def verifica_login(request):
         return HttpResponse('Email ou senha não encontrados')
     
         
-    
 def perfil_user(request):
     return render(request, 'perfil_user.html')
+
