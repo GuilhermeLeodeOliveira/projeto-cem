@@ -3,13 +3,16 @@ from .models import Equipamento
 from django.http import HttpResponse
 
 def cad_equipamento(request):
+    
     if 'chave' in request.session:
         user_authenticated = True
+        context = {'user_authenticated': user_authenticated}
+        return render(request, 'cad_equipamento.html', context)
     else:
         user_authenticated = False
+        return HttpResponse('Precisa estar logado para acessar essa função')
 
-    context = {'user_authenticated': user_authenticated}
-    return render(request, 'cad_equipamento.html', context)
+    
 
 def equipamentos(request):
     return render(request, 'equipamentos.html')

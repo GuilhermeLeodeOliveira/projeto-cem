@@ -6,6 +6,9 @@
 <div class="container">
     <div class="quadrado">
         <h1>Login Usuário</h1>
+        {% if mensagem %}
+          <p class="text-danger">{{ mensagem }}</p>
+        {% endif %} 
         <form action="{% url 'verifica_login_user' %}" method="post" class="form_login">
             {% csrf_token %}
             <div class="">

@@ -1,11 +1,10 @@
 from django.contrib import admin
-from .models import Usuario, ProgramaPosGraduacao, FormInfra, FormTermo, Docente, PosDout
+from .models import Usuario, ProgramaPosGraduacao, FormTermo, Docente, PosDout
 from .models import AlunoPosIC, preCadDocente, preCadPosDout, preCadUserExterno, UserExterno
 # Register your models here.
 
 admin.site.register(Usuario)
 admin.site.register(ProgramaPosGraduacao)
-admin.site.register(FormInfra)
 admin.site.register(FormTermo)
 admin.site.register(Docente)
 admin.site.register(PosDout)

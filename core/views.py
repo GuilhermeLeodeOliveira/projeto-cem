@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import Usuario, ProgramaPosGraduacao, Docente, preCadDocente, FormTermo 
-from .models import FormInfra, preCadPosDout, PosDout, preCadAlunoPosIC, AlunoPosIC
+from .models import preCadPosDout, PosDout, preCadAlunoPosIC, AlunoPosIC
 from .models import preCadUserExterno, UserExterno
 from django.http import HttpResponse
 from PIL import Image
@@ -128,7 +128,7 @@ def form_infra(request):
         novo_aluno_pos_ic.declaracao_orientador = request.POST.get('declaracao_orientador')
         novo_aluno_pos_ic.save()
         request.session['chave'] = novo_aluno_pos_ic.id_pre_cad_aluno_pos_ic
-        return render(request, 'form_infra.html')
+        return render(request, 'form_termo.html')
     
     elif perfil == "user_externo":
         novo_user_externo = preCadUserExterno()
@@ -152,11 +152,10 @@ def form_infra(request):
         novo_user_externo.save()
         request.session['chave'] = novo_user_externo.id_pre_cad_user_externo
         
-    return render(request, 'form_infra.html')
+    return render(request, 'form_termo.html')
 
 def form_termo(request):
     chave = request.session.get('chave', 'valor_padrão')
-    chave_infra = request.session.get('chave_infra', 1)
     
     return render(request, 'form_termo.html')
 
@@ -166,17 +165,14 @@ def cadastrar_usuario(request):
     novo_termo.veracidade1 = request.POST.get('veracidade1')
     novo_termo.veracidade2 = request.POST.get('veracidade2')
     novo_termo.veracidade3 = request.POST.get('veracidade3')
+
+    if novo_termo.veracidade1 == 'nao' or novo_termo.veracidade2 == 'nao' or novo_termo.veracidade3 == 'nao':
+        mensagem = 'Se você não está de acordo com nossos termos, não é possível realizar o cadastro'
+        return render(request, 'form_termo.html', {'mensagem': mensagem})
+
     novo_termo.save()
 
     chave_termo = novo_termo.id_form_termo
-
-    nova_infra = FormInfra()
-    nova_infra.cem_sbc_equip = request.POST.get('veracidade1')
-    nova_infra.cem_sbc_equip_apoio = request.POST.get('veracidade2')
-    nova_infra.cem_sa_equip = request.POST.get('veracidade3')
-    nova_infra.save()
-
-    chave_infra = nova_infra.id_form_infra
 
     chave = request.session.get('chave', 'valor_padrão')
     
@@ -188,7 +184,8 @@ def cadastrar_usuario(request):
 
         if Docente.objects.filter(email_inst=docente.email_inst).exists() or PosDout.objects.filter(email_inst=docente.email_inst).exists() or AlunoPosIC.objects.filter(email_inst=docente.email_inst).exists() or UserExterno.objects.filter(email_inst=docente.email_inst).exists():
             # Trate o erro de e-mail duplicado, por exemplo, exiba uma mensagem de erro
-            return HttpResponse("Esse email já possui cadastro")
+            mensagem = 'O email que você digitou já possui cadastro'
+            return render(request, 'cad_docente.html', {'mensagem': mensagem})
             
         novo_docente = Docente()
         novo_docente.nome = docente.nome
@@ -203,7 +200,6 @@ def cadastrar_usuario(request):
         novo_docente.programa_pos = docente.programa_pos
         novo_docente.info_projeto = docente.info_projeto
         novo_docente.lista_publi = docente.lista_publi
-        novo_docente.id_form_infra = nova_infra
         novo_docente.id_form_termo = novo_termo
         novo_docente.save()
     
@@ -212,7 +208,8 @@ def cadastrar_usuario(request):
 
         if Docente.objects.filter(email_inst=pos_dout.email_inst).exists() or PosDout.objects.filter(email_inst=pos_dout.email_inst).exists() or AlunoPosIC.objects.filter(email_inst=pos_dout.email_inst).exists() or UserExterno.objects.filter(email_inst=pos_dout.email_inst).exists():
                 # Trate o erro de e-mail duplicado, por exemplo, exiba uma mensagem de erro
-            return HttpResponse("Esse email já possui cadastro")
+            mensagem = 'O email que você digitou já possui cadastro'
+            return render(request, 'cad_pos_dout.html', {'mensagem': mensagem})
 
         novo_pos_dout = PosDout()
         novo_pos_dout.nome = pos_dout.nome
@@ -228,7 +225,6 @@ def cadastrar_usuario(request):
         novo_pos_dout.programa_pos = pos_dout.programa_pos
         novo_pos_dout.plano_trabalho = pos_dout.plano_trabalho
         novo_pos_dout.declaracao_ciencia_supervisor = pos_dout.declaracao_ciencia_supervisor
-        novo_pos_dout.id_form_infra = nova_infra
         novo_pos_dout.id_form_termo = novo_termo
         novo_pos_dout.save()
 
@@ -237,7 +233,8 @@ def cadastrar_usuario(request):
 
         if Docente.objects.filter(email_inst=pos_dout_ic.email_inst).exists() or PosDout.objects.filter(email_inst=pos_dout_ic.email_inst).exists() or AlunoPosIC.objects.filter(email_inst=pos_dout_ic.email_inst).exists() or UserExterno.objects.filter(email_inst=pos_dout_ic.email_inst).exists():
                 # Trate o erro de e-mail duplicado, por exemplo, exiba uma mensagem de erro
-                return HttpResponse("Esse email já possui cadastro")
+            mensagem = 'O email que você digitou já possui cadastro'
+            return render(request, 'cad_aluno_pos_dout_ic.html', {'mensagem': mensagem})
 
         novo_pos_dout_ic = AlunoPosIC()
         novo_pos_dout_ic.nome = pos_dout_ic.nome
@@ -255,7 +252,6 @@ def cadastrar_usuario(request):
         novo_pos_dout_ic.plano_trabalho = pos_dout_ic.plano_trabalho
         novo_pos_dout_ic.declaracao_orientador = pos_dout_ic.declaracao_ciencia_orientador
         novo_pos_dout_ic.id_form_termo = novo_termo
-        novo_pos_dout_ic.id_form_infra = nova_infra
         novo_pos_dout_ic.save()
 
     elif perfil == "user_externo":
@@ -263,7 +259,8 @@ def cadastrar_usuario(request):
 
         if Docente.objects.filter(email_inst=user_externo.email_inst).exists() or PosDout.objects.filter(email_inst=user_externo.email_inst).exists() or AlunoPosIC.objects.filter(email_inst=user_externo.email_inst).exists() or UserExterno.objects.filter(email_inst=user_externo.email_inst).exists():
                 # Trate o erro de e-mail duplicado, por exemplo, exiba uma mensagem de erro
-                return HttpResponse("Esse email já possui cadastro")
+            mensagem = 'O email que você digitou já possui cadastro'
+            return render(request, 'cad_user_externo.html', {'mensagem': mensagem})
 
         novo_user_externo = UserExterno()
         novo_user_externo.nome = user_externo.nome
@@ -284,10 +281,9 @@ def cadastrar_usuario(request):
         novo_user_externo.manifesto_apoio = user_externo.manifesto_apoio
         novo_user_externo.arquivo = user_externo.arquivo
         novo_user_externo.id_form_termo = novo_termo
-        novo_user_externo.id_form_infra = nova_infra
         novo_user_externo.save()
 
-    return redirect('login_user')
+    return redirect('encerrar_sessao')
 
 def cad_aluno_pos_dout_ic(request):
     return render(request, 'cad_aluno_pos_dout_ic.html')
@@ -302,7 +298,6 @@ def verifica_login_user(request):
     
     email = request.POST.get('email')
     senha = request.POST.get('senha')
-
     
     if Docente.objects.filter(email_inst=email).exists():
         
@@ -310,6 +305,7 @@ def verifica_login_user(request):
         
         if docente.email_inst == email and docente.senha == senha:
             request.session['chave'] = docente.id_docente
+            request.session['perfil'] = 'docente'
             return redirect('perfil_user')
         
     elif  PosDout.objects.filter(email_inst=email).exists():
@@ -318,14 +314,16 @@ def verifica_login_user(request):
 
         if pos_dout.email_inst == email and pos_dout.senha == senha:
             request.session['chave'] = pos_dout.id_pos_dout
+            request.session['perfil'] = 'pos_doutorando'
             return redirect('perfil_user')
         
     elif AlunoPosIC.objects.filter(email_inst=email).exists():
         
-        aluno_pos_dou_ic = AlunoPosIC.objects.get(email_inst=email)
+        aluno_pos_dout_ic = AlunoPosIC.objects.get(email_inst=email)
 
-        if aluno_pos_dou_ic.email_inst == email and docente.senha == senha:
-            request.session['chave'] = aluno_pos_dou_ic.id_aluno_pos_ic
+        if aluno_pos_dout_ic.email_inst == email and aluno_pos_dout_ic.senha == senha:
+            request.session['chave'] = aluno_pos_dout_ic.id_aluno_pos_ic
+            request.session['perfil'] = 'aluno_pos_ic'
             return redirect('perfil_user')
         
     elif UserExterno.objects.filter(email_inst=email).exists():
@@ -334,12 +332,37 @@ def verifica_login_user(request):
         
         if user_externo.email_inst == email:
             request.session['chave'] = user_externo.id_user_externo
+            request.session['perfil'] = 'user_externo'
             return redirect('perfil_user')
         
     else:
-        return HttpResponse('Email ou senha não encontrados')
-    
+        mensagem = 'Email ou senha incorretos'
+        return render(request, 'index.html', {'mensagem': mensagem})
         
-def perfil_user(request):
-    return render(request, 'perfil_user.html')
 
+def perfil_user(request):
+
+    perfil = request.session['perfil']
+    chave = request.session['chave']
+
+    if perfil == 'docente':
+        user = Docente.objects.get(id_docente=chave)
+        #return render(request, 'perfil_user.html', {'docente': docente})
+    
+    elif perfil == 'pos_doutorando':
+        user = PosDout.objects.get(id_pos_dout=chave)
+        #return render(request, 'perfil_user.html', {'pos_doutorando': pos_doutorando})
+    
+    elif perfil == 'aluno_pos_ic':
+        user = AlunoPosIC.objects.get(id_aluno_pos_ic=chave)
+        #return render(request, 'perfil_user.html', {'aluno_pos_ic': aluno_pos_ic})
+
+    elif perfil == 'user_externo':
+        user = UserExterno.objects.get(id_user_externo=chave)
+        #return render(request, 'perfil_user.html', {'user_externo': user_externo})
+    
+    return render(request, 'perfil_user.html', {'user': user})
+    
+def encerrar_sessao(request):
+    request.session.flush()
+    return redirect(home)

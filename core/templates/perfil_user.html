@@ -4,7 +4,13 @@
 {% block conteudo %}
 
 <div class="container">
-    <h1>{{request.session.chave}}</h1>
+    <h1>
+
+        
+
+        {{request.session.chave}} 
+        {{user.nome}} 
+    </h1>
 </div>
 
 {% endblock %}

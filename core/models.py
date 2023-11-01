@@ -16,12 +16,6 @@ class ProgramaPosGraduacao(models.Model):
 
     def __str__(self):
         return self.nome_programa
-    
-class FormInfra(models.Model):
-    id_form_infra = models.AutoField(primary_key=True)
-    cem_sbc_equip = models.CharField(max_length=255)
-    cem_sbc_equip_apoio = models.CharField(max_length=255)
-    cem_sa_equip = models.CharField(max_length=255)
 
 class FormTermo(models.Model):
     id_form_termo = models.AutoField(primary_key=True)
@@ -42,7 +36,6 @@ class Docente(models.Model):
     possui_projeto = models.CharField(max_length=3)
     info_projeto = models.TextField(max_length=255)
     lista_publi = models.TextField(max_length=255)
-    id_form_infra = models.ForeignKey(FormInfra, on_delete=models.CASCADE, null=False)
     id_form_termo = models.ForeignKey(FormTermo, on_delete=models.CASCADE, null=False)
 
     def __str__(self):
@@ -83,7 +76,6 @@ class PosDout(models.Model):
     programa_pos = models.TextField(max_length=255)
     plano_trabalho = models.TextField(max_length=255)
     declaracao_ciencia_supervisor = models.CharField(max_length=3)
-    id_form_infra = models.ForeignKey(FormInfra, on_delete=models.CASCADE, null=False)
     id_form_termo = models.ForeignKey(FormTermo, on_delete=models.CASCADE, null=False)
 
     def __str__(self):
@@ -122,7 +114,6 @@ class AlunoPosIC(models.Model):
     programa_pos = models.TextField(max_length=255)
     plano_trabalho = models.TextField(max_length=255)
     declaracao_ciencia_orientador = models.CharField(max_length=3)
-    id_form_infra = models.ForeignKey(FormInfra, on_delete=models.CASCADE, null=False)
     id_form_termo = models.ForeignKey(FormTermo, on_delete=models.CASCADE, null=False)
 
     def __str__(self):
@@ -165,7 +156,6 @@ class UserExterno(models.Model):
     publicacoes = models.TextField(max_length=255)
     plano_trabalho = models.TextField(max_length=255)
     manifesto_apoio = models.CharField(max_length=3)
-    id_form_infra = models.ForeignKey(FormInfra, on_delete=models.CASCADE, null=False)
     id_form_termo = models.ForeignKey(FormTermo, on_delete=models.CASCADE, null=False)
 
     def __str__(self):

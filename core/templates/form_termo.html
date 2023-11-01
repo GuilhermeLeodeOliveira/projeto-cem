@@ -3,7 +3,13 @@
 
 {% block conteudo %}
   <div class="container">
+    
     <h1>Termo de veracidade de informações prestadas e de responsabilidade</h1>
+
+    {% if mensagem %}
+      <p class="text-danger">{{ mensagem }}</p>
+    {% endif %} 
+
     <form action="{% url 'cadastrar_usuario' %}" method="post" class="">
       {% csrf_token %}
 

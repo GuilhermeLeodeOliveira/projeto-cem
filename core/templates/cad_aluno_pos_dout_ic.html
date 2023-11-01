@@ -4,6 +4,9 @@
 {% block conteudo %}
   <div class="container">
     <h1>Aluno(a) de pós-graduação ou iniciação científica - UFABC ou externo(a)</h1>
+    {% if mensagem %}
+      <p class="text-danger">{{ mensagem }}</p>
+    {% endif %} 
     <form action="{% url 'form_infra' %}" method="post" class="" id="myForm">
       {% csrf_token %}
       <div class="forms-cadastro p-2">

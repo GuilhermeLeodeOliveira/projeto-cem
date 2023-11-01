@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'equipamentos',
     'django_extensions',
     'administracao',
+    'treinamento',
 ]
 
 MIDDLEWARE = [

@@ -4,6 +4,9 @@
 {% block conteudo %}
   <div class="container">
     <h1>Docente UFABC</h1>
+    {% if mensagem %}
+      <p class="text-danger">{{ mensagem }}</p>
+    {% endif %} 
 
     <form action="{% url 'form_infra' %}" method="post" class="">
       {% csrf_token %}
