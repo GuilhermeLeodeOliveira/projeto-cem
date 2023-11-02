@@ -18,7 +18,8 @@ h1 {
 
 .forms-cadastro{
     border: solid #000 1px;
-    padding-top: 25px;
+    padding-top: 2px;
+    padding-bottom: 10px;
 
 }
 
@@ -27,9 +28,9 @@ h1 {
     display: flex;
 }
 
-input[type=text]{
+input[type=text], select{
     height: 30px;
-    width: 350px;
+    width: 50%;
 }
 
 input[type=submit]{
@@ -37,6 +38,22 @@ input[type=submit]{
     border: 0;
     height: 35px;
     color: #FFF;
+    
+}
+
+.form-equipamento .forms-cadastro .questao label {
+    width: 15%;
+}
+
+.form-equipamento .forms-cadastro .questao input[type="text"],
+.form-equipamento .forms-cadastro .questao select {
+    height: 30px;
+    width: 60%;
+}
+
+.questao{
+    display: flex;
+    justify-content:space-evenly;
 }
 
 textarea{
@@ -60,4 +77,23 @@ textarea{
 
 .login_input{
     width: 100%;
+}
+
+.container{
+    width: 100%;
+}
+
+@media (max-width: 1000px){
+
+    .form-equipamento .forms-cadastro .questao label {
+        width: 15%;
+    }
+    
+    .form-equipamento .forms-cadastro .questao input[type="text"],
+    .form-equipamento .forms-cadastro .questao select {
+        height: 30px;
+        width: 50%;
+    }
+    
+
 }
