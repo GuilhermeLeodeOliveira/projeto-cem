@@ -14,12 +14,12 @@
   <body>
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
       <div class="container-fluid d-flex align-items-center">
-        <a class="navbar-brand" href="{% url "home" %}"><img src="{% static 'imagens/logo.png' %}" alt="Logo Central Multiusuario" /></a>
+        <a class="navbar-brand" href="{% url "dashboard" %}"><img src="{% static 'imagens/logo.png' %}" alt="Logo Central Multiusuario" /></a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
           <ul class="navbar-nav">
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="{% url "home" %}">Home</a>
+              <a class="nav-link active" aria-current="page" href="{% url "dashboard" %}">Dashboard</a>
             </li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Dropdown link</a>
@@ -36,10 +36,7 @@
               </ul>
             </li>
             <li class="nav-item">
-              <a class="nav-link active" href="{% url 'cadastro' %}">Cadastro</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Pricing</a>
+              <a class="nav-link" href="{% url "cad_equipamento" %}">Cadastrar Equipamento</a>
             </li>
           </ul>
         </div>

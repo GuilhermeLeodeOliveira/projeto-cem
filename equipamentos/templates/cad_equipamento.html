@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'equipamentos/base.html' %}
 {% load static %}
 
 {% block conteudo %}
@@ -9,19 +9,23 @@
       <div class="forms-cadastro">
         <div class="mt-3 questao">
           <label for="nome">Nome:</label>
-          <input type="text" name="nome" id="nome"/>
+          <input type="text" name="nome" id="nome"required/>
         </div>
         <div class="mt-3 questao">
           <label for="apelido">Apelido:</label>
-          <input type="text" name="apelido" id="apelido" />
+          <input type="text" name="apelido" id="apelido" required/>
+        </div>
+        <div class="mt-3 questao">
+          <label for="descricao">Descrição:</label>
+          <input type="text" name="descricao" id="descricao" required/>
         </div>
         <div class="mt-3 questao">
           <label for="fabricante">Fabricante:</label>
-          <input type="text" name="fabricante" id="fabricante" />
+          <input type="text" name="fabricante" id="fabricante" required/>
         </div>
         <div class="mt-3 questao">
           <label for="localizacao">Localização:</label>
-          <select name="localizacao" id="localizacao">
+          <select name="localizacao" id="localizacao"required>
             <option value="cem_sa">CEM SA</option>
             <option value="cem_sbc">CEM SBC</option>
             <option value="lab_assoc">Laboratório Associado</option>
@@ -30,47 +34,62 @@
         </div>
         <div class="mt-3 questao">
           <label for="origem">Origem:</label>
-          <input type="text" name="origem" id="origem" />
+          <select name="origem" id="origem"required>
+            <option value="finep">Finep</option>
+            <option value="fapesp">Fapesp</option>
+            <option value="sisbamo">Sisbamo</option>
+          </select>
         </div>
         <div class="mt-3 questao">
           <label for="ano_aquisicao">Ano de Aquisição:</label>
-          <input type="text" name="ano_aquisicao" id="ano_aquisicao" />
+          <input type="text" name="ano_aquisicao" id="ano_aquisicao" required/>
         </div>
         <div class="mt-3 questao">
           <label for="sala">Sala:</label>
-          <input type="text" name="sala" id="sala" />
+          <input type="text" name="sala" id="sala" required/>
         </div>
         <div class="mt-3 questao">
-          <label for="tipo">Tipo:</label>
-          <input type="text" name="tipo" id="tipo" />
+          <label for="divisao">Divisão:</label>
+          <input type="text" name="divisao" id="divisao" required/>
         </div>
         <div class="mt-3 questao">
-          <label for="status">Status:</label>
-          <input type="text" name="status" id="status" />
-        </div>
-        <div class="mt-3 questao">
-          <label for="manutencao">Manutenção:</label>
-          <input type="text" name="manutencao" id="manutencao" />
+          <label for="localizacao">Status:</label>
+          <select name="status" id="status"required>
+            <option value="ativo">Ativo</option>
+            <option value="manu_pervent">Manutenção Preventiva</option>
+            <option value="manu_corretiva">Manutenção Corretiva</option>
+            <option value="inativo">Inativo</option>
+        </select>
         </div>
         <div class="mt-3 questao">
           <label for="comentario">Comentário:</label>
-          <input type="text" name="comentario" id="comentario" />
+          <input type="text" name="comentario" id="comentario" required/>
         </div>
         <div class="mt-3 questao">
-          <label for="descricao">Descrição:</label>
-          <input type="text" name="descricao" id="descricao" />
+          <label for="chave">N° da Chave:</label>
+          <input type="text" name="chave" id="chave" required/>
         </div>
         <div class="mt-3 questao">
-          <label for="coordenacao">Coordenação:</label>
-          <input type="text" name="coordenacao" id="coordenacao" />
+          <label for="patrimonio">N° do Patrimônio:</label>
+          <input type="text" name="patrimonio" id="patrimonio" required/>
         </div>
         <div class="mt-3 questao">
-          <label for="prof">Professo responsável:</label>
-          <input type="text" name="prof" id="prof" />
+          <label for="aquisicao">Valor da Aquisição:</label>
+          <input type="number" name="aquisicao" id="aquisicao" value="0"/>
+        </div>
+        <div class="mt-3 questao">
+          <label for="prof">Professor Responsável:</label>
+          <input type="text" name="prof" id="prof" required/>
         </div>
         <div class="mt-3 questao">
           <label for="tecnico">Técnico:</label>
-          <input type="text" name="tecnico" id="tecnico" />
+          {% for tecnico in tecnicos %}
+            
+            <select name="tecnico" id="tecnico"required>
+              <option value="{{ tecnico.nome }}"> {{ tecnico.nome }} </option>
+            </select>
+
+          {% endfor %}
         </div>
         
       </div>

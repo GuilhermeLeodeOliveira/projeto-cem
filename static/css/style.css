@@ -46,6 +46,7 @@ input[type=submit]{
 }
 
 .form-equipamento .forms-cadastro .questao input[type="text"],
+.form-equipamento .forms-cadastro .questao input[type="number"],
 .form-equipamento .forms-cadastro .questao select {
     height: 30px;
     width: 60%;
