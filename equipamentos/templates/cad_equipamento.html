@@ -83,13 +83,15 @@
         </div>
         <div class="mt-3 questao">
           <label for="tecnico">Técnico:</label>
-          {% for tecnico in tecnicos %}
-            
-            <select name="tecnico" id="tecnico"required>
+          <select name="tecnico" id="tecnico"required>
+            {% for tecnico in tecnicos %}
+              
+              
               <option value="{{ tecnico.nome }}"> {{ tecnico.nome }} </option>
-            </select>
+              
 
-          {% endfor %}
+            {% endfor %}
+          </select>
         </div>
         
       </div>

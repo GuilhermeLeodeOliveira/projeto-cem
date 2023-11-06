@@ -26,5 +26,6 @@ urlpatterns = [
     path('encerrar_sessao/', encerrar_sessao, name='encerrar_sessao'),
     path('equipamentos/', include('equipamentos.urls'), name='cad_equipamento'),
     path('treinamento/', include('treinamento.urls'), name='treinamento'),
+    path('solicitacoes_user/', include('treinamento.urls'), name='solicitacoes_user'),
 
 ]

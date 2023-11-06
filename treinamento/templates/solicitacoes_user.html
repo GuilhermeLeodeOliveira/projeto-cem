@@ -1,0 +1,38 @@
+{% extends 'treinamento/base.html' %}
+{% load static %}
+
+{% block conteudo %}
+
+<div class="container">
+    <h1>Minhas Solicitações</h1>
+
+    
+    <div class="tela">
+        <table class="solicitacoes text-center">
+            <thead class="">
+                <tr class="">
+                    <th>Data</th>
+                    <th>Hora</th>
+                    <th>Status</th>
+                    <th>Equipamento</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Linhas da tabela com dados aqui -->
+                {% for solicitacao in solicitacoes %}
+                <tr>
+                    <td>{{solicitacao.data}}</td>
+                    <td>{{solicitacao.hora}}</td>
+                    <td>{{solicitacao.status}}</td>
+                    <td>{{solicitacao.id_equipamento}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+       
+    </div>
+    
+</div>
+
+<script src="{% static 'js/solicita.js' %}"></script>
+{% endblock %}

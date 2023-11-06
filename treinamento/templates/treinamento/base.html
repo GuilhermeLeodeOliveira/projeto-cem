@@ -12,15 +12,32 @@
   </head>
 
   <body>
+    
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
       <div class="container-fluid d-flex align-items-center">
+        {% if request.session.chave %}
+        
+        <img src="{% static 'imagens/logo.png' %}" alt="Logo Central Multiusuario" />
+        
+        {% else %}
+
         <a class="navbar-brand" href="{% url "home" %}"><img src="{% static 'imagens/logo.png' %}" alt="Logo Central Multiusuario" /></a>
+        
+        {% endif %} 
+        
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
           <ul class="navbar-nav">
             <li class="nav-item">
+              {% if not request.session.chave %}
+              
               <a class="nav-link active" aria-current="page" href="{% url "home" %}">Home</a>
+              
+              {% endif %} 
+              
+            
             </li>
+            <!-- # dropdown
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Dropdown link</a>
               <ul class="dropdown-menu">
@@ -35,12 +52,20 @@
                 </li>
               </ul>
             </li>
+            -->            
             <li class="nav-item">
-              <a class="nav-link active" href="{% url 'cadastro' %}">Cadastro</a>
+              <a class="nav-link" href="{% url "treinamento" %}">Treinamento</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Pricing</a>
-            </li>
+            
+            {% if request.session.chave %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url "perfil_user" %}">Perfil</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url "encerrar_sessao" %}">Sair</a>
+              </li>
+            {% endif %}
+            
           </ul>
         </div>
       </div>

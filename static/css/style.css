@@ -84,6 +84,26 @@ textarea{
     width: 100%;
 }
 
+th{
+    border-bottom: #000 solid 1px;
+}
+
+.tela{
+    margin-top: 20px;
+}
+
+.solicitacoes{
+    width: 100%;
+}
+
+td{
+    border: #000 solid 1px;
+}
+
+.form_solicita_treinamento{
+    
+}
+
 @media (max-width: 1000px){
 
     .form-equipamento .forms-cadastro .questao label {

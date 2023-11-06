@@ -19,7 +19,7 @@ def verifica_login(request):
 
             return redirect('dashboard')
         else:
-            return HttpResponse('email ou senha incorretors')
+            return HttpResponse('email ou senha incorretos')
         
     elif Tecnico.objects.filter(email=email).exists():
         
@@ -27,6 +27,7 @@ def verifica_login(request):
         
         if tecnico.email == email and tecnico.senha == senha:
             request.session['chave'] = tecnico.id_tecnico
+            
             return redirect('perfil_tecnico')
         else:
             return HttpResponse('Email ou senha incorretos')
@@ -53,5 +54,12 @@ def perfil_tecnico(request):
         user_authenticated = False
         return HttpResponse('Você precisa estar logado para acessa a página')
     
-    context = {'user_authenticated': user_authenticated}
-    return render(request, 'perfil_tecnico.html', context)
+    chave = request.session['chave']
+    request.session['perfil'] = 'tecnico'
+    user = Tecnico.objects.get(id_tecnico=chave)
+    return render(request, 'perfil_tecnico.html', {'user_authenticated': user_authenticated, 'user': user})
+
+def encerrar_sessao_adm(request):
+    request.session.flush()
+    return redirect(login_adm)
+

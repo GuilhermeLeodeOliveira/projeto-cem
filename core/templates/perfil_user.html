@@ -6,11 +6,13 @@
 <div class="container">
     <h1>
 
-        
-
         {{request.session.chave}} 
         {{user.nome}} 
+        
     </h1>
+
+    <a href="{% url "solicitacoes_user" %}">Minhas Solicitações</a>
+
 </div>
 
 {% endblock %}

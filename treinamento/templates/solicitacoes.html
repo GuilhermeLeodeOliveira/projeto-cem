@@ -1,0 +1,111 @@
+{% extends 'administracao/base.html' %}
+{% load static %}
+
+{% block conteudo %}
+
+<div class="container ">
+    <h1>Solicitações</h1>
+    <div class="d-flex justfy-content-between form_solicita_treinamento">
+        
+        <select name="equipamento" id="selectEquipamento">
+            <option value="">Equipamento</option>
+            {% for equipamento in equipamentos %}
+            <option value="{{ equipamento.nome }}">{{ equipamento.nome }}</option>
+            {% endfor %}
+        </select>
+
+        <select name="status" id="selectStatus">
+            <option value="">Status</option>
+            <option value="pendente">Pendente</option>
+            <option value="em_processo">Em processo</option>
+            <option value="finalizado">Finalizado</option>
+        </select>
+
+    </div>
+
+    <div class="tela">
+        <table class="solicitacoes text-center" id="tabelaSolicitacoes">
+            <thead class="">
+                <tr class="">
+                    <th>Data da solicitação</th>
+                    <th>Hora</th>
+                    <th>Nome</th>
+                    <th>Email</th>
+                    <th>Equipamento</th>
+                    <th>Status</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Linhas da tabela com dados aqui -->
+                {% for solicitacao in solicitacoes %}
+                <tr>
+                    <td>{{ solicitacao.data }}</td>
+                    <td>{{ solicitacao.hora }}</td>
+
+                    {% if solicitacao.id_Docente != 'None' %}
+                        <td>{{solicitacao.id_Docente.nome}}</td>
+                        <td>{{solicitacao.id_Docente.email_inst}}</td>
+                    {% elif solicitacao.id_PosDout != 'None' %}
+                        <td>{{solicitacao.id_PosDout.nome}}</td>
+                        <td>{{solicitacao.id_PosDout.email_inst}}</td>
+                    {% elif solicitacao.id_AlunoPosIC != 'None' %}
+                        <td>{{solicitacao.id_AlunoPosIC.nome}}</td>
+                        <td>{{solicitacao.id_AlunoPosIC.email_inst}}</td>
+                    {% elif solicitacao.id_UserExterno != 'None' %}
+                        <td>{{solicitacao.id_UserExterno.nome}}</td>
+                        <td>{{solicitacao.id_UserExterno.email_inst}}</td>
+                    {% endif %}
+
+                    
+                    <td>{{ solicitacao.id_equipamento }}</td>
+                    <td>{{ solicitacao.status }}</td>
+
+                    <td><input type="checkbox" name="" value="{{ equipamento.nome }}" id=""></td>
+
+                </tr>
+
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<script>
+    let equipamentoSelect = document.getElementById("selectEquipamento");
+    let statusSelect = document.getElementById("selectStatus");
+    let tabela = document.getElementById("tabelaSolicitacoes");
+
+    // Adicione ouvintes de evento "change" a todos os selects
+    equipamentoSelect.addEventListener("change", filtrarTabela);
+    statusSelect.addEventListener("change", filtrarTabela);
+
+    function filtrarTabela() {
+        let equipamentoSelecionado = equipamentoSelect.value;
+        let statusSelecionado = statusSelect.value;
+
+        // Selecione todas as linhas da tabela
+        let linhas = tabela.querySelectorAll("tbody tr");
+
+        linhas.forEach(function(linha) {
+            // Selecione as colunas de "Equipamento" e "Status" na linha
+            let equipamentoColuna = linha.querySelector("td:nth-child(5)");
+            let statusColuna = linha.querySelector("td:nth-child(6)");
+
+            // Verifique se a linha corresponde aos valores selecionados
+            if (
+                (!equipamentoSelecionado || equipamentoColuna.textContent === equipamentoSelecionado) &&
+                (!statusSelecionado || statusColuna.textContent === statusSelecionado)
+            ) {
+                // Exiba a linha
+                linha.style.display = "";
+            } else {
+                // Oculte a linha
+                linha.style.display = "none";
+            }
+        });
+    }
+</script>
+
+{% endblock %}

@@ -3,7 +3,63 @@
 
 {% block conteudo %}
 
-    <h1>Treinamento</h1>
-     
+<div class="container">
+    <h1>Solicitar Treinamento</h1>
 
+    <div class="d-flex justfy-content-between form_solicita_treinamento">
+        <select name="equipamento" id="equipamento">
+            <option value="">Equipamento</option>
+            {% for equipamento in equipamentos %}
+            <option value="{{ equipamento.nome }}">{{ equipamento.nome }}</option>
+            {% endfor %}
+        </select>
+    
+        <select name="divisao" id="divisao">
+            <option value="">divisao</option>
+            {% for equipamento in equipamentos %}
+            <option value="{{ equipamento.divisao }}">{{ equipamento.divisao }}</option>
+            {% endfor %}
+        </select>
+
+        <select name="apelido" id="apelido">
+            <option value="">apelido</option>
+            {% for equipamento in equipamentos %}
+            <option value="{{ equipamento.apelido }}">{{ equipamento.apelido }}</option>
+            {% endfor %}
+        </select>
+
+    </div>
+    
+    <form action="{% url 'solicitar_treinamento' %}" method="post">
+        {% csrf_token %}
+        <div class="tela">
+            <table class="solicitacoes text-center">
+                <thead>
+                    <tr>
+                        <th>Equipamento</th>
+                        <th>Divisão</th>
+                        <th>Apelido</th>
+                        <th>Solicitar Equip.</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Linhas da tabela com dados aqui -->
+                    {% for equipamento in equipamentos %}
+                    <tr>
+                        <td>{{ equipamento.nome }}</td>
+                        <td>{{ equipamento.divisao }}</td>
+                        <td>{{ equipamento.apelido }}</td>
+                        <td><input type="checkbox" name="equipamento_selecionado" value="{{ equipamento.nome }}" id=""></td>
+                    </tr>
+                    {% endfor %}    
+                </tbody>
+            </table>
+            
+        </div>
+        <input type="submit" value="Solicitar" id="btn-submit" class="mt-3">
+    </form>
+    
+</div>
+
+<script src="{% static 'js/solicita.js' %}"></script>
 {% endblock %}
