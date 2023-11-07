@@ -20,7 +20,7 @@ def treinamento(request):
 def solicitacoes(request):
     perfil = request.session['perfil']
     if 'chave' in request.session:
-        solicitacoes = Solicitacoes.objects.all()
+        solicitacoes = Solicitacoes.objects.filter(status='pendente')
         equipamentos = Equipamento.objects.all()
         return render(request, 'solicitacoes.html', {'perfil': perfil, 'equipamentos':equipamentos, 'solicitacoes': solicitacoes})
 
@@ -97,3 +97,13 @@ def solicitacoes_user(request):
         solicitacoes = Solicitacoes.objects.filter(id_UserExterno=chave)
         
     return render(request, 'solicitacoes_user.html', {'solicitacoes': solicitacoes})
+
+def agendar_treinamento(request):
+
+    return HttpResponse('funciona')
+
+def finalizar_treinamento(request):
+    return HttpResponse('funciona')
+
+def concluir_treinamento(request):
+    return HttpResponse('funciona')
