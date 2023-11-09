@@ -5,7 +5,7 @@
 
 <div class="container ">
     <h1>Solicitações</h1>
-    <form action="{% url "agendar_treinamento" %}" method="post" id="agendar-form"> 
+    <form action="{% url "agendar_treinamento" %}" method="post" id="agendar-form" accept-charset="UTF-8"> 
         {% csrf_token %}
         <div class="d-flex justfy-content-between form_solicita_treinamento">
             
@@ -90,6 +90,7 @@
     </form>
 
 </div>
+
 
 <script src="{% static 'js/agenda.js' %}"></script>
 {% endblock %}

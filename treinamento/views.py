@@ -1,3 +1,7 @@
+import csv
+from django.template import loader, Context
+
+from datetime import datetime
 from django.shortcuts import render, redirect
 #from .models import 
 from django.http import HttpResponse
@@ -5,7 +9,7 @@ from django.http import JsonResponse
 from equipamentos.models import Equipamento
 from core.models import Docente, PosDout, AlunoPosIC, UserExterno
 from .models import Solicitacoes
-from datetime import datetime
+
 
 # Create your views here.
 
@@ -99,8 +103,40 @@ def solicitacoes_user(request):
     return render(request, 'solicitacoes_user.html', {'solicitacoes': solicitacoes})
 
 def agendar_treinamento(request):
+    if request.method == "POST":
+        usuarios_selecionados = []
 
-    return HttpResponse('funciona')
+        # Verifique se a chave "usuario" existe nos dados POST
+        if "usuario" in request.POST:
+            # Separe os valores com base no caractere "_"
+            valores_usuarios = request.POST.getlist("usuario")
+
+            for valor in valores_usuarios:
+                nome, equipamento_id = valor.split("_")  # Separe o nome do equipamento_id
+                usuarios_selecionados.append([nome, equipamento_id])
+
+            # Criar um arquivo CSV com os dados coletados
+            response = HttpResponse(content_type="text/csv")
+            response["Content-Disposition"] = 'attachment; filename="usuarios_selecionados.csv"'
+
+            # Crie um objeto CSV com quoting definido como QUOTE_MINIMAL
+            writer = csv.writer(response, delimiter=",", quoting=csv.QUOTE_MINIMAL)
+
+            # Escreva o cabeçalho
+            writer.writerow(["Nome do Usuário", "ID do Equipamento"])
+
+            # Escreva os dados
+            for usuario in usuarios_selecionados:
+                writer.writerow(usuario)
+                            
+            # Obtenha o conteúdo da resposta como uma string
+            csv_data = response.content.decode('utf-8')
+            response.content = csv_data.encode('utf-16')
+
+            return response
+
+    return HttpResponse("Requisição inválida")
+
 
 def finalizar_treinamento(request):
     return HttpResponse('funciona')

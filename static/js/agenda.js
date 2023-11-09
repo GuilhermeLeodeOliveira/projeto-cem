@@ -59,13 +59,10 @@ const agendarForm = document.getElementById("agendar-form");
 selectStatus.addEventListener("change", () => {
     const selectedValue = selectStatus.value;
     if (selectedValue === "pendente") {
-        btnSubmit.value = "Agendar";
         agendarForm.action = "{% url 'agendar_treinamento' %}";
     } else if (selectedValue === "em_processo") {
-        btnSubmit.value = "Finalizar";
         agendarForm.action = "{% url 'finalizar_treinamento' %}";
     } else if (selectedValue === "finalizado") {
-        btnSubmit.value = "Concluir";
         agendarForm.action = "{% url 'concluir_treinamento' %}";
     }
 });
