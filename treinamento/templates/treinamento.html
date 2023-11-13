@@ -8,21 +8,21 @@
 
     <div class="d-flex justfy-content-between form_solicita_treinamento">
         <select name="equipamento" id="equipamento">
-            <option value="">Equipamento</option>
+            <option value="">Digite um nome</option>
             {% for equipamento in equipamentos %}
             <option value="{{ equipamento.nome }}">{{ equipamento.nome }}</option>
             {% endfor %}
         </select>
     
         <select name="divisao" id="divisao">
-            <option value="">divisao</option>
+            <option value="">Digite uma divisão</option>
             {% for equipamento in equipamentos %}
             <option value="{{ equipamento.divisao }}">{{ equipamento.divisao }}</option>
             {% endfor %}
         </select>
 
         <select name="apelido" id="apelido">
-            <option value="">apelido</option>
+            <option value="">Digite um apelido</option>
             {% for equipamento in equipamentos %}
             <option value="{{ equipamento.apelido }}">{{ equipamento.apelido }}</option>
             {% endfor %}

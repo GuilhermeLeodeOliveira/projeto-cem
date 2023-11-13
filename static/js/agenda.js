@@ -40,7 +40,7 @@ btnSubmit.addEventListener("click", function() {
     let mensagem = "Você selecionou os seguintes usuários:\n";
 
     checkboxesSelecionados.forEach(function(checkbox) {
-        mensagem += "- " + checkbox.value + " - " + checkbox.name + "\n";
+        mensagem += "- " + checkbox.value + "\n";
     });
 
     // Exiba um pop-up de confirmação com os checkboxes selecionados

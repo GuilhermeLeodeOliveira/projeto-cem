@@ -15,7 +15,27 @@ from .models import Solicitacoes
 
 def treinamento(request):
     if 'chave' in request.session:
-        equipamentos = Equipamento.objects.all()
+        # Obtenha o ID do usuário atualmente logado
+        perfil_user = request.session.get('perfil')
+        chave = request.session.get('chave')
+
+        # Verifique o tipo de perfil e obtenha as solicitações correspondentes
+        if perfil_user == 'docente':
+            solicitacoes_usuario = Solicitacoes.objects.filter(id_Docente=chave)
+        elif perfil_user == 'pos_doutorando':
+            solicitacoes_usuario = Solicitacoes.objects.filter(id_PosDout=chave)
+        elif perfil_user == 'aluno_pos_ic':
+            solicitacoes_usuario = Solicitacoes.objects.filter(id_AlunoPosIC=chave)
+        elif perfil_user == 'user_externo':
+            solicitacoes_usuario = Solicitacoes.objects.filter(id_UserExterno=chave)
+        else:
+            solicitacoes_usuario = None
+
+        # Se houver solicitações para o usuário, exclua os equipamentos associados a essas solicitações
+        if solicitacoes_usuario:
+            equipamentos = Equipamento.objects.exclude(id_equipamento__in=solicitacoes_usuario.values('id_equipamento'))
+        else:
+            equipamentos = Equipamento.objects.all()
         return render(request, 'treinamento.html', {'equipamentos': equipamentos})
     else:
         return HttpResponse('Precisa estar logado para acessar essa função')
@@ -24,8 +44,9 @@ def treinamento(request):
 def solicitacoes(request):
     perfil = request.session['perfil']
     if 'chave' in request.session:
-        solicitacoes = Solicitacoes.objects.filter(status='pendente')
-        equipamentos = Equipamento.objects.all()
+        chave = request.session['chave']
+        solicitacoes = Solicitacoes.objects.filter(id_equipamento__id_tecnico=chave)
+        equipamentos = Equipamento.objects.filter(id_tecnico = chave)
         return render(request, 'solicitacoes.html', {'perfil': perfil, 'equipamentos':equipamentos, 'solicitacoes': solicitacoes})
 
 def solicitar_treinamento(request):
@@ -33,8 +54,36 @@ def solicitar_treinamento(request):
     if request.method == 'POST':
         
         equipamentos_selecionados = request.POST.getlist('equipamento_selecionado')
+
+        perfil_user = request.session['perfil']
+        chave = request.session['chave']
         
         for equipamento_nome in equipamentos_selecionados:
+            
+            # Verifique se já existe uma solicitação para o usuário e o equipamento
+            usuario = None
+
+            if perfil_user == 'docente':
+                usuario = Docente.objects.get(id_docente=chave)
+                campo_usuario = 'id_Docente'
+            elif perfil_user == 'pos_doutorando':
+                usuario = PosDout.objects.get(id_pos_dout=chave)
+                campo_usuario = 'id_PosDout'
+            elif perfil_user == 'aluno_pos_ic':
+                usuario = AlunoPosIC.objects.get(id_aluno_pos_ic=chave)
+                campo_usuario = 'id_AlunoPosIC'
+            elif perfil_user == 'user_externo':
+                usuario = UserExterno.objects.get(id_user_externo=chave)
+                campo_usuario = 'id_UserExterno'
+
+            equipamento = Equipamento.objects.get(nome=equipamento_nome)
+
+            if Solicitacoes.objects.filter(**{campo_usuario: usuario, 'id_equipamento': equipamento}).exists():
+                # Já existe uma solicitação para esse usuário e equipamento
+                # Você pode decidir o que fazer aqui, redirecionar para uma página de erro, etc.
+                return HttpResponse('Você já realizou uma solicitação para esse equipamento')
+
+
             # Crie uma instância do modelo Equipamento para cada equipamento selecionado
             equipamento = Equipamento.objects.get(nome=equipamento_nome)
             nova_solicitacao = Solicitacoes()
@@ -103,6 +152,7 @@ def solicitacoes_user(request):
     return render(request, 'solicitacoes_user.html', {'solicitacoes': solicitacoes})
 
 def agendar_treinamento(request):
+
     if request.method == "POST":
         usuarios_selecionados = []
 
@@ -110,10 +160,34 @@ def agendar_treinamento(request):
         if "usuario" in request.POST:
             # Separe os valores com base no caractere "_"
             valores_usuarios = request.POST.getlist("usuario")
+            
 
             for valor in valores_usuarios:
+                
                 nome, equipamento_id = valor.split("_")  # Separe o nome do equipamento_id
-                usuarios_selecionados.append([nome, equipamento_id])
+
+                #solicitacao = Solicitacoes.objects.all()
+                
+                if Solicitacoes.objects.filter(id_Docente__nome=nome).exists():
+                    docente = Docente.objects.filter(nome=nome).first()
+                    email = docente.email_inst
+
+                elif Solicitacoes.objects.filter(id_PosDout__nome=nome).exists():
+                    docente = PosDout.objects.filter(nome=nome).first()
+                    email = docente.email_inst
+
+
+                elif Solicitacoes.objects.filter(id_AlunoPosIC__nome=nome).exists():
+                    docente = AlunoPosIC.objects.filter(nome=nome).first()
+                    email = docente.email_inst
+
+
+                elif Solicitacoes.objects.filter(id_UserExterno__nome=nome).exists():
+                    docente = UserExterno.objects.filter(nome=nome).first()
+                    email = docente.email_inst
+
+                usuarios_selecionados.append([nome, email, equipamento_id])
+                
 
             # Criar um arquivo CSV com os dados coletados
             response = HttpResponse(content_type="text/csv")
@@ -123,7 +197,8 @@ def agendar_treinamento(request):
             writer = csv.writer(response, delimiter=",", quoting=csv.QUOTE_MINIMAL)
 
             # Escreva o cabeçalho
-            writer.writerow(["Nome do Usuário", "ID do Equipamento"])
+            writer.writerow(["Nome do Usuário", "Email", "Equipamento"])
+            
 
             # Escreva os dados
             for usuario in usuarios_selecionados:
