@@ -31,7 +31,7 @@ function filtrarTabela() {
         }
     });
 }
-    
+
 let btnSubmit = document.getElementById("btn-submit");
 
 // Adicione um ouvinte de evento ao botão de envio
@@ -53,16 +53,40 @@ btnSubmit.addEventListener("click", function() {
 
 });
 
+
 const selectStatus = document.getElementById("selectStatus");
 const agendarForm = document.getElementById("agendar-form");
 
-selectStatus.addEventListener("change", () => {
+// Função para atualizar a ação do formulário com base no valor selecionado
+function atualizarAcaoFormulario() {
+
     const selectedValue = selectStatus.value;
+    let checkboxes = document.querySelectorAll("input[type='checkbox']");
+    const btnSubmit = document.getElementById("btn-submit");
+    
     if (selectedValue === "pendente") {
-        agendarForm.action = "{% url 'agendar_treinamento' %}";
+        agendarForm.action = '/administracao/solicitacoes/agendar_treinamento/';
+        btnSubmit.value = 'Agendar';
+        btnSubmit.style.display = 'block'; // Ou outro estilo desejado
+        checkboxes.forEach(checkbox => checkbox.checked = false);
     } else if (selectedValue === "em_processo") {
-        agendarForm.action = "{% url 'finalizar_treinamento' %}";
+        agendarForm.action = '/administracao/solicitacoes/finalizar_treinamento/';
+        btnSubmit.value = 'Finalizar';
+        btnSubmit.style.display = 'block';
+        checkboxes.forEach(checkbox => checkbox.checked = false);
+
     } else if (selectedValue === "finalizado") {
-        agendarForm.action = "{% url 'concluir_treinamento' %}";
+        agendarForm.action = '/administracao/solicitacoes/concluir_treinamento/';
+        btnSubmit.style.display = 'none';
+        checkboxes.forEach(checkbox => checkbox.checked = false);
+
+    }else{
+        btnSubmit.style.display = 'none';
     }
-});
+}
+
+// Defina a ação inicial com base no valor inicial do selectStatus
+atualizarAcaoFormulario();
+
+// Adicione um ouvinte de evento de mudança para o selectStatus
+selectStatus.addEventListener("change", atualizarAcaoFormulario);

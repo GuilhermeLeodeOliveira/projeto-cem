@@ -2,7 +2,7 @@ import csv
 from django.template import loader, Context
 
 from datetime import datetime
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 #from .models import 
 from django.http import HttpResponse
 from django.http import JsonResponse
@@ -164,29 +164,55 @@ def agendar_treinamento(request):
 
             for valor in valores_usuarios:
                 
-                nome, equipamento_id = valor.split("_")  # Separe o nome do equipamento_id
+                nome, equipamento = valor.split("_")  # Separe o nome do equipamento_id
 
                 #solicitacao = Solicitacoes.objects.all()
-                
-                if Solicitacoes.objects.filter(id_Docente__nome=nome).exists():
+
+                if Solicitacoes.objects.filter(id_Docente__nome=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
                     docente = Docente.objects.filter(nome=nome).first()
                     email = docente.email_inst
+                    solicitacao = Solicitacoes.objects.get(id_Docente__nome=nome, id_equipamento__nome = equipamento)
+                    if solicitacao.status == "pendente":
+                        solicitacao.status = "em_processo"
+                        solicitacao.save()
+                    else:
+                        return HttpResponse('Você não pode realizar a operação escolhida para essas solicitações')
+                    
 
-                elif Solicitacoes.objects.filter(id_PosDout__nome=nome).exists():
-                    docente = PosDout.objects.filter(nome=nome).first()
-                    email = docente.email_inst
+                elif Solicitacoes.objects.filter(id_PosDout__nome=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
+                    pos_dout = PosDout.objects.filter(nome=nome).first()
+                    email = pos_dout.email_inst
+                    solicitacao = Solicitacoes.objects.get(id_PosDout_nome=nome, id_equipamento__nome = equipamento)
+                    if solicitacao.status == "pendente":
+                        solicitacao.status = "em_processo"
+                        solicitacao.save()
+                    else:
+                        return HttpResponse('Você não pode realizar a operação escolhida para essas solicitações')
 
 
-                elif Solicitacoes.objects.filter(id_AlunoPosIC__nome=nome).exists():
-                    docente = AlunoPosIC.objects.filter(nome=nome).first()
-                    email = docente.email_inst
+                elif Solicitacoes.objects.filter(id_AlunoPosIC__nome=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
+                    aluno_pos_ic = AlunoPosIC.objects.filter(nome=nome).first()
+                    email = aluno_pos_ic.email_inst
+                    solicitacao = Solicitacoes.objects.get(id_AlunoPosIc__nome=nome, id_equipamento__nome = equipamento)
+                    if solicitacao.status == "pendente":
+                        solicitacao.status = "em_processo"
+                        solicitacao.save()
+                    else:
+                        return HttpResponse('Você não pode realizar a operação escolhida para essas solicitações')
 
 
-                elif Solicitacoes.objects.filter(id_UserExterno__nome=nome).exists():
-                    docente = UserExterno.objects.filter(nome=nome).first()
-                    email = docente.email_inst
+                elif Solicitacoes.objects.filter(id_UserExterno__nome=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
+                    user_externo = UserExterno.objects.filter(nome=nome).first()
+                    email = user_externo.email_inst
+                    solicitacao = Solicitacoes.objects.get(id_UserExterno__nome=nome, id_equipamento__nome = equipamento)
+                    if solicitacao.status == "pendente":
+                        solicitacao.status = "em_processo"
+                        solicitacao.save()
+                    else:
+                        return redirect('solicitacoes')
+                
 
-                usuarios_selecionados.append([nome, email, equipamento_id])
+                usuarios_selecionados.append([nome, email, equipamento])
                 
 
             # Criar um arquivo CSV com os dados coletados
@@ -209,11 +235,56 @@ def agendar_treinamento(request):
             response.content = csv_data.encode('utf-16')
 
             return response
-
-    return HttpResponse("Requisição inválida")
+        
+        #return redirect(reverse('solicitacoes'))
 
 
 def finalizar_treinamento(request):
+    
+    if request.method == "POST":
+        usuarios_selecionados = []
+
+        # Verifique se a chave "usuario" existe nos dados POST
+        if "usuario" in request.POST:
+            # Separe os valores com base no caractere "_"
+            valores_usuarios = request.POST.getlist("usuario")
+            
+            for valor in valores_usuarios:
+                
+                nome, equipamento = valor.split("_")  # Separe o nome do equipamento_id
+
+                #solicitacao = Solicitacoes.objects.all()
+
+                if Solicitacoes.objects.filter(id_Docente__nome=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
+                    solicitacao = Solicitacoes.objects.get(id_Docente__nome=nome, id_equipamento__nome = equipamento)
+                    if solicitacao.status == "em_processo":
+                        
+                        docente = Docente.objects.filter(nome=nome).first()
+                        email = docente.email_inst
+                        solicitacao = Solicitacoes.objects.get(id_Docente__nome=nome, id_equipamento__nome = equipamento)
+                        solicitacao.status = "em_processo"
+                        solicitacao.save()
+                    
+
+                elif Solicitacoes.objects.filter(id_PosDout__nome=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
+                    docente = PosDout.objects.filter(nome=nome).first()
+                    email = docente.email_inst
+
+
+                elif Solicitacoes.objects.filter(id_AlunoPosIC__nome=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
+                    docente = AlunoPosIC.objects.filter(nome=nome).first()
+                    email = docente.email_inst
+
+
+                elif Solicitacoes.objects.filter(id_UserExterno__nome=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
+                    docente = UserExterno.objects.filter(nome=nome).first()
+                    email = docente.email_inst
+
+                usuarios_selecionados.append([nome, email, equipamento])
+
+                #return render(request, 'finalizar_treinamento.html', {'usuarios_selecionados': usuarios_selecionados})
+
+
     return HttpResponse('funciona')
 
 def concluir_treinamento(request):

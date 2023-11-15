@@ -14,5 +14,15 @@ class Solicitacoes(models.Model):
     id_UserExterno = models.ForeignKey(UserExterno, on_delete=models.CASCADE, blank=True, null=True)
     id_equipamento = models.ForeignKey(Equipamento, on_delete=models.CASCADE, blank=False, null=False)
     
-    def __str__(self):
-        return self.status
+
+class Treinamento(models.Model):
+    id_terinamento = models.AutoField(primary_key=True)
+    data_treinamento = models.DateField()
+    hora_treinamento = models.TimeField()
+    local_treinamento = models.CharField(max_length=50)
+    id_Docente = models.ForeignKey(Docente, on_delete=models.CASCADE, blank=True, null=True)
+    id_PosDout = models.ForeignKey(PosDout, on_delete=models.CASCADE, blank=True, null=True)
+    id_AlunoPosIC = models.ForeignKey(AlunoPosIC, on_delete=models.CASCADE, blank=True, null=True)
+    id_UserExterno = models.ForeignKey(UserExterno, on_delete=models.CASCADE, blank=True, null=True)
+    id_equipamento = models.ForeignKey(Equipamento, on_delete=models.CASCADE, blank=False, null=False)
+    id_solicitacao = models.ForeignKey(Solicitacoes, on_delete=models.CASCADE, blank=False, null=False)

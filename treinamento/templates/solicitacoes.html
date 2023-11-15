@@ -10,13 +10,14 @@
         <div class="d-flex justfy-content-between form_solicita_treinamento">
             
             <select name="equipamento" id="selectEquipamento">
-                <option value="">Digite um nome</option>
+                <option value="">Digite o nome do Equipamento</option>
                 {% for equipamento in equipamentos %}
                 <option value="{{ equipamento.nome }}">{{ equipamento.nome }}</option>
                 {% endfor %}
             </select>
 
             <select name="status" id="selectStatus">
+                <option value="">Digite o status da solicitação</option>
                 <option value="pendente">Pendente</option>
                 <option value="em_processo">Em processo</option>
                 <option value="finalizado">Finalizado</option>
@@ -90,7 +91,6 @@
     </form>
 
 </div>
-
 
 <script src="{% static 'js/agenda.js' %}"></script>
 {% endblock %}
