@@ -69,7 +69,7 @@ function atualizarAcaoFormulario() {
         btnSubmit.value = 'Agendar';
         btnSubmit.style.display = 'block'; // Ou outro estilo desejado
         checkboxes.forEach(checkbox => checkbox.checked = false);
-    } else if (selectedValue === "em_processo") {
+    } else if (selectedValue === "em processo") {
         agendarForm.action = '/administracao/solicitacoes/finalizar_treinamento/';
         btnSubmit.value = 'Finalizar';
         btnSubmit.style.display = 'block';

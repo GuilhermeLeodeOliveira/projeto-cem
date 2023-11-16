@@ -18,8 +18,11 @@ class Solicitacoes(models.Model):
 class Treinamento(models.Model):
     id_terinamento = models.AutoField(primary_key=True)
     data_treinamento = models.DateField()
-    hora_treinamento = models.TimeField()
+    hora_inicio_treinamento = models.TimeField()
+    hora_termino_treinamento = models.TimeField()
     local_treinamento = models.CharField(max_length=50)
+    compareceu = models.CharField(max_length=5, blank=True, null=True)
+    justificativa = models.CharField(max_length=225, blank=True, null=True)
     id_Docente = models.ForeignKey(Docente, on_delete=models.CASCADE, blank=True, null=True)
     id_PosDout = models.ForeignKey(PosDout, on_delete=models.CASCADE, blank=True, null=True)
     id_AlunoPosIC = models.ForeignKey(AlunoPosIC, on_delete=models.CASCADE, blank=True, null=True)

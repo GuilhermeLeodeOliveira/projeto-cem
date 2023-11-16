@@ -104,6 +104,12 @@ td{
     
 }
 
+.finalizar-treinamento{
+    border: #000 solid 1px;
+    margin-top: 10px;
+    padding: 10px;
+}
+
 @media (max-width: 1000px){
 
     .form-equipamento .forms-cadastro .questao label {

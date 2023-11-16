@@ -7,7 +7,68 @@
     <h1>Finalizar Treinamento</h1>
 
     <!-- Itere sobre os usuários selecionados e exiba as informações -->
-    <h1>{{usuarios_selecionados}}</h1>
+    <form action="{% url "concluir_treinamento" %}" method="post">
+        {% csrf_token %}
+        {% for usuario in usuarios_selecionados %}
+            {% with i=forloop.counter0 %}
+                <div class="finalizar-treinamento">
+                    <h6>Nome: {{usuario.0}}, Email: {{usuario.1}}, Equipamento: {{usuario.2}}</h6>
+                    <div class="">
+                        <div class="mt-3">
+                            <label for="data_treinamento">Insira a data do treinamento:</label>
+                            <input type="date" name="data_{{usuario.0}}_{{usuario.1}}_{{usuario.2}}" id="data_treinamento">
+                        </div>
+                        <div class="mt-3">
+                            <label for="hora_inicio_treinamento">Insira o horário de início do treinamento:</label>
+                            <input type="time" name="inicio_{{usuario.0}}_{{usuario.1}}_{{usuario.2}}" id="hora_inicio_treinamento">
+                        </div>
+                        <div class="mt-3">
+                            <label for="hora_termino_treinamento">Insira o horário do término do treinamento:</label>
+                            <input type="time" name="termino_{{usuario.0}}_{{usuario.1}}_{{usuario.2}}" id="hora_termino_treinamento">
+                        </div>
+                        <div class="mt-3">
+                            <label for="local">Insira o local de treinamento:</label>
+                            <input type="text" name="local_{{usuario.0}}_{{usuario.1}}_{{usuario.2}}" id="local">
+                        </div>
+                        <div class="mt-3">
+                            <p>O usuário compareceu ao treinamento?</p>
+                            <label for="{{i}}_compareceu_sim">
+                                <input type="radio" name="compareceu_{{usuario.0}}_{{usuario.1}}_{{usuario.2}}" id="{{i}}_compareceu_sim" required> Sim
+                            </label>
+                            <label for="{{i}}_compareceu_nao">
+                                <input type="radio" name="compareceu_{{usuario.0}}_{{usuario.1}}_{{usuario.2}}" id="{{i}}_compareceu_nao" required> Não
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            {% endwith %}
+        {% endfor %}
+        <input type="submit" value="teste" class="mt-3">
+    </form>
 </div>
+
+<script>
+    
+
+    // Função para obter a data atual no formato "YYYY-MM-DD"
+    function getCurrentDate() {
+        let today = new Date();
+        let dd = String(today.getDate()).padStart(2, '0');
+        let mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
+        let yyyy = today.getFullYear();
+
+        return yyyy + '-' + mm + '-' + dd;
+    }
+
+    // Configurar o valor máximo do campo de data
+    window.onload = function () {
+        let currentDate = getCurrentDate();
+        let dateInputs = document.querySelectorAll('input[type="date"]');
+
+        for (var i = 0; i < dateInputs.length; i++) {
+            dateInputs[i].setAttribute('max', currentDate);
+        }
+    };
+</script>
 
 {% endblock %}
