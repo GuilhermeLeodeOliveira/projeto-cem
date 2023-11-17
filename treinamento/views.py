@@ -136,18 +136,22 @@ def solicitacoes_user(request):
 
     if perfil_user == 'docente':
         solicitacoes = Solicitacoes.objects.filter(id_Docente=chave)
+        #solicitacoes = Solicitacoes.objects.filter(id_Docente=chave, status="pendente")
         
         
     elif perfil_user == 'pos_doutorando':
         solicitacoes = Solicitacoes.objects.filter(id_PosDout=chave)
+        #solicitacoes = Solicitacoes.objects.filter(id_PosDout=chave, status="pendente")
         
         
     elif perfil_user == 'aluno_pos_ic':
         solicitacoes = Solicitacoes.objects.filter(id_AlunoPosIC=chave)
+        #solicitacoes = Solicitacoes.objects.filter(id_AlunoPosIC=chave, status="pendente")
         
         
     elif perfil_user == 'user_externo':
         solicitacoes = Solicitacoes.objects.filter(id_UserExterno=chave)
+        #solicitacoes = Solicitacoes.objects.filter(id_UserExterno=chave, status="pendente")
         
     return render(request, 'solicitacoes_user.html', {'solicitacoes': solicitacoes})
 
@@ -313,8 +317,9 @@ def concluir_treinamento(request):
             novo_treinamento.hora_inicio_treinamento = request.POST.get(f'inicio_{nome}_{email}_{equipamento}')
             novo_treinamento.hora_termino_treinamento = request.POST.get(f'termino_{nome}_{email}_{equipamento}')
             novo_treinamento.local_treinamento = request.POST.get(f'local_{nome}_{email}_{equipamento}')
-            novo_treinamento.compareceu = "sim"
-            novo_treinamento.justificativa = "teste"
+            novo_treinamento.compareceu = request.POST.get(f'compareceu_{nome}_{email}_{equipamento}')
+            novo_treinamento.justificativa = request.POST.get(f'justificativa_{nome}_{email}_{equipamento}')
+            novo_treinamento.aptidao = request.POST.get(f'aptidao_{nome}_{email}_{equipamento}')
 
             if Solicitacoes.objects.filter(id_Docente__nome=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
                 docente = Docente.objects.get(nome=nome)
@@ -366,6 +371,6 @@ def concluir_treinamento(request):
         del request.session['usuarios_selecionados']
         # Adicione qualquer lógica adicional ou redirecionamento aqui
         
-        return HttpResponse('funciona')  # Crie um template para exibir uma mensagem de sucesso, se necessário
+        return redirect('solicitacoes')  # Crie um template para exibir uma mensagem de sucesso, se necessário
 
     return HttpResponse('Método não permitido')

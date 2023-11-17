@@ -20,7 +20,7 @@ class Equipamento(models.Model):
     patrimonio = models.CharField(max_length=255)
     aquisicao = models.CharField(max_length=100)
     prof = models.CharField(max_length=255)
-    id_tecnico = models.ForeignKey(Tecnico, on_delete=models.CASCADE, null=False)
+    tecnicos = models.ManyToManyField(Tecnico)
 
     def __str__(self):
         return self.nome

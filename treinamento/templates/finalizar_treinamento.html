@@ -33,12 +33,23 @@
                         <div class="mt-3">
                             <p>O usuário compareceu ao treinamento?</p>
                             <label for="{{i}}_compareceu_sim">
-                                <input type="radio" name="compareceu_{{usuario.0}}_{{usuario.1}}_{{usuario.2}}" id="{{i}}_compareceu_sim" required> Sim
+                                <input type="radio" name="compareceu_{{usuario.0}}_{{usuario.1}}_{{usuario.2}}" id="{{i}}_compareceu_sim" value="sim" required> Sim
                             </label>
                             <label for="{{i}}_compareceu_nao">
-                                <input type="radio" name="compareceu_{{usuario.0}}_{{usuario.1}}_{{usuario.2}}" id="{{i}}_compareceu_nao" required> Não
+                                <input type="radio" name="compareceu_{{usuario.0}}_{{usuario.1}}_{{usuario.2}}" id="{{i}}_compareceu_nao" value="nao" required> Não
                             </label>
+                            <div>
+                                <label for="{{i}}_justificativa">Se não, foi justificado?</label>
+                                <input type="text" name="justificativa_{{usuario.0}}_{{usuario.1}}_{{usuario.2}}" id="{{i}}_justificativa">
+                            </div>
                         </div>
+
+                        <div class="mt-3">
+                            <p>Está apto para manusear o equipamento?</p>
+                            <label for="{{i}}_aptidao_sim"><input type="radio" name="aptidao_{{usuario.0}}_{{usuario.1}}_{{usuario.2}}" value="sim" id="{{i}}_aptidao_sim">Sim</label>
+                            <label for="{{i}}_aptidao_nao"><input type="radio" name="aptidao_{{usuario.0}}_{{usuario.1}}_{{usuario.2}}" value="nao" id="{{i}}_aptidao_nao">Não</label>
+                        </div>
+                        
                     </div>
                 </div>
             {% endwith %}

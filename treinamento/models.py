@@ -23,6 +23,7 @@ class Treinamento(models.Model):
     local_treinamento = models.CharField(max_length=50)
     compareceu = models.CharField(max_length=5, blank=True, null=True)
     justificativa = models.CharField(max_length=225, blank=True, null=True)
+    aptidao = models.CharField(max_length=10)
     id_Docente = models.ForeignKey(Docente, on_delete=models.CASCADE, blank=True, null=True)
     id_PosDout = models.ForeignKey(PosDout, on_delete=models.CASCADE, blank=True, null=True)
     id_AlunoPosIC = models.ForeignKey(AlunoPosIC, on_delete=models.CASCADE, blank=True, null=True)
