@@ -16,7 +16,7 @@ class Solicitacoes(models.Model):
     
 
 class Treinamento(models.Model):
-    id_terinamento = models.AutoField(primary_key=True)
+    id_treinamento = models.AutoField(primary_key=True)
     data_treinamento = models.DateField()
     hora_inicio_treinamento = models.TimeField()
     hora_termino_treinamento = models.TimeField()

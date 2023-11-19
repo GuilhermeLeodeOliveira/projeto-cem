@@ -53,6 +53,26 @@ btnSubmit.addEventListener("click", function() {
 
 });
 
+let gerarCsv = document.getElementById("gerar-csv"); 
+
+// Adicione um ouvinte de evento ao botão de envio
+gerarCsv.addEventListener("click", function() {
+    let checkboxesSelecionados = document.querySelectorAll(".solicitacoes input[type='checkbox']:checked");
+    let mensagem = "Você selecionou os seguintes usuários:\n";
+
+    checkboxesSelecionados.forEach(function(checkbox) {
+        mensagem += "- " + checkbox.value + "\n";
+    });
+
+    // Exiba um pop-up de confirmação com os checkboxes selecionados
+    if (window.confirm(mensagem)) {
+        // Se o usuário confirmar, envie os dados para o servidor
+        document.querySelector(".form-equipamento").submit();
+    }else{
+        event.preventDefault(); // Impede o envio do formulário se o usuário cancelar
+    }
+
+});
 
 const selectStatus = document.getElementById("selectStatus");
 const agendarForm = document.getElementById("agendar-form");
