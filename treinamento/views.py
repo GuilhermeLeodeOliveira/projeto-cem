@@ -136,24 +136,28 @@ def solicitacoes_user(request):
 
     if perfil_user == 'docente':
         solicitacoes = Solicitacoes.objects.filter(id_Docente=chave)
+        treinamento = Treinamento.objects.filter(id_Docente=chave)
         #solicitacoes = Solicitacoes.objects.filter(id_Docente=chave, status="pendente")
         
         
     elif perfil_user == 'pos_doutorando':
         solicitacoes = Solicitacoes.objects.filter(id_PosDout=chave)
+        treinamento = Treinamento.objects.filter(id_PosDout=chave)
         #solicitacoes = Solicitacoes.objects.filter(id_PosDout=chave, status="pendente")
         
         
     elif perfil_user == 'aluno_pos_ic':
         solicitacoes = Solicitacoes.objects.filter(id_AlunoPosIC=chave)
+        treinamento = Treinamento.objects.filter(id_AlunoPosIC=chave)
         #solicitacoes = Solicitacoes.objects.filter(id_AlunoPosIC=chave, status="pendente")
         
         
     elif perfil_user == 'user_externo':
         solicitacoes = Solicitacoes.objects.filter(id_UserExterno=chave)
+        treinamento = Treinamento.objects.filter(id_UserExterno=chave)
         #solicitacoes = Solicitacoes.objects.filter(id_UserExterno=chave, status="pendente")
         
-    return render(request, 'solicitacoes_user.html', {'solicitacoes': solicitacoes})
+    return render(request, 'solicitacoes_user.html', {'solicitacoes': solicitacoes, 'treinamento': treinamento})
 
 def gerar_csv(request):
 
@@ -393,62 +397,65 @@ def concluir_treinamento(request):
         # Itere sobre os usuários selecionados e processe os dados
         for usuario in usuarios_selecionados:
             
-            novo_treinamento = Treinamento()  # Inicialize um novo objeto para cada usuário
             nome = usuario[0]
             email = usuario[1]
             equipamento = usuario[2]
             
             # Obtenha os dados específicos do formulário para este usuário
             
-            novo_treinamento.compareceu = request.POST.get(f'compareceu_{nome}_{email}_{equipamento}')
-            novo_treinamento.justificativa = request.POST.get(f'justificativa_{nome}_{email}_{equipamento}')
-            novo_treinamento.aptidao = request.POST.get(f'aptidao_{nome}_{email}_{equipamento}')
+            compareceu = request.POST.get(f'compareceu_{nome}_{email}_{equipamento}')
+            justificativa = request.POST.get(f'justificativa_{nome}_{email}_{equipamento}')
+            aptidao = request.POST.get(f'aptidao_{nome}_{email}_{equipamento}')
 
             if Treinamento.objects.filter(id_Docente__nome=nome).exists() and Treinamento.objects.filter(id_equipamento__nome=equipamento).exists():
-                docente = Docente.objects.get(nome=nome)
-                novo_treinamento.id_Docente = docente
-                solicitacao = Treinamento.objects.get(id_Docente__nome=nome, id_Docente__email_inst=email, id_equipamento__nome=equipamento)
+                treinamento = Treinamento.objects.get(id_Docente__nome=nome, id_equipamento__nome=equipamento)
+                treinamento.compareceu = compareceu
+                treinamento.justificativa = justificativa
+                treinamento.aptidao = aptidao
+                solicitacao = Solicitacoes.objects.get(id_Docente__nome=nome, id_Docente__email_inst=email, id_equipamento__nome=equipamento)
                 if solicitacao:
                     # Modifique o status da solicitação
                     solicitacao.status = 'finalizado'
                     solicitacao.save()
-                novo_treinamento.id_solicitacao=solicitacao
+                treinamento.save()
             
             elif Treinamento.objects.filter(id_PosDout__nome=nome).exists() and Treinamento.objects.filter(id_equipamento__nome=equipamento).exists():
-                pos_dout = PosDout.objects.get(nome=nome)
-                novo_treinamento.id_PosDout = pos_dout
-                solicitacao = Treinamento.objects.get(id_PosDout__nome=nome, id_PosDout__email_inst=email, id_equipamento__nome=equipamento)
+                treinamento = Treinamento.objects.get(id_PosDout__nome=nome, id_equipamento__nome=equipamento)
+                treinamento.compareceu = compareceu
+                treinamento.justificativa = justificativa
+                treinamento.aptidao = aptidao
+                solicitacao = Solicitacoes.objects.get(id_PosDout__nome=nome, id_PosDout__email_inst=email, id_equipamento__nome=equipamento)
                 if solicitacao:
                     # Modifique o status da solicitação
                     solicitacao.status = 'finalizado'
                     solicitacao.save()
-                novo_treinamento.id_solicitacao=solicitacao
+                treinamento.save()
             
             elif Treinamento.objects.filter(id_AlunoPosIC__nome=nome).exists() and Treinamento.objects.filter(id_equipamento__nome=equipamento).exists():
-                aluno_pos_ic = AlunoPosIC.objects.get(nome=nome)
-                novo_treinamento.id_AlunoPosIC = aluno_pos_ic
-                solicitacao = Treinamento.objects.get(id_AlunoPosIC__nome=nome, id_AlunoPosIC__email_inst=email, id_equipamento__nome=equipamento)
+                treinamento = Treinamento.objects.get(id_AlunoPosIC__nome=nome, id_equipamento__nome=equipamento)
+                treinamento.compareceu = compareceu
+                treinamento.justificativa = justificativa
+                treinamento.aptidao = aptidao
+                solicitacao = Solicitacoes.objects.get(id_AlunoPosIC__nome=nome, id_AlunoPosIC__email_inst=email, id_equipamento__nome=equipamento)
                 if solicitacao:
                     # Modifique o status da solicitação
                     solicitacao.status = 'finalizado'
                     solicitacao.save()
-                novo_treinamento.id_solicitacao=solicitacao
+                treinamento.save()
             
             elif Treinamento.objects.filter(id_UserExterno__nome=nome).exists() and Treinamento.objects.filter(id_equipamento__nome=equipamento).exists():
-                user_externo = UserExterno.objects.get(nome=nome)
-                novo_treinamento.id_UserExterno = user_externo
-                solicitacao = Treinamento.objects.get(id_UserExterno__nome=nome, id_UserExterno__email_inst=email, id_equipamento__nome=equipamento)
+                treinamento = Treinamento.objects.get(id_UserExterno__nome=nome, id_equipamento__nome=equipamento)
+                treinamento.compareceu = compareceu
+                treinamento.justificativa = justificativa
+                treinamento.aptidao = aptidao
+                solicitacao = Solicitacoes.objects.get(id_UserExterno__nome=nome, id_UserExterno__email_inst=email, id_equipamento__nome=equipamento)
                 if solicitacao:
                     # Modifique o status da solicitação
                     solicitacao.status = 'finalizado'
                     solicitacao.save()
-                novo_treinamento.id_solicitacao=solicitacao
+                treinamento.save()
 
-            equip = Equipamento.objects.get(nome=equipamento)
-            novo_treinamento.id_equipamento = equip
             
-
-            novo_treinamento.save()
             
         # Limpe a lista de usuários selecionados da sessão após o processamento
         del request.session['usuarios_selecionados']
