@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Usuario, ProgramaPosGraduacao, FormTermo, Docente, PosDout
+from .models import Usuario, ProgramaPosGraduacao, FormTermo, Docente, PosDout, Login, preLogin
 from .models import AlunoPosIC, preCadDocente, preCadPosDout, preCadUserExterno, UserExterno
 # Register your models here.
 
@@ -13,3 +13,5 @@ admin.site.register(preCadDocente)
 admin.site.register(preCadPosDout)
 admin.site.register(preCadUserExterno)
 admin.site.register(UserExterno)
+admin.site.register(Login)
+admin.site.register(preLogin)

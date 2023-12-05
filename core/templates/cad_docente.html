@@ -7,25 +7,30 @@
     {% if mensagem %}
       <p class="text-danger">{{ mensagem }}</p>
     {% endif %} 
-
-    <form action="{% url 'form_infra' %}" method="post" class="">
+    
+    <form action="{% url 'form_termo' %}" method="post" class="">
       {% csrf_token %}
 
       <div class="forms-cadastro p-2">
         <p>Dados pessoais</p>
         <div class="">
           <div class="mt-3">
-            <label for="nome">Nome Completo:</label> <input type="text" name="nome" id="nome" required/>
+            <label for="primeiro_nome">Primeiro Nome:</label> <input type="text" name="primeiro_nome" id="primeiro_nome" required />
+          </div>
+          <div class="mt-3">
+            <label for="segundo_nome">Sobrenome Nome:</label> <input type="text" name="segundo_nome" id="segundo_nome" required />
           </div>
           <div class="mt-3">
             <label for="tel">Celular:</label> <input type="text" name="tel" id="tel" required/>
           </div>
+          {% if not request.session.recadastro %}
           <div class="mt-3">
             <label for="tel">email-institucional:</label> <input type="text" name="email_inst" id="email_insti" required/>
           </div>
           <div class="mt-3">
             <label for="senha">Senha:</label> <input type="password" name="senha" id="senha" required />
           </div>
+          {% endif %}
           <div class="mt-3">
             <label for="tel">Matrícula SIAPE:</label> <input type="text" name="mat_siape" id="mat_siape" required/>
           </div>
@@ -54,21 +59,6 @@
       </div>
 
       <div class="forms-cadastro p-2 mt-3">
-        <p>Programa de pós-graduação:</p>
-        <p class="text-success"> Escolha a(s) que mais se adeque(m)</p>
-        <div class="">
-          {% for programa in programas %}
-            <div class="radio mt-3">
-              <label for="{{ programa.nome_programa }}"><input type="checkbox" name="{{ programa.nome_programa }}" value="{{ programa.nome_programa }}" id="{{ programa.nome_programa }}" /> {{ programa.nome_programa }}</label>
-            </div>
-          {% endfor %}
-          <div class="radio mt-3">
-            <label for="outros_projetos"><input type="checkbox" name="outros_projetos" value="outros_projetos" id="outros_projetos" />Outros:</label> <input type="text" name="input_outros_projetos" id="" />
-          </div>
-        </div>
-      </div>
-
-      <div class="forms-cadastro p-2 mt-3">
         <p>Possui projetos de pesquisa vigentes?</p>
         <p class="text-success">Escolha uma das seguintes respostas:</p>
         <div class="">
@@ -79,10 +69,10 @@
             <label for="possui_projeto_nao"><input type="radio" name="possui_projeto" value="nao" id="possui_projeto_nao" required/>Não</label>
           </div>
         </div>
-      </div>
-
-      <div class="forms-cadastro p-2 mt-3">
-        <p>Se sim, insira o número do projeto, título e vigência (por exemplo, CNPq-Universal xxxxx-2020, Síntese e caracterização de nano-bio-magnétos e processos de difusão destes em cavidades orgânicas instruídas por operações do tipo "machine learning", vigente até 25/12/2025).</p>
+        <p class="mt-3">Se sim, insira o número do projeto, título e vigência (por exemplo, CNPq-Universal xxxxx-2020, Síntese e caracterização de nano-bio-magnétos e processos de difusão destes em cavidades orgânicas instruídas por operações do tipo "machine learning", vigente até 25/12/2025).</p>
+        {% if mensagem_possui_projeto %}
+          <p class="text-danger">{{ mensagem_possui_projeto }}</p>
+        {% endif %} 
         <div class="">
           <div class="mt-3">
             <label for="projeto">Projeto:</label> <input type="text" name="projeto" id="projeto" />

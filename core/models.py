@@ -23,29 +23,43 @@ class FormTermo(models.Model):
     veracidade2 = models.CharField(max_length=3)
     veracidade3 = models.CharField(max_length=3)
 
+class preLogin(models.Model):
+    id_pre_login = models.AutoField(primary_key=True)
+    email_inst = models.EmailField(max_length=255)
+    senha = models.CharField(max_length=50)
+    perfil = models.CharField(max_length=30, default='perfil')
+    password_change_required = models.BooleanField(default=True)
+
+class Login(models.Model):
+    id_login = models.AutoField(primary_key=True)
+    email_inst = models.EmailField(max_length=255)
+    senha = models.CharField(max_length=50)
+    perfil = models.CharField(max_length=30, default='perfil')
+    password_change_required = models.BooleanField(default=True)
+
 class Docente(models.Model):
     id_docente = models.AutoField(primary_key=True)
-    nome = models.CharField(max_length=255)
+    primeiro_nome = models.CharField(max_length=255)
+    segundo_nome = models.CharField(max_length=255)
     celular = models.CharField(max_length=17)
-    email_inst = models.EmailField(max_length=255, unique=True)
-    senha = models.CharField(max_length=50)
     matricula_siape = models.CharField(max_length=10)
     ramal_lab = models.CharField(max_length=10)
     centro = models.CharField(max_length=10)
-    programa_pos = models.CharField(max_length=255)
     possui_projeto = models.CharField(max_length=3)
     info_projeto = models.TextField(max_length=255)
     lista_publi = models.TextField(max_length=255)
     id_form_termo = models.ForeignKey(FormTermo, on_delete=models.CASCADE, null=False)
+    id_login = models.ForeignKey(Login, on_delete=models.CASCADE, null=False, default=0)
 
     def __str__(self):
-        return self.nome
+        return self.primeiro_nome
     
     
 
 class preCadDocente(models.Model):
     id_pre_cad_docente = models.AutoField(primary_key=True)
-    nome = models.CharField(max_length=255)
+    primeiro_nome = models.CharField(max_length=255)
+    segundo_nome = models.CharField(max_length=255)
     celular = models.CharField(max_length=17)
     email_inst = models.EmailField(max_length=255)
     senha = models.CharField(max_length=50)
@@ -56,14 +70,16 @@ class preCadDocente(models.Model):
     possui_projeto = models.CharField(max_length=3)
     info_projeto = models.TextField(max_length=255)
     lista_publi = models.TextField(max_length=255)
+    id_login = models.ForeignKey(preLogin, on_delete=models.CASCADE, null=False, default=0)
     
     def __str__(self):
-        return self.nome
+        return self.email_inst
     
 
 class PosDout(models.Model):
     id_pos_dout = models.AutoField(primary_key=True)
-    nome = models.CharField(max_length=255)
+    primeiro_nome = models.CharField(max_length=255)
+    segundo_nome = models.CharField(max_length=255)
     celular = models.CharField(max_length=17)
     email_inst = models.EmailField(max_length=255, unique=True)
     senha = models.CharField(max_length=50)
@@ -79,11 +95,12 @@ class PosDout(models.Model):
     id_form_termo = models.ForeignKey(FormTermo, on_delete=models.CASCADE, null=False)
 
     def __str__(self):
-        return self.nome
+        return self.email_inst
 
 class preCadPosDout(models.Model):
     id_pre_cad_pos_dout = models.AutoField(primary_key=True)
-    nome = models.CharField(max_length=255)
+    primeiro_nome = models.CharField(max_length=255)
+    segundo_nome = models.CharField(max_length=255)
     celular = models.CharField(max_length=17)
     email_inst = models.EmailField(max_length=255)
     senha = models.CharField(max_length=50)
@@ -91,55 +108,58 @@ class preCadPosDout(models.Model):
     ramal_lab = models.CharField(max_length=10)
     nome_supervisor = models.CharField(max_length=255)
     centro = models.CharField(max_length=10)
+    perfil = models.CharField(max_length=30)
     data_pos = models.DateField()
-    possui_bolsa = models.CharField(max_length=10)
-    programa_pos = models.TextField(max_length=255)
+    bolsa = models.CharField(max_length=10)
     plano_trabalho = models.TextField(max_length=255)
     declaracao_ciencia_supervisor = models.CharField(max_length=3)
-    
+
 
 class AlunoPosIC(models.Model):
     id_aluno_pos_ic = models.AutoField(primary_key=True)
-    nome = models.CharField(max_length=255)
+    primeiro_nome = models.CharField(max_length=255)
+    segundo_nome = models.CharField(max_length=255)
     celular = models.CharField(max_length=17)
-    email_inst = models.EmailField(max_length=255, unique=True)
-    senha = models.CharField(max_length=50)
     matricula_ufabc = models.CharField(max_length=10)
     ramal_lab = models.CharField(max_length=10)
     nome_orientador = models.CharField(max_length=255)
-    departamento = models.CharField(max_length=255)
-    centro = models.CharField(max_length=10)
+    perfil = models.CharField(max_length=30)
     data_pos = models.DateField()
-    possui_bolsa = models.CharField(max_length=10)
-    programa_pos = models.TextField(max_length=255)
+    centro = models.CharField(max_length=10)
+    bolsa = models.CharField(max_length=10)
     plano_trabalho = models.TextField(max_length=255)
     declaracao_ciencia_orientador = models.CharField(max_length=3)
     id_form_termo = models.ForeignKey(FormTermo, on_delete=models.CASCADE, null=False)
+    id_login = models.ForeignKey(Login, on_delete=models.CASCADE, null=False, default=0)
+    id_docente = models.ForeignKey(Docente, on_delete=models.CASCADE, blank=True, null=True)
+
 
     def __str__(self):
-        return self.nome
+        return self.primeiro_nome
 
 
 class preCadAlunoPosIC(models.Model):
     id_pre_cad_aluno_pos_ic = models.AutoField(primary_key=True)
-    nome = models.CharField(max_length=255)
-    celular = models.CharField(max_length=17, default=None)
+    primeiro_nome = models.CharField(max_length=255)
+    segundo_nome = models.CharField(max_length=255)
+    celular = models.CharField(max_length=17)
     email_inst = models.EmailField(max_length=255)
     senha = models.CharField(max_length=50)
     matricula_ufabc = models.CharField(max_length=10)
     ramal_lab = models.CharField(max_length=10)
     nome_orientador = models.CharField(max_length=255)
-    departamento = models.TextField(max_length=255)
-    centro = models.CharField(max_length=10)
+    perfil = models.CharField(max_length=30)
     data_pos = models.DateField()
-    possui_bolsa = models.CharField(max_length=10)
-    programa_pos = models.TextField(max_length=255)
+    centro = models.CharField(max_length=10)
+    bolsa = models.CharField(max_length=10)
     plano_trabalho = models.TextField(max_length=255)
     declaracao_ciencia_orientador = models.CharField(max_length=3)
+    id_login = models.ForeignKey(preLogin, on_delete=models.CASCADE, null=False, default=0)
 
 class UserExterno(models.Model):
     id_user_externo = models.AutoField(primary_key=True)
-    nome = models.CharField(max_length=100)
+    primeiro_nome = models.CharField(max_length=255)
+    segundo_nome = models.CharField(max_length=255)
     instituicao = models.CharField(max_length=100)
     atividade = models.CharField(max_length=150)
     endereco_inst = models.CharField(max_length=150)
@@ -157,13 +177,15 @@ class UserExterno(models.Model):
     plano_trabalho = models.TextField(max_length=255)
     manifesto_apoio = models.CharField(max_length=3)
     id_form_termo = models.ForeignKey(FormTermo, on_delete=models.CASCADE, null=False)
+    id_login = models.ForeignKey(Login, on_delete=models.CASCADE, null=False, default=0)
 
     def __str__(self):
-        return self.nome
+        return self.email_inst
     
 class preCadUserExterno(models.Model):
     id_pre_cad_user_externo = models.AutoField(primary_key=True)
-    nome = models.CharField(max_length=100)
+    primeiro_nome = models.CharField(max_length=255)
+    segundo_nome = models.CharField(max_length=255)
     instituicao = models.CharField(max_length=100)
     atividade = models.CharField(max_length=150)
     endereco_inst = models.CharField(max_length=150)
@@ -180,3 +202,4 @@ class preCadUserExterno(models.Model):
     publicacoes = models.TextField(max_length=255)
     plano_trabalho = models.TextField(max_length=255)
     manifesto_apoio = models.CharField(max_length=3)
+    id_login = models.ForeignKey(preLogin, on_delete=models.CASCADE, null=False, default=0)

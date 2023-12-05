@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect, reverse
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.http import JsonResponse
 from equipamentos.models import Equipamento
-from core.models import Docente, PosDout, AlunoPosIC, UserExterno
+from core.models import Docente, PosDout, AlunoPosIC, UserExterno, Login
 from .models import Solicitacoes, Treinamento
 
 
@@ -131,28 +131,29 @@ def solicitar_treinamento(request):
 
 def solicitacoes_user(request):
 
-    perfil_user = request.session['perfil']
+    
     chave = request.session['chave']
+    login = Login.objects.get(id_login=chave)
 
-    if perfil_user == 'docente':
+    if login.perfil == 'docente':
         solicitacoes = Solicitacoes.objects.filter(id_Docente=chave)
         treinamento = Treinamento.objects.filter(id_Docente=chave)
         #solicitacoes = Solicitacoes.objects.filter(id_Docente=chave, status="pendente")
         
         
-    elif perfil_user == 'pos_doutorando':
+    elif login.perfil == 'pos_doutorando':
         solicitacoes = Solicitacoes.objects.filter(id_PosDout=chave)
         treinamento = Treinamento.objects.filter(id_PosDout=chave)
         #solicitacoes = Solicitacoes.objects.filter(id_PosDout=chave, status="pendente")
         
         
-    elif perfil_user == 'aluno_pos_ic':
+    elif login.perfil == 'aluno_pos_ic':
         solicitacoes = Solicitacoes.objects.filter(id_AlunoPosIC=chave)
         treinamento = Treinamento.objects.filter(id_AlunoPosIC=chave)
         #solicitacoes = Solicitacoes.objects.filter(id_AlunoPosIC=chave, status="pendente")
         
         
-    elif perfil_user == 'user_externo':
+    elif login.perfil == 'user_externo':
         solicitacoes = Solicitacoes.objects.filter(id_UserExterno=chave)
         treinamento = Treinamento.objects.filter(id_UserExterno=chave)
         #solicitacoes = Solicitacoes.objects.filter(id_UserExterno=chave, status="pendente")
