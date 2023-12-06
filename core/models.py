@@ -54,7 +54,6 @@ class Docente(models.Model):
     def __str__(self):
         return self.primeiro_nome
     
-    
 
 class preCadDocente(models.Model):
     id_pre_cad_docente = models.AutoField(primary_key=True)
@@ -74,45 +73,6 @@ class preCadDocente(models.Model):
     
     def __str__(self):
         return self.email_inst
-    
-
-class PosDout(models.Model):
-    id_pos_dout = models.AutoField(primary_key=True)
-    primeiro_nome = models.CharField(max_length=255)
-    segundo_nome = models.CharField(max_length=255)
-    celular = models.CharField(max_length=17)
-    email_inst = models.EmailField(max_length=255, unique=True)
-    senha = models.CharField(max_length=50)
-    matricula_ufabc = models.CharField(max_length=10)
-    ramal_lab = models.CharField(max_length=10)
-    nome_supervisor = models.CharField(max_length=255)
-    centro = models.CharField(max_length=10)
-    data_pos = models.DateField()
-    possui_bolsa = models.CharField(max_length=10)
-    programa_pos = models.TextField(max_length=255)
-    plano_trabalho = models.TextField(max_length=255)
-    declaracao_ciencia_supervisor = models.CharField(max_length=3)
-    id_form_termo = models.ForeignKey(FormTermo, on_delete=models.CASCADE, null=False)
-
-    def __str__(self):
-        return self.email_inst
-
-class preCadPosDout(models.Model):
-    id_pre_cad_pos_dout = models.AutoField(primary_key=True)
-    primeiro_nome = models.CharField(max_length=255)
-    segundo_nome = models.CharField(max_length=255)
-    celular = models.CharField(max_length=17)
-    email_inst = models.EmailField(max_length=255)
-    senha = models.CharField(max_length=50)
-    matricula_ufabc = models.CharField(max_length=10)
-    ramal_lab = models.CharField(max_length=10)
-    nome_supervisor = models.CharField(max_length=255)
-    centro = models.CharField(max_length=10)
-    perfil = models.CharField(max_length=30)
-    data_pos = models.DateField()
-    bolsa = models.CharField(max_length=10)
-    plano_trabalho = models.TextField(max_length=255)
-    declaracao_ciencia_supervisor = models.CharField(max_length=3)
 
 
 class AlunoPosIC(models.Model):

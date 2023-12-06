@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect, reverse
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.http import JsonResponse
 from equipamentos.models import Equipamento
-from core.models import Docente, PosDout, AlunoPosIC, UserExterno, Login
+from core.models import Docente, AlunoPosIC, UserExterno, Login
 from .models import Solicitacoes, Treinamento
 
 
@@ -66,9 +66,6 @@ def solicitar_treinamento(request):
             if perfil_user == 'docente':
                 usuario = Docente.objects.get(id_docente=chave)
                 campo_usuario = 'id_Docente'
-            elif perfil_user == 'pos_doutorando':
-                usuario = PosDout.objects.get(id_pos_dout=chave)
-                campo_usuario = 'id_PosDout'
             elif perfil_user == 'aluno_pos_ic':
                 usuario = AlunoPosIC.objects.get(id_aluno_pos_ic=chave)
                 campo_usuario = 'id_AlunoPosIC'
@@ -106,10 +103,6 @@ def solicitar_treinamento(request):
             if perfil_user == 'docente':
                 docente = Docente.objects.get(id_docente=chave)
                 nova_solicitacao.id_Docente = docente
-                
-            elif perfil_user == 'pos_doutorando':
-                pos_dout = PosDout.objects.get(id_pos_dout=chave)
-                nova_solicitacao.id_PosDout = pos_dout
                 
             elif perfil_user == 'aluno_pos_ic':
 
@@ -182,11 +175,6 @@ def gerar_csv(request):
                     email = docente.email_inst
                     
 
-                elif Solicitacoes.objects.filter(id_PosDout__nome=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
-                    pos_dout = PosDout.objects.filter(nome=nome).first()
-                    email = pos_dout.email_inst
-                    
-
                 elif Solicitacoes.objects.filter(id_AlunoPosIC__nome=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
                     aluno_pos_ic = AlunoPosIC.objects.filter(nome=nome).first()
                     email = aluno_pos_ic.email_inst
@@ -244,11 +232,6 @@ def agendar_treinamento(request):
                     email = docente.email_inst
                     
 
-                elif Solicitacoes.objects.filter(id_PosDout__nome=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
-                    pos_dout = PosDout.objects.filter(nome=nome).first()
-                    email = pos_dout.email_inst
-                   
-
                 elif Solicitacoes.objects.filter(id_AlunoPosIC__nome=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
                     aluno_pos_ic = AlunoPosIC.objects.filter(nome=nome).first()
                     email = aluno_pos_ic.email_inst
@@ -288,16 +271,6 @@ def concluir_agendamento(request):
                 docente = Docente.objects.get(nome=nome)
                 novo_treinamento.id_Docente = docente
                 solicitacao = Solicitacoes.objects.get(id_Docente__nome=nome, id_Docente__email_inst=email, id_equipamento__nome=equipamento)
-                if solicitacao:
-                    # Modifique o status da solicitação
-                    solicitacao.status = 'em processo'
-                    solicitacao.save()
-                novo_treinamento.id_solicitacao=solicitacao
-            
-            elif Solicitacoes.objects.filter(id_PosDout__nome=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
-                pos_dout = PosDout.objects.get(nome=nome)
-                novo_treinamento.id_PosDout = pos_dout
-                solicitacao = Solicitacoes.objects.get(id_PosDout__nome=nome, id_PosDout__email_inst=email, id_equipamento__nome=equipamento)
                 if solicitacao:
                     # Modifique o status da solicitação
                     solicitacao.status = 'em processo'
@@ -360,14 +333,6 @@ def finalizar_treinamento(request):
                         email = docente.email_inst
                         
 
-                elif Solicitacoes.objects.filter(id_PosDout__nome=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
-                    solicitacao = Solicitacoes.objects.get(id_PosDout__nome = nome, id_equipamento__nome = equipamento)
-                    
-                    if solicitacao.status == "em processo":
-                        pos_dout = PosDout.objects.filter(nome=nome).first()
-                        email = pos_dout.email_inst
-
-
                 elif Solicitacoes.objects.filter(id_AlunoPosIC__nome=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
                     solicitacao = Solicitacoes.objects.get(id_Aluno__nome = nome, id_equipamento__nome = equipamento)
                     if solicitacao.status == "em processo":
@@ -414,18 +379,6 @@ def concluir_treinamento(request):
                 treinamento.justificativa = justificativa
                 treinamento.aptidao = aptidao
                 solicitacao = Solicitacoes.objects.get(id_Docente__nome=nome, id_Docente__email_inst=email, id_equipamento__nome=equipamento)
-                if solicitacao:
-                    # Modifique o status da solicitação
-                    solicitacao.status = 'finalizado'
-                    solicitacao.save()
-                treinamento.save()
-            
-            elif Treinamento.objects.filter(id_PosDout__nome=nome).exists() and Treinamento.objects.filter(id_equipamento__nome=equipamento).exists():
-                treinamento = Treinamento.objects.get(id_PosDout__nome=nome, id_equipamento__nome=equipamento)
-                treinamento.compareceu = compareceu
-                treinamento.justificativa = justificativa
-                treinamento.aptidao = aptidao
-                solicitacao = Solicitacoes.objects.get(id_PosDout__nome=nome, id_PosDout__email_inst=email, id_equipamento__nome=equipamento)
                 if solicitacao:
                     # Modifique o status da solicitação
                     solicitacao.status = 'finalizado'
