@@ -592,7 +592,7 @@ def verifica_login_user(request):
         try:
             # Tenta obter o usuário com o email fornecido
             usuario = Login.objects.get(email_inst=email)
-            request.session['chave'] = usuario.id_login
+            
             
             # Verifica se a senha fornecida coincide com a senha armazenada
             if check_password(senha, usuario.senha):
