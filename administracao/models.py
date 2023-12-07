@@ -24,7 +24,7 @@ class Tecnico(models.Model):
     id_login = models.ForeignKey(Login, on_delete=models.CASCADE, null=False, default=0)
 
     def __str__(self):  
-        return self.nome
+        return self.primeiro_nome
     
 class preCadTecnico(models.Model):
     id_pre_cad_tecnico = models.AutoField(primary_key=True)

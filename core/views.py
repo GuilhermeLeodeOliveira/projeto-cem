@@ -11,6 +11,9 @@ from django import forms
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.hashers import check_password, make_password
 from django.shortcuts import render, redirect
+from django.urls import reverse
+from django.contrib.auth.hashers import check_password
+from django.http import Http404
 
 
 def home(request):
@@ -430,7 +433,7 @@ def cadastrar_usuario(request):
 
             novo_login = Login()
             novo_login.email_inst = login.email_inst
-            novo_login.senha = login.senha
+            novo_login.senha = make_password(login.senha)
             novo_login.perfil = login.perfil
             novo_login.password_change_required = False
             novo_login.save()
@@ -465,7 +468,7 @@ def cadastrar_usuario(request):
 
             novo_login = Login()
             novo_login.email_inst = login.email_inst
-            novo_login.senha = login.senha
+            novo_login.senha = make_password(login.senha)
             novo_login.perfil = login.perfil
             novo_login.password_change_required = False
             novo_login.save()
@@ -479,20 +482,18 @@ def cadastrar_usuario(request):
         tecnico = preCadTecnico.objects.get(id_pre_cad_tecnico=chave)
 
         novo_tecnico = Tecnico()
-        novo_tecnico.nome = tecnico.nome
+        novo_tecnico.primeiro_nome = tecnico.primeiro_nome
+        novo_tecnico.segundo_nome = tecnico.segundo_nome
         novo_tecnico.celular = tecnico.celular
-        novo_tecnico.email_inst = tecnico.email_inst
-        novo_tecnico.senha = tecnico.senha
-        novo_tecnico.matricula_ufabc = tecnico.matricula_ufabc
+        novo_tecnico.matricula_siape = tecnico.matricula_siape
         novo_tecnico.ramal_lab = tecnico.ramal_lab
-        novo_tecnico.nome_supervisor = tecnico.nome_supervisor
         novo_tecnico.centro = tecnico.centro
-        novo_tecnico.data_pos = tecnico.data_pos
-        novo_tecnico.possui_bolsa = tecnico.possui_bolsa
-        novo_tecnico.programa_pos = tecnico.programa_pos
-        novo_tecnico.plano_trabalho = tecnico.plano_trabalho
-        novo_tecnico.declaracao_ciencia_supervisor = tecnico.declaracao_ciencia_supervisor
+        novo_tecnico.possui_projeto = tecnico.possui_projeto
+        novo_tecnico.info_projeto = tecnico.info_projeto
+        novo_tecnico.lista_publi = tecnico.lista_publi
         novo_tecnico.id_form_termo = novo_termo
+        
+        novo_tecnico.id_login = login
         novo_tecnico.save()
 
     elif perfil == "aluno_pos_dout_ic":
@@ -504,7 +505,7 @@ def cadastrar_usuario(request):
 
             novo_login = Login()
             novo_login.email_inst = login.email_inst
-            novo_login.senha = login.senha
+            novo_login.senha = make_password(login.senha)
             novo_login.perfil = login.perfil
             novo_login.password_change_required = False
             novo_login.save()
@@ -538,7 +539,7 @@ def cadastrar_usuario(request):
 
             novo_login = Login()
             novo_login.email_inst = login.email_inst
-            novo_login.senha = login.senha
+            novo_login.senha = make_password(login.senha)
             novo_login.perfil = login.perfil
             novo_login.password_change_required = False
             novo_login.save()
@@ -580,21 +581,50 @@ def login_user(request):
 
 def verifica_login_user(request):
     
-    email = request.POST.get('email')
-    senha = request.POST.get('senha')
+    if request.method == 'POST':
 
-    if Login.objects.get(email_inst=email, senha=senha):
-        login = Login.objects.get(email_inst=email, senha=senha)
-        request.session['chave'] = login.id_login
-        
-        if login.password_change_required==False:
-            return redirect('perfil_user')
-        elif login.password_change_required==True:
-            return render(request, 'redefinir_senha.html')
+        email = request.POST.get('email')
+        senha = request.POST.get('senha')
+
+        try:
+            # Tenta obter o usuário com o email fornecido
+            usuario = Login.objects.get(email_inst=email)
+            request.session['chave'] = usuario.id_login
+            
+            # Verifica se a senha fornecida coincide com a senha armazenada
+            if check_password(senha, usuario.senha):
+                # Se as credenciais estiverem corretas, redirecione para a página desejada
+                # Neste exemplo, redirecione para a página inicial ('home')
+                if usuario.password_change_required==False:
+                    if usuario.perfil == "docente" or usuario.perfil == "aluno" or usuario.perfil == "user_externo":
+                        request.session['chave'] = usuario.id_login
+                        return redirect('perfil_user')
+                    elif usuario.perfil == "tecnico":
+                        # Chame a view de outro aplicativo usando reverse
+                        url = reverse('perfil_tecnico')  
+                        # Redirecione para a URL obtida
+                        return redirect(url)
+                    
+                    else:
+                        return HttpResponse('Erro! Entre em contato com a Central Multiusuário')
+
+                elif usuario.password_change_required==True:
+                    return render(request, 'redefinir_senha.html')
+                else:
+                    return HttpResponse("Erro! Entre em contato com a Central Multiusuário")
+            else:
+                # Senha incorreta
+                mensagem = 'Email ou senha incorretos'
+                return render(request, 'index.html', {'mensagem': mensagem})
+            
+        except Login.DoesNotExist:
+            # Usuário não encontrado
+            mensagem = 'Usuário não existe'
+            return render(request, 'index.html', {'mensagem': mensagem})
+
+    # Se ocorrer um erro ou se for uma solicitação GET, retorne à página de login
+    return HttpResponse("Erro! Entre em contato com a Central Multiusuário")
     
-    else:
-        mensagem = 'Email ou senha incorretos'
-        return render(request, 'index.html', {'mensagem': mensagem})
 
 def perfil_user(request):
  
@@ -625,24 +655,28 @@ def encerrar_sessao(request):
 
 def redefinir_senha(request):
     return render(request, 'redefinir_senha.html')
-
+ 
 def confirma_redefinicao(request):
+    
     senha_atual = request.POST.get('senha_atual')
     nova_senha = request.POST.get('nova_senha')
     confirma_nova_senha = request.POST.get('confirma_nova_senha')
 
     chave = request.session.get('chave')
 
-    login = Login.objects.get(id_login=chave)
+    try:
+        login = Login.objects.get(id_login=chave)
+    except Login.DoesNotExist:
+        raise Http404("Usuário não encontrado")  # ou redirecione para uma página de erro
 
-    if login.senha == senha_atual and nova_senha == confirma_nova_senha:
-        login.senha = nova_senha
+    # Comparação direta de senhas como strings
+    if check_password(senha_atual, login.senha) and nova_senha == confirma_nova_senha:
+        login.senha = make_password(nova_senha)
         login.save()
-        request.session.flush()
+        request.session.pop('chave', None)  # Remova a chave específica da sessão
         request.session['recadastro'] = login.id_login
         return render(request, 'form_perfil.html')
-    
     else:
         mensagem_nova_senha = 'Senha atual incorreta ou nova senha confirmação incorreta'
-        return render(request, 'cad_user_externo.html', {'mensagem_nova_senha': mensagem_nova_senha})
+        return render(request, 'redefinir_senha.html', {'mensagem_nova_senha': mensagem_nova_senha})
 
