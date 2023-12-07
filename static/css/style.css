@@ -5,6 +5,11 @@ h1 {
 .container{
 }
 
+.equipamento{
+    color: inherit; /* ou outra cor desejada */
+    text-decoration: none; /* opcional: remove sublinhado padrão */
+}
+
 .btn-proximo{
     border-radius: 5px;
     background-color: #276d23;

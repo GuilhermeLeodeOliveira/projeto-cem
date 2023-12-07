@@ -2,42 +2,45 @@
 {% load static %}
 
 {% block conteudo %}
-  {% if menssagem_sucesso_cadastro %}
-    <p class="text-success">{{menssagem_sucesso_cadastro}}</p>
-  {% endif %}
+  
   <div class="container">
-    <h1>Cadastro de Equipamentos</h1>
-    <form action="{% url 'cadastrar_equipamento' %}" method="post" class="form-equipamento">
+    <h1>Editar de Equipamento</h1>
+    {% if request.session.menssagem_sucesso_edicao %}
+        <p class="text-success">{{ request.session.menssagem_sucesso_edicao }}</p>
+    {% endif %}
+    <form action="{% url 'salvar_edicao_equipamento' id_equipamento=equipamento.id_equipamento %}" method="post" class="form-equipamento">
       {% csrf_token %}
       <div class="forms-cadastro">
         <div class="mt-3 questao">
           <label for="nome">Nome:</label>
-          <input type="text" name="nome" id="nome"required/>
+          <input type="text" name="nome" value="{{ equipamento.nome }}" id="nome" required />
         </div>
         <div class="mt-3 questao">
           <label for="apelido">Apelido:</label>
-          <input type="text" name="apelido" id="apelido" required/>
+          <input type="text" name="apelido" value="{{ equipamento.apelido }}" id="apelido" required />
         </div>
         <div class="mt-3 questao">
           <label for="descricao">Descrição:</label>
-          <input type="text" name="descricao" id="descricao" required/>
+          <input type="text" name="descricao" value="{{ equipamento.descricao }}" id="descricao" required />
         </div>
         <div class="mt-3 questao">
           <label for="fabricante">Fabricante:</label>
-          <input type="text" name="fabricante" id="fabricante" required/>
+          <input type="text" name="fabricante" value="{{ equipamento.fabricante }}" id="fabricante" required />
         </div>
         <div class="mt-3 questao">
           <label for="localizacao">Localização:</label>
-          <select name="localizacao" id="localizacao"required>
+          <select name="localizacao" id="localizacao" required>
+            <option value="{{ equipamento.localizacao }}">{{ equipamento.localizacao }}</option>
             <option value="cem_sa">CEM SA</option>
             <option value="cem_sbc">CEM SBC</option>
             <option value="lab_assoc">Laboratório Associado</option>
             <option value="lab_mult">Laboratório Multiusuário</option>
-        </select>
+          </select>
         </div>
         <div class="mt-3 questao">
           <label for="origem">Origem:</label>
-          <select name="origem" id="origem"required>
+          <select name="origem" id="origem" required>
+            <option value="{{ equipamento.origem }}">{{ equipamento.origem }}</option>
             <option value="finep">Finep</option>
             <option value="fapesp">Fapesp</option>
             <option value="sisbamo">Sisbamo</option>
@@ -45,67 +48,58 @@
         </div>
         <div class="mt-3 questao">
           <label for="ano_aquisicao">Ano de Aquisição:</label>
-          <input type="text" name="ano_aquisicao" id="ano_aquisicao" required/>
+          <input type="text" name="ano_aquisicao" value="{{ equipamento.ano_aquisicao }}" id="ano_aquisicao" required />
         </div>
         <div class="mt-3 questao">
           <label for="sala">Sala:</label>
-          <input type="text" name="sala" id="sala" required/>
+          <input type="text" name="sala" value="{{ equipamento.sala }}" id="sala" />
         </div>
         <div class="mt-3 questao">
           <label for="divisao">Divisão:</label>
-          <input type="text" name="divisao" id="divisao" required/>
+          <input type="text" name="divisao" value="{{ equipamento.divisao }}" id="divisao" />
         </div>
         <div class="mt-3 questao">
           <label for="status">Status:</label>
-          <select name="status" id="status"required>
+          <select name="status" id="status" required>
+            <option value="{{ equipamento.status }}">{{ equipamento.status }}</option>
             <option value="ativo">Ativo</option>
             <option value="manu_pervent">Manutenção Preventiva</option>
             <option value="manu_corretiva">Manutenção Corretiva</option>
             <option value="inativo">Inativo</option>
-        </select>
+          </select>
         </div>
         <div class="mt-3 questao">
           <label for="comentario">Comentário:</label>
-          <input type="text" name="comentario" id="comentario" required/>
+          <input type="text" name="comentario" value="{{ equipamento.comentario }}" id="comentario" />
         </div>
         <div class="mt-3 questao">
           <label for="chave">N° da Chave:</label>
-          <input type="text" name="chave" id="chave" required/>
+          <input type="text" name="chave" value="{{ equipamento.chave }}" id="chave" />
         </div>
         <div class="mt-3 questao">
           <label for="patrimonio">N° do Patrimônio:</label>
-          <input type="text" name="patrimonio" id="patrimonio" required/>
+          <input type="text" name="patrimonio" value="{{ equipamento.patrimonio }}" id="patrimonio" />
         </div>
         <div class="mt-3 questao">
           <label for="aquisicao">Valor da Aquisição:</label>
-          <input type="number" name="aquisicao" id="aquisicao" value="0"/>
+          <input type="text" name="aquisicao" value="{{ equipamento.aquisicao }}" id="aquisicao" />
         </div>
         <div class="mt-3 questao">
           <label for="prof">Professor Responsável:</label>
-          <input type="text" name="prof" id="prof" required/>
+          <input type="text" name="prof" value="{{ equipamento.prof }}" id="prof" />
         </div>
         <div class="mt-3 questao">
           <label for="tecnico">Técnico:</label>
           <select name="tecnico" id="tecnico">
             {% for tecnico in tecnicos %}
-              
-              
-              <option value="{{ tecnico.id_login }}"> {{ tecnico.primeiro_nome }} {{tecnico.segundo_nome}}</option>
-              
-
+              <option value="{{ tecnico.id_login }}">{{ tecnico.primeiro_nome }} {{ tecnico.segundo_nome }}</option>
             {% endfor %}
           </select>
         </div>
-        
       </div>
       <div class="d-flex justify-content-end mt-5">
-          <button type="submit" class="btn-proximo mb-5">Próximo</button>
-        </div>
+        <button type="submit" class="btn-proximo mb-5">Próximo</button>
+      </div>
     </form>
   </div>
-
-  <script src=" {% static 'js/main.js' %}"></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="{% static 'js/jquery.mask.js' %}"></script>
 {% endblock %}

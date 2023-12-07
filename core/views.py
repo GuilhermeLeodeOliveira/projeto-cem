@@ -603,6 +603,7 @@ def verifica_login_user(request):
                         request.session['chave'] = usuario.id_login
                         return redirect('perfil_user')
                     elif usuario.perfil == "tecnico":
+                        request.session['chave'] = usuario.id_login
                         # Chame a view de outro aplicativo usando reverse
                         url = reverse('perfil_tecnico')  
                         # Redirecione para a URL obtida
@@ -659,11 +660,16 @@ def encerrar_sessao(request):
 def redefinir_senha(request):
     return render(request, 'redefinir_senha.html')
  
+
 def confirma_redefinicao(request):
-    
     senha_atual = request.POST.get('senha_atual')
     nova_senha = request.POST.get('nova_senha')
     confirma_nova_senha = request.POST.get('confirma_nova_senha')
+
+    # Verificação da quantidade mínima de caracteres na nova senha
+    if len(nova_senha) < 8:
+        mensagem_nova_senha = 'A nova senha deve ter pelo menos 8 caracteres.'
+        return render(request, 'redefinir_senha.html', {'mensagem_nova_senha': mensagem_nova_senha})
 
     chave = request.session.get('chave')
 
@@ -682,5 +688,3 @@ def confirma_redefinicao(request):
     else:
         mensagem_nova_senha = 'Senha atual incorreta ou nova senha confirmação incorreta'
         return render(request, 'redefinir_senha.html', {'mensagem_nova_senha': mensagem_nova_senha})
-
-
