@@ -27,6 +27,6 @@ urlpatterns = [
     path('treinamento/', include('treinamento.urls'), name='treinamento'),
     path('solicitacoes_user/', include('treinamento.urls'), name='solicitacoes_user'),
     path('confirma_redefinicao/', confirma_redefinicao, name='confirma_redefinicao'),
-    path('redefinir_senha/', redefinir_senha, name='redefinir_senha')
+    path('redefinir_senha/', redefinir_senha, name='redefinir_senha'),
 
 ]

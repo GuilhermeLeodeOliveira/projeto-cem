@@ -613,6 +613,7 @@ def verifica_login_user(request):
                         return HttpResponse('Erro! Entre em contato com a Central Multiusuário')
 
                 elif usuario.password_change_required==True:
+                    request.session['chave'] = usuario.id_login
                     return render(request, 'redefinir_senha.html')
                 else:
                     return HttpResponse("Erro! Entre em contato com a Central Multiusuário")
@@ -676,7 +677,7 @@ def confirma_redefinicao(request):
     try:
         login = Login.objects.get(id_login=chave)
     except Login.DoesNotExist:
-        raise Http404("Usuário não encontrado")  # ou redirecione para uma página de erro
+        raise HttpResponse("Usuário não encontrado")  # ou redirecione para uma página de erro
 
     # Comparação direta de senhas como strings
     if check_password(senha_atual, login.senha) and nova_senha == confirma_nova_senha:

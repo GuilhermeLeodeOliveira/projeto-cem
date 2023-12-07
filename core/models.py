@@ -33,7 +33,7 @@ class preLogin(models.Model):
 class Login(models.Model):
     id_login = models.AutoField(primary_key=True)
     email_inst = models.EmailField(max_length=255)
-    senha = models.CharField(max_length=50)
+    senha = models.CharField(max_length=255)
     perfil = models.CharField(max_length=30, default='perfil')
     password_change_required = models.BooleanField(default=True)
 
