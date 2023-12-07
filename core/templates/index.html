@@ -9,6 +9,10 @@
         {% if mensagem %}
           <p class="text-danger">{{ mensagem }}</p>
         {% endif %} 
+        {% if menssagem_sucesso_cadastro %}
+          <p class="text-success">{{ menssagem_sucesso_cadastro }}</p>
+        {% endif %} 
+        
         <form action="{% url 'verifica_login_user' %}" method="post" class="form_login">
             {% csrf_token %}
             <div class="">

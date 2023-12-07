@@ -63,27 +63,6 @@ def perfil_tecnico(request):
 
 def encerrar_sessao_adm(request):
     request.session.flush()
-    url = reverse('index.html')
+    url = reverse('home')
                         # Redirecione para a URL obtida
     return redirect(url)
-
-from core.models import Login
-import csv
-from django.contrib.auth.hashers import make_password
-
-with open('arquivo.csv', 'r') as arquivo_csv:
-    leitor_csv = csv.reader(arquivo_csv)
-    next(leitor_csv)  # Pule a linha de cabeçalho se houver uma
-
-    for linha in leitor_csv:
-        email = linha[0]
-        senha = linha[1]
-
-        # Verifique se o usuário já existe pelo e-mail
-        if not Login.objects.filter(email_inst=email).exists():
-            # Criar um objeto Login com os valores padrão
-            # Use make_password para armazenar a senha de forma segura
-            login_objeto = Login(email_inst=email, senha=make_password(senha))
-
-            # Salvar o objeto no banco de dados
-            login_objeto.save()

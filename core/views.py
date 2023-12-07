@@ -259,7 +259,7 @@ def form_termo(request):
         if Login.objects.filter(email_inst=verifica_email).exists():
             # Trate o erro de e-mail duplicado, por exemplo, exiba uma mensagem de erro
             mensagem = 'O email que você digitou já possui cadastro'
-            return render(request, 'cad_docente.html', {'mensagem': mensagem})
+            return render(request, 'cad_aluno_pos_dout_ic.html', {'mensagem': mensagem})
 
         if not request.session.get('recadastro'):
             email = request.POST.get('email_inst')
@@ -568,7 +568,10 @@ def cadastrar_usuario(request):
         novo_user_externo.id_login = login
         novo_user_externo.save()
 
-    return redirect('encerrar_sessao')
+
+    request.session.flush()
+    menssagem_sucesso_cadastro = 'Cadastro concluído com sucesso'
+    return render(request, 'index.html', {'menssagem_sucesso_cadastro': menssagem_sucesso_cadastro})
 
 def cad_aluno_pos_dout_ic(request):
     return render(request, 'cad_aluno_pos_dout_ic.html')
@@ -680,3 +683,53 @@ def confirma_redefinicao(request):
         mensagem_nova_senha = 'Senha atual incorreta ou nova senha confirmação incorreta'
         return render(request, 'redefinir_senha.html', {'mensagem_nova_senha': mensagem_nova_senha})
 
+
+
+from equipamentos.models import Equipamento
+import csv
+
+with open('arquivoEquipamento.csv', 'r', encoding='utf-8') as arquivo_csv:
+    leitor_csv = csv.reader(arquivo_csv, delimiter=';')
+
+    # Ler o cabeçalho
+    cabecalho = next(leitor_csv, None)
+    if cabecalho is not None:
+        print(f'Cabeçalho: {cabecalho}')
+
+        # Ler a primeira linha de dados
+        primeira_linha = next(leitor_csv, None)
+        if primeira_linha is not None:
+            print(f'Primeira Linha de Dados: {primeira_linha}')
+
+            # Agora, continue processando as linhas de dados
+            for linha in leitor_csv:
+                if len(linha) == len(cabecalho):
+                    dados = dict(zip(cabecalho, linha))
+
+                    # Crie o objeto Equipamento com base nos dados
+                    equipamento_obj = Equipamento.objects.create(
+                        nome=dados['\ufeffnome'],
+                        apelido=dados['apelido'],
+                        descricao=dados['descricao'],
+                        fabricante=dados['fabricante'],
+                        localizacao=dados['localizacao'],
+                        origem=dados['origem'],
+                        ano_aquisicao=dados['ano_aquisicao'],
+                        sala=dados['sala'],
+                        divisao=dados['divisao'],
+                        status=dados['status'],
+                        comentario=dados['comentario'],
+                        chave=dados['chave'],
+                        patrimonio=dados['patrimonio'],
+                        aquisicao=dados['aquisicao'],
+                        prof=dados['prof'],
+                    )
+
+                    equipamento_obj.save()
+                else:
+    
+                    print(f'A linha não tem a quantidade esperada de campos: {linha}')
+        else:
+            print('Não há dados no arquivo.')
+    else:
+        print('O arquivo está vazio ou não possui cabeçalho.')
