@@ -429,7 +429,7 @@ def cadastrar_usuario(request):
 
         if not request.session.get('recadastro'):
             
-            login = preLogin.objects.get(id_pre_login=pre_login)
+            login = preLogin.objects.filter(id_pre_login=pre_login).first()
 
             novo_login = Login()
             novo_login.email_inst = login.email_inst
@@ -443,7 +443,7 @@ def cadastrar_usuario(request):
             recadastro = request.session.get('recadastro')
             login = Login.objects.get(id_login=recadastro)
 
-        docente = preCadDocente.objects.get(id_pre_cad_docente=chave)
+        docente = preCadDocente.objects.filter(id_pre_cad_docente=chave).first()
 
         novo_docente = Docente()
         novo_docente.primeiro_nome = docente.primeiro_nome
@@ -464,7 +464,7 @@ def cadastrar_usuario(request):
 
         if not request.session.get('recadastro'):
             
-            login = preLogin.objects.get(id_pre_login=pre_login)
+            login = preLogin.objects.filter(id_pre_login=pre_login).first()
 
             novo_login = Login()
             novo_login.email_inst = login.email_inst
@@ -479,7 +479,7 @@ def cadastrar_usuario(request):
             login = Login.objects.get(id_login=recadastro)
 
 
-        tecnico = preCadTecnico.objects.get(id_pre_cad_tecnico=chave)
+        tecnico = preCadTecnico.objects.filter(id_pre_cad_tecnico=chave).first()
 
         novo_tecnico = Tecnico()
         novo_tecnico.primeiro_nome = tecnico.primeiro_nome
@@ -501,7 +501,7 @@ def cadastrar_usuario(request):
 
         if not request.session.get('recadastro'):
                     
-            login = preLogin.objects.get(id_pre_login=request.session.get('login'))
+            login = preLogin.objects.filter(id_pre_login=request.session.get('login')).first()
 
             novo_login = Login()
             novo_login.email_inst = login.email_inst
@@ -510,7 +510,7 @@ def cadastrar_usuario(request):
             novo_login.password_change_required = False
             novo_login.save()
 
-        pos_dout_ic = preCadAlunoPosIC.objects.get(id_pre_cad_aluno_pos_ic=chave)
+        pos_dout_ic = preCadAlunoPosIC.objects.filter(id_pre_cad_aluno_pos_ic=chave).first()
 
         novo_pos_dout_ic = AlunoPosIC()
         novo_pos_dout_ic.primeiro_nome = pos_dout_ic.primeiro_nome
@@ -532,10 +532,9 @@ def cadastrar_usuario(request):
 
     elif perfil == "user_externo":
 
-
         if not request.session.get('recadastro'):
             
-            login = preLogin.objects.get(id_pre_login=request.session.get('login'))
+            login = preLogin.objects.filter(id_pre_login=request.session.get('login')).first()
 
             novo_login = Login()
             novo_login.email_inst = login.email_inst
@@ -544,7 +543,7 @@ def cadastrar_usuario(request):
             novo_login.password_change_required = False
             novo_login.save()
 
-        user_externo = preCadUserExterno.objects.get(id_pre_cad_user_externo=chave)
+        user_externo = preCadUserExterno.objects.filter(id_pre_cad_user_externo=chave).first()
 
         novo_user_externo = UserExterno()
         novo_user_externo.primeiro_nome = user_externo.primeiro_nome
@@ -644,7 +643,8 @@ def perfil_user(request):
         user = PosDout.objects.get(id_pos_dout=chave)
         #return render(request, 'perfil_user.html', {'pos_doutorando': pos_doutorando})
     
-    elif login.perfil == 'aluno_pos_ic':
+    elif login.perfil == 'aluno':
+        
         user = AlunoPosIC.objects.get(id_login=chave)
         #return render(request, 'perfil_user.html', {'aluno_pos_ic': aluno_pos_ic})
 
@@ -652,7 +652,7 @@ def perfil_user(request):
         user = UserExterno.objects.get(id_login=chave)
         #return render(request, 'perfil_user.html', {'user_externo': user_externo})
     
-    return render(request, 'perfil_user.html', {'user': user})
+    return render(request, 'perfil_user.html', {'user': user, 'login': login})
     
 def encerrar_sessao(request):
     request.session.flush()
@@ -689,3 +689,6 @@ def confirma_redefinicao(request):
     else:
         mensagem_nova_senha = 'Senha atual incorreta ou nova senha confirmação incorreta'
         return render(request, 'redefinir_senha.html', {'mensagem_nova_senha': mensagem_nova_senha})
+    
+def edita_dados_user(requets):
+    return HttpResponse('tela ediçao de dados')

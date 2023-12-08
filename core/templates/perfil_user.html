@@ -4,14 +4,49 @@
 {% block conteudo %}
 
 <div class="container">
-    <h1>
 
-        {{request.session.chave}} 
-        {{user.primeiro_nome }} {{user.segundo_nome}} 
-        
+    <ul class="d-flex justify-content-around">
+        <li class="">
+            <a href="{% url "solicitacoes_user" %}">Minhas Solicitações</a>
+        </li>
+        <li class="">
+            <a href="{% url "edita_dados_user" %}">Editar Meus Dados</a>
+        </li>
+    </ul>
+
+    <h1>
+        {{user.primeiro_nome }} {{user.segundo_nome}}
     </h1>
 
-    <a href="{% url "solicitacoes_user" %}">Minhas Solicitações</a>
+    <div>
+        {% if login.perfil == "aluno" %}
+        
+        <p> Celular: {{user.celular}} </p>
+        <p> Matrícula UFABC:{{user.matricula_ufabc}} </p>
+        <p> Ramal do Laboratório{{user.ramal_lab}} </p>
+        <p> Nome do Orientador: {{user.nome_orientador}} </p>
+        <p> Perfil: {{user.perfil}} </p>
+        <p> Data da Pós: {{user.data_pos}} </p>
+        <p> Centro: {{user.centro}} </p>
+        <p> Bolsa: {{user.bolsa}} </p>
+        <p> Plano de Trabalho: {{user.plano_trabalho}} </p>
+
+        {% endif %}
+
+        {% if login.perfil == "docente" %}
+        
+            <p>Celular: {{user.celular}}</p>
+            <p>Matrícula Siape: {{user.matricula_siape}}</p>
+            <p>Ramal do Laboratório: {{user.ramal_lab}}</p>
+            <p>Centroo: {{user.centro}}</p>
+            <p>Projeto: {{user.info_projeto}}</p>
+            <p>Lista de Publicação: {{user.lista_publi}}</p> 
+        
+
+        {% endif %}
+    </div>
+
+    
 
 </div>
 

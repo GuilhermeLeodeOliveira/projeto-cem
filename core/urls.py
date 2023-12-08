@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
-from .views import salvar, editar, update, delete, cadastro, form_perfil, selecionar_tela
+from .views import salvar, editar, update, delete, cadastro, form_perfil, selecionar_tela, edita_dados_user
 from .views import cad_docente, form_termo, cadastrar_usuario, cad_aluno_pos_dout_ic, confirma_redefinicao
 from .views import cad_user_externo, login_user, verifica_login_user, perfil_user, encerrar_sessao, redefinir_senha
 from . import views
@@ -28,5 +28,6 @@ urlpatterns = [
     path('solicitacoes_user/', include('treinamento.urls'), name='solicitacoes_user'),
     path('confirma_redefinicao/', confirma_redefinicao, name='confirma_redefinicao'),
     path('redefinir_senha/', redefinir_senha, name='redefinir_senha'),
+    path('edita_dados_user/', edita_dados_user, name='edita_dados_user'),
 
 ]
