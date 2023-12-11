@@ -16,17 +16,20 @@ from .models import Solicitacoes, Treinamento
 def treinamento(request):
     if 'chave' in request.session:
         # Obtenha o ID do usuário atualmente logado
-        perfil_user = request.session.get('perfil')
         chave = request.session.get('chave')
+        login = Login.objects.get(id_login=chave)
+        
 
         # Verifique o tipo de perfil e obtenha as solicitações correspondentes
-        if perfil_user == 'docente':
-            solicitacoes_usuario = Solicitacoes.objects.filter(id_Docente=chave)
-        elif perfil_user == 'pos_doutorando':
+        if login.perfil == 'docente':
+            user = Docente.objects.get(id_login=chave)
+            solicitacoes_usuario = Solicitacoes.objects.filter(id_Docente=user.id_docente)
+        elif login.perfil == 'pos_doutorando':
             solicitacoes_usuario = Solicitacoes.objects.filter(id_PosDout=chave)
-        elif perfil_user == 'aluno_pos_ic':
-            solicitacoes_usuario = Solicitacoes.objects.filter(id_AlunoPosIC=chave)
-        elif perfil_user == 'user_externo':
+        elif login.perfil == 'aluno':
+            user = AlunoPosIC.objects.get(id_login=chave)
+            solicitacoes_usuario = Solicitacoes.objects.filter(id_AlunoPosIC=user)
+        elif login.perfil == 'user_externo':
             solicitacoes_usuario = Solicitacoes.objects.filter(id_UserExterno=chave)
         else:
             solicitacoes_usuario = None
@@ -42,12 +45,18 @@ def treinamento(request):
     
 
 def solicitacoes(request):
-    perfil = request.session['perfil']
+    
     if 'chave' in request.session:
         chave = request.session['chave']
-        solicitacoes = Solicitacoes.objects.filter(id_equipamento__tecnicos=chave)
-        equipamentos = Equipamento.objects.filter(tecnicos = chave)
-        return render(request, 'solicitacoes.html', {'perfil': perfil, 'equipamentos':equipamentos, 'solicitacoes': solicitacoes})
+        login = Login.objects.get(id_login=chave)
+        solicitacoes = Solicitacoes.objects.all()
+
+        for solicitacao in solicitacoes:
+            aluno = AlunoPosIC.objects.filter(id_login=solicitacao.id_login)
+            docentes = Docente.objects.filter(id_login=solicitacao.id_login)
+            
+        equipamentos = Equipamento.objects.all()
+        return render(request, 'solicitacoes.html', {'equipamentos':equipamentos, 'solicitacoes': solicitacoes})
 
 def solicitar_treinamento(request):
     
@@ -55,18 +64,18 @@ def solicitar_treinamento(request):
         
         equipamentos_selecionados = request.POST.getlist('equipamento_selecionado')
 
-        perfil_user = request.session['perfil']
         chave = request.session['chave']
+        login = Login.objects.get(id_login=chave)
         
         for equipamento_nome in equipamentos_selecionados:
             
             # Verifique se já existe uma solicitação para o usuário e o equipamento
             usuario = None
 
-            if perfil_user == 'docente':
-                usuario = Docente.objects.get(id_docente=chave)
+            if login.perfil == 'docente':
+                usuario = Docente.objects.get(id_login=chave)
                 campo_usuario = 'id_Docente'
-            elif perfil_user == 'aluno_pos_ic':
+            elif login.perfil == 'aluno':
                 usuario = AlunoPosIC.objects.get(id_aluno_pos_ic=chave)
                 campo_usuario = 'id_AlunoPosIC'
             elif perfil_user == 'user_externo':
@@ -84,7 +93,6 @@ def solicitar_treinamento(request):
             # Crie uma instância do modelo Equipamento para cada equipamento selecionado
             equipamento = Equipamento.objects.get(nome=equipamento_nome)
             nova_solicitacao = Solicitacoes()
-            nova_solicitacao.data = request.POST.get('nome')
 
             # Obtém a data e hora atuais
             data_hora_atual = datetime.now()
@@ -97,60 +105,27 @@ def solicitar_treinamento(request):
             nova_solicitacao.hora = hora_atual
             nova_solicitacao.status = 'pendente'
 
-            perfil_user = request.session['perfil']
             chave = request.session['chave']
 
-            if perfil_user == 'docente':
-                docente = Docente.objects.get(id_docente=chave)
-                nova_solicitacao.id_Docente = docente
-                
-            elif perfil_user == 'aluno_pos_ic':
-
-                aluno_pos_ic = AlunoPosIC.objects.get(id_aluno_pos_ic=chave)
-                nova_solicitacao.id_AlunoPosIC = aluno_pos_ic
-                
-            elif perfil_user == 'user_externo':
-                user_externo = UserExterno.objects.get(id_user_externo=chave)
-                nova_solicitacao.id_UserExterno = user_externo
-                
+            nova_solicitacao.id_login = chave                
 
             nova_solicitacao.id_equipamento = equipamento
 
             nova_solicitacao.save()  # Salve a instância no banco de dados
 
         # Redirecione para uma página de confirmação ou outra ação desejada
-    return render(request, 'perfil_user.html')
+    return redirect('solicitacoes_user')
 
 
 def solicitacoes_user(request):
-
     
     chave = request.session['chave']
     login = Login.objects.get(id_login=chave)
 
-    if login.perfil == 'docente':
-        solicitacoes = Solicitacoes.objects.filter(id_Docente=chave)
-        treinamento = Treinamento.objects.filter(id_Docente=chave)
-        #solicitacoes = Solicitacoes.objects.filter(id_Docente=chave, status="pendente")
-        
-        
-    elif login.perfil == 'pos_doutorando':
-        solicitacoes = Solicitacoes.objects.filter(id_PosDout=chave)
-        treinamento = Treinamento.objects.filter(id_PosDout=chave)
-        #solicitacoes = Solicitacoes.objects.filter(id_PosDout=chave, status="pendente")
-        
-        
-    elif login.perfil == 'aluno_pos_ic':
-        solicitacoes = Solicitacoes.objects.filter(id_AlunoPosIC=chave)
-        treinamento = Treinamento.objects.filter(id_AlunoPosIC=chave)
-        #solicitacoes = Solicitacoes.objects.filter(id_AlunoPosIC=chave, status="pendente")
-        
-        
-    elif login.perfil == 'user_externo':
-        solicitacoes = Solicitacoes.objects.filter(id_UserExterno=chave)
-        treinamento = Treinamento.objects.filter(id_UserExterno=chave)
-        #solicitacoes = Solicitacoes.objects.filter(id_UserExterno=chave, status="pendente")
-        
+    solicitacoes = Solicitacoes.objects.filter(id_login=login)        
+    treinamento = Treinamento.objects.filter(id_login=login)
+
+
     return render(request, 'solicitacoes_user.html', {'solicitacoes': solicitacoes, 'treinamento': treinamento})
 
 def gerar_csv(request):

@@ -26,6 +26,12 @@
             <option value="{{ equipamento.divisao }}">{{ equipamento.divisao }}</option>
             {% endfor %}
         </select>
+
+        <select name="localizacao" id="localizacao" onchange="filtrarEquipamentos()">
+            <option value="">Selecione uma localização</option>
+            <option value="Santo André">Santo André</option>
+            <option value="São Bernardo">São Bernardo</option>
+        </select>
     </div>
     <div class="tela">
         
@@ -35,6 +41,7 @@
                     <th>Nome</th>
                     <th>Apelido</th>
                     <th>Divisão</th>
+                    <th>Localização</th>
                 </tr>
             </thead>
             <tbody>
@@ -44,6 +51,7 @@
                         <td><a class="equipamento" href="{% url 'editar_equipamento' id_equipamento=equipamento.id_equipamento %}">{{ equipamento.nome }}</a></td>
                         <td>{{ equipamento.apelido }}</td>
                         <td>{{ equipamento.divisao }}</td>
+                        <td>{{ equipamento.localizacao }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -75,6 +83,26 @@
                 } else {
                     linha.style.display = "none";
                 }
+            });
+        }
+
+        function filtrarEquipamentos() {
+            let localizacaoSelecionada = document.getElementById("localizacao").value;
+      
+            let linhas = document.querySelectorAll("#tabelaEquipamentos tr");
+      
+            linhas.forEach(function (linha) {
+              let colunaLocalizacao = linha.querySelector("td:nth-child(4)");  // Assumindo que a localização está na 4ª coluna
+      
+              if (
+                !localizacaoSelecionada ||
+                (localizacaoSelecionada === "Santo André" && colunaLocalizacao.textContent === "Santo André") ||
+                (localizacaoSelecionada === "São Bernardo" && colunaLocalizacao.textContent === "São Bernardo")
+              ) {
+                linha.style.display = "";
+              } else {
+                linha.style.display = "none";
+              }
             });
         }
         

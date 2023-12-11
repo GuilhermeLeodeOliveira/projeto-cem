@@ -48,7 +48,7 @@ def cadastrar_equipamento(request):
 def equipamentos(request):
     if 'chave' in request.session:
         equipamentos = Equipamento.objects.all()
-        return render(request, 'tela_equipamentos.html', {'equipamentos': equipamentos})
+        return render(request, 'equipamentos.html', {'equipamentos': equipamentos})
 
 def editar_equipamento(request, id_equipamento):
     equipamento = get_object_or_404(Equipamento, id_equipamento=id_equipamento)
@@ -85,4 +85,4 @@ def salvar_edicao_equipamento(request, id_equipamento):
 
     # Redirecione para a página de detalhes do equipamento ou para onde desejar
     request.session['menssagem_sucesso_edicao'] = 'Edição feita com sucesso'
-    return redirect('editar_equipamento', id_equipamento=id_equipamento)
+    return redirect('equipamentos')

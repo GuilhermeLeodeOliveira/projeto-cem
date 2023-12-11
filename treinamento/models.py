@@ -1,5 +1,5 @@
 from django.db import models
-from core.models import Docente, AlunoPosIC, UserExterno
+from core.models import Login
 from equipamentos.models import Equipamento
 # Create your models here.
 
@@ -8,9 +8,7 @@ class Solicitacoes(models.Model):
     data = models.DateField()
     hora = models.TimeField()
     status = models.CharField(max_length=50)
-    id_Docente = models.ForeignKey(Docente, on_delete=models.CASCADE, blank=True, null=True)
-    id_AlunoPosIC = models.ForeignKey(AlunoPosIC, on_delete=models.CASCADE, blank=True, null=True)
-    id_UserExterno = models.ForeignKey(UserExterno, on_delete=models.CASCADE, blank=True, null=True)
+    id_login = models.ForeignKey(Login, on_delete=models.CASCADE, blank=True, null=True)
     id_equipamento = models.ForeignKey(Equipamento, on_delete=models.CASCADE, blank=False, null=False)
     
 
@@ -22,9 +20,7 @@ class Treinamento(models.Model):
     local_treinamento = models.CharField(max_length=50)
     compareceu = models.CharField(max_length=5, blank=True, null=True)
     justificativa = models.CharField(max_length=225, blank=True, null=True)
-    aptidao = models.CharField(max_length=10)
-    id_Docente = models.ForeignKey(Docente, on_delete=models.CASCADE, blank=True, null=True)
-    id_AlunoPosIC = models.ForeignKey(AlunoPosIC, on_delete=models.CASCADE, blank=True, null=True)
-    id_UserExterno = models.ForeignKey(UserExterno, on_delete=models.CASCADE, blank=True, null=True)
+    aptidao = models.CharField(max_length=10)  
+    id_login = models.ForeignKey(Login, on_delete=models.CASCADE, blank=True, null=True)
     id_equipamento = models.ForeignKey(Equipamento, on_delete=models.CASCADE, blank=False, null=False)
     id_solicitacao = models.ForeignKey(Solicitacoes, on_delete=models.CASCADE, blank=False, null=False)
