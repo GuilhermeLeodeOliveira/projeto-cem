@@ -5,9 +5,35 @@ h1 {
 .container{
 }
 
+.sub-nav{
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border: #000 solid 1px;
+    width: 100%;
+}
+
+.sub-link{
+    color: inherit; /* ou outra cor desejada */
+    text-decoration: none;
+    display: flex;
+    justify-content:space-around;
+}
+
+.sub-item{
+    border: #000 solid 1px;
+    width: 50%;
+    font-size: medium;
+}
+
+tbody{
+    text-align: left;
+}
+
 .equipamento{
     color: inherit; /* ou outra cor desejada */
     text-decoration: none; /* opcional: remove sublinhado padrão */
+    padding-left: 10px;
 }
 
 .btn-proximo{

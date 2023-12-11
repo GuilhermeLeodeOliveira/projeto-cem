@@ -71,6 +71,19 @@
       </div>
     </nav>
 
+    {% if request.session.chave %}
+    <table class="sub-nav">
+      <tr>
+          <td class="sub-item">
+              <a href="{% url 'solicitacoes_user' %}" class="sub-link">Solicitações</a>
+          </td>
+          <td class="sub-item">
+              <a href="{% url 'edita_dados_user' %}" class="sub-link">Editar Meus Dados</a>
+          </td>
+      </tr>
+    </table>
+    {% endif %}
+
     {% block conteudo %}
 
     {% endblock %}

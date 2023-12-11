@@ -47,7 +47,7 @@
             </li>
             
             <li class="nav-item">
-              <a class="nav-link" href="{% url "tela_equipamentos" %}">Equipamentos</a>
+              <a class="nav-link" href="{% url "equipamentos" %}">Equipamentos</a>
             </li>
             
             <li class="nav-item">
@@ -65,6 +65,20 @@
         </div>
       </div>
     </nav>
+
+    {% if request.session.chave %}
+    <table class="sub-nav">
+      <tr>
+          <td class="sub-item">
+              <a href="{% url 'solicitacoes' %}" class="sub-link">Solicitações</a>
+          </td>
+          <td class="sub-item">
+              <a href="{% url 'edita_dados_tecnico' %}" class="sub-link">Editar Meus Dados</a>
+          </td>
+      </tr>
+    </table>
+    {% endif %}
+
     {% block conteudo %}
 
     {% endblock %}
