@@ -5,9 +5,28 @@
 {% block conteudo %}
 
 <div class="container">
+    <ul class="d-flex justify-content-around">
+        <li class="">
+            <a href="{% url "solicitacoes" %}">Solicitações</a>
+        </li>
+        <li class="">
+            <a href="{% url "edita_dados_tecnico" %}">Editar Meus Dados</a>
+        </li>
+    </ul>
 
-    <h1>{{user.primeiro_nome}}</h1>
-    <a href="{% url 'solicitacoes' %}">Solicitações</a>
+    <h1>{{user.primeiro_nome}} {{user.segundo_nome}}</h1>
+    
+
+    <div>
+
+        <p>Email: {{login.email_inst}}</p>
+        <p> Celular: {{user.celular}} </p>
+        <p> Matrícula SIAPE: {{user.matricula_siape}} </p>
+        <p> Ramal do Laboratório: {{user.ramal_lab}} </p>
+        <p> Centro: {{user.centro}} </p>
+        
+
+    </div>
 
 </div>
 {% endblock %}

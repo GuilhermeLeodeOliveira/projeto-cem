@@ -17,9 +17,6 @@ class Tecnico(models.Model):
     matricula_siape = models.CharField(max_length=10)
     ramal_lab = models.CharField(max_length=10)
     centro = models.CharField(max_length=10)
-    possui_projeto = models.CharField(max_length=3)
-    info_projeto = models.TextField(max_length=255)
-    lista_publi = models.TextField(max_length=255)
     id_form_termo = models.ForeignKey(FormTermo, on_delete=models.CASCADE, null=False)
     id_login = models.ForeignKey(Login, on_delete=models.CASCADE, null=False, default=0)
 
@@ -36,8 +33,4 @@ class preCadTecnico(models.Model):
     matricula_siape = models.CharField(max_length=10)
     ramal_lab = models.CharField(max_length=10)
     centro = models.CharField(max_length=10)
-    programa_pos = models.CharField(max_length=255)
-    possui_projeto = models.CharField(max_length=3)
-    info_projeto = models.TextField(max_length=255)
-    lista_publi = models.TextField(max_length=255)
     id_login = models.ForeignKey(preLogin, on_delete=models.CASCADE, null=False, default=0)

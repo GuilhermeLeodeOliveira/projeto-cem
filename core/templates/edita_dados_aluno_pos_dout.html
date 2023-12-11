@@ -1,0 +1,218 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block conteudo %}
+
+<div class="container">
+
+    <ul class="d-flex justify-content-around">
+        <li class="">
+            <a href="{% url "solicitacoes_user" %}">Minhas Solicitações</a>
+        </li>
+        <li class="">
+            <a href="{% url "edita_dados_user" %}">Editar Meus Dados</a>
+        </li>
+    </ul>
+
+
+    <h1>
+        {{user.primeiro_nome }} {{user.segundo_nome}}
+    </h1>
+
+    <form action="{% url 'editando_dados' %}" method="post" class="" id="myForm">
+        {% csrf_token %}
+        <div class="forms-cadastro p-2">
+          <p>Dados pessoais</p>
+          <div class="">
+              <div class="mt-3">
+                <label for="primeiro_nome">Primeiro Nome:</label> <input type="text" name="primeiro_nome" value="{{user.primeiro_nome}}" id="primeiro_nome" required />
+              </div>
+              <div class="mt-3">
+                <label for="segundo_nome">Sobrenome:</label> <input type="text" name="segundo_nome" value="{{user.segundo_nome}}" id="segundo_nome" required />
+              </div>
+            <div class="mt-3">
+              <label for="tel">Celular:</label> <input type="text" name="tel" value="{{user.celular}}" id="tel" required />
+            </div>
+  
+            <div class="mt-3">
+            <label for="email_inst">email-institucional:</label> <input type="text" name="email_inst" value="{{login.email_inst}}" id="email_inst" required />
+            </div>
+  
+            <div class="mt-3">
+              <label for="matricula_ufabc">Matrícula SIAPE:</label> <input type="text" name="matricula_ufabc" value="{{user.matricula_ufabc}}" id="matricula_ufabc" required />
+            </div>
+            <div class="mt-3">
+              <label for="lab">Ramal/Telefone e sala do Laboratório de Pesquisa:</label> <input type="text" name="lab" value="{{user.ramal_lab}}" id="lab" required />
+            </div>
+            <div class="mt-3">
+              <label for="nome_supervisor">Nome do(a) supervisor(a):</label> <input type="text" name="nome_supervisor" value="{{user.nome_orientador}}" id="nome_supervisor" required />
+            </div>
+          </div>
+        </div>
+  
+        <div class="forms-cadastro p-2 mt-3">
+            <p>Perfil:</p>
+            <div class="">
+                <div class="radio mt-3">
+                    <label for="doutorando"><input type="radio" name="perfil" value="doutorando" id="doutorando" required/>Doutorando(a)</label>
+                </div>
+                <div class="radio mt-3">
+                    <label for="mestrando"><input type="radio" name="perfil" value="mestrando" id="mestrando" required/>Mestrando(a)</label>
+                </div>
+                <div class="radio mt-3">
+                    <label for="IC"><input type="radio" name="perfil" value="IC" id="IC" required/>Aluno(a) de Iniciação Científica</label>
+                </div>
+                <div class="radio mt-3">
+                    <label for="outro_perfil">
+                        <input type="radio" name="perfil" value="outro_perfil" id="outro_perfil" required
+                               {% if user.perfil != 'doutorando' and user.perfil != 'mestrando' and user.perfil != 'IC' %}checked{% endif %}/>
+                        Outros:
+                    </label>
+                    <input type="text" name="input_outro_perfil" id="input_outro_perfil" value="{% if user.perfil != 'doutorando' and user.perfil != 'mestrando' and user.perfil != 'IC' %}{{ user.perfil }}{% endif %}" />
+                    {% if mensagem_outro_perfil %}
+                        <p class="text-danger">{{ mensagem_outro_perfil }}</p>
+                    {% endif %} 
+                </div>
+            </div>
+        </div>
+  
+        <div class="forms-cadastro p-2 mt-3">
+          <p>Data de ingresso na pós-graduação ou IC:</p>
+          <div class="">
+            <div class="radio mt-3">
+              <label><input type="date" name="data_inicio" value="{{user.data_pos|date:'Y-m-d'}}" id="data_inicio" required /></label>
+            </div>
+          </div>
+        </div>
+  
+        <div class="forms-cadastro p-2 mt-3">
+            <p>Centro:</p>
+            <div class="">
+                <div class="radio mt-3">
+                    <label for="CCNH"><input type="radio" name="centro" value="CCNH" id="CCNH" required/>CCNH</label>
+                </div>
+                <div class="radio mt-3">
+                    <label for="CMCC"><input type="radio" name="centro" value="CMCC" id="CMCC" required/>CMCC</label>
+                </div>
+                <div class="radio mt-3">
+                    <label for="CECS"><input type="radio" name="centro" value="CECS" id="CECS" required/>CECS</label>
+                </div>
+                {% if mensagem_outro_centro %}
+                    <p class="text-danger">{{ mensagem_outro_centro }}</p>
+                {% endif %} 
+                <div class="radio mt-3">
+                    <label for="outro_centro">
+                        <input type="radio" name="centro" value="outro_centro" id="outro_centro" required
+                               {% if user.centro != 'CCNH' and user.centro != 'CMCC' and user.centro != 'CECS' %}checked{% endif %}/>
+                        Outros:
+                    </label>
+                    <input type="text" name="input_outro_centro" id="input_outro_centro" value="{% if user.centro != 'CCNH' and user.centro != 'CMCC' and user.centro != 'CECS' %}{{ user.centro }}{% endif %}" />
+                </div>
+            </div>
+        </div>
+        
+        <div class="forms-cadastro p-2 mt-3">
+            <p>Possui bolsa?</p>
+            <div class="">
+                <div class="radio mt-3">
+                    <label for="UFABC"><input type="radio" name="bolsa" value="UFABC" id="UFABC" required/>Sim, da UFABC (PDPD, IC ou programa de pós-graduação)</label>
+                </div>
+                <div class="radio mt-3">
+                    <label for="FAPESP"><input type="radio" name="bolsa" value="FAPESP" id="FAPESP" required/>Sim, da FAPESP</label>
+                </div>
+                <div class="radio mt-3">
+                    <label for="voluntario"><input type="radio" name="bolsa" value="voluntario" id="voluntario" required/>Não, sou voluntário(a)</label>
+                </div>
+                {% if mensagem_outra_bolsa %}
+                    <p class="text-danger">{{ mensagem_outra_bolsa }}</p>
+                {% endif %} 
+                <div class="radio mt-3">
+                    <label for="outra_bolsa">
+                        <input type="radio" name="bolsa" value="outra_bolsa" id="outra_bolsa" required
+                               {% if user.bolsa != 'ufabc' and user.bolsa != 'fapesp' and user.bolsa != 'voluntario' %}checked{% endif %}/>
+                        Outros:
+                    </label>
+                    <input type="text" name="input_outra_bolsa" id="input_outra_bolsa" value="{% if user.bolsa != 'ufabc' and user.bolsa != 'fapesp' and user.bolsa != 'voluntario' %}{{ user.bolsa }}{% endif %}" />
+                </div>
+            </div>
+        </div>
+  
+        <div class="forms-cadastro p-2 mt-3">
+          <p>Plano de Trabalho (deve conter objeto de estudo, objetivos, técnicas e principais equipamentos a serem utilizados)</p>
+          <div class="">
+            <textarea name="plano_trabalho" id="">{{user.plano_trabalho}}</textarea>
+          </div>
+        </div>
+        
+        <div class="d-flex justify-content-end mt-5">
+          <button type="submit" class="btn-proximo mb-5">Próximo</button>
+        </div>
+    </form>
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Obtenha o valor de user.perfil
+        var perfilUsuario = "{{ user.perfil }}";
+
+        // Se user.perfil for igual a doutorando, mestrando ou IC, marque o botão correspondente
+        if (perfilUsuario === 'doutorando' || perfilUsuario === 'mestrando' || perfilUsuario === 'IC') {
+            document.getElementById(perfilUsuario).checked = true;
+        } else {
+            // Se user.perfil for diferente de doutorando, mestrando e IC, marque o botão "outro_perfil" e atualize o campo de texto
+            var radioOutroPerfil = document.getElementById('outro_perfil');
+            var inputOutroPerfil = document.getElementById('input_outro_perfil');
+            radioOutroPerfil.checked = true;
+            inputOutroPerfil.value = perfilUsuario;
+        }
+    });
+    
+    document.addEventListener('DOMContentLoaded', function () {
+        // Obtenha o valor de user.centro
+        var centroUsuario = "{{ user.centro }}";
+
+        // Se user.centro for igual a CCNH, CMCC ou CECS, marque o botão correspondente
+        if (centroUsuario === 'CCNH' || centroUsuario === 'CMCC' || centroUsuario === 'CECS') {
+            document.getElementById(centroUsuario).checked = true;
+        } else {
+            // Se user.centro for diferente de CCNH, CMCC e CECS, marque o botão "outro_centro" e atualize o campo de texto
+            var radioOutroCentro = document.getElementById('outro_centro');
+            var inputOutroCentro = document.getElementById('input_outro_centro');
+            radioOutroCentro.checked = true;
+            inputOutroCentro.value = centroUsuario;
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Obtenha o valor de user.bolsa
+        var bolsaUsuario = "{{ user.bolsa }}";
+
+        // Se user.bolsa for igual a ufabc, fapesp ou voluntario, marque o botão correspondente
+        if (bolsaUsuario === 'UFABC' || bolsaUsuario === 'FAPESP' || bolsaUsuario === 'voluntario') {
+            document.getElementById(bolsaUsuario).checked = true;
+        } else {
+            // Se user.bolsa for diferente de ufabc, fapesp e voluntario, marque o botão "outra_bolsa" e atualize o campo de texto
+            var radioOutraBolsa = document.getElementById('outra_bolsa');
+            var inputOutraBolsa = document.getElementById('input_outra_bolsa');
+            radioOutraBolsa.checked = true;
+            inputOutraBolsa.value = bolsaUsuario;
+        }
+    });
+    
+    document.addEventListener('DOMContentLoaded', function () {
+        var form = document.getElementById('myForm'); // Altere 'myForm' para o ID do seu formulário
+    
+        form.addEventListener('submit', function (event) {
+            // Exibir o popup de confirmação
+            var confirmacao = confirm('Deseja realmente alterar os dados?');
+    
+            // Se o usuário cancelar, interromper o envio do formulário
+            if (!confirmacao) {
+                event.preventDefault();
+            }
+            // Se o usuário confirmar, o formulário será enviado normalmente
+        });
+    });
+</script>
+
+{% endblock %}

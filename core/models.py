@@ -1,5 +1,5 @@
 from django.db import models
-
+import datetime
 # Create your models here.
 
 class Usuario(models.Model):
@@ -35,6 +35,8 @@ class Login(models.Model):
     email_inst = models.EmailField(max_length=255)
     senha = models.CharField(max_length=255)
     perfil = models.CharField(max_length=30, default='perfil')
+    data_cadastro = models.DateTimeField(blank=True, null=True, default=datetime.datetime.now)
+    data_ultimo_login = models.DateTimeField(blank=True, null=True, default=datetime.datetime(2023, 1, 1, 0, 0))
     password_change_required = models.BooleanField(default=True)
 
 class Docente(models.Model):
@@ -42,9 +44,9 @@ class Docente(models.Model):
     primeiro_nome = models.CharField(max_length=255)
     segundo_nome = models.CharField(max_length=255)
     celular = models.CharField(max_length=17)
-    matricula_siape = models.CharField(max_length=10)
-    ramal_lab = models.CharField(max_length=10)
-    centro = models.CharField(max_length=10)
+    matricula_siape = models.CharField(max_length=30)
+    ramal_lab = models.CharField(max_length=30)
+    centro = models.CharField(max_length=30)
     possui_projeto = models.CharField(max_length=3)
     info_projeto = models.TextField(max_length=255)
     lista_publi = models.TextField(max_length=255)
@@ -62,9 +64,9 @@ class preCadDocente(models.Model):
     celular = models.CharField(max_length=17)
     email_inst = models.EmailField(max_length=255)
     senha = models.CharField(max_length=50)
-    matricula_siape = models.CharField(max_length=10)
-    ramal_lab = models.CharField(max_length=10)
-    centro = models.CharField(max_length=10)
+    matricula_siape = models.CharField(max_length=30)
+    ramal_lab = models.CharField(max_length=30)
+    centro = models.CharField(max_length=30)
     programa_pos = models.CharField(max_length=255)
     possui_projeto = models.CharField(max_length=3)
     info_projeto = models.TextField(max_length=255)
@@ -80,13 +82,13 @@ class AlunoPosIC(models.Model):
     primeiro_nome = models.CharField(max_length=255)
     segundo_nome = models.CharField(max_length=255)
     celular = models.CharField(max_length=17)
-    matricula_ufabc = models.CharField(max_length=10)
-    ramal_lab = models.CharField(max_length=10)
+    matricula_ufabc = models.CharField(max_length=30)
+    ramal_lab = models.CharField(max_length=30)
     nome_orientador = models.CharField(max_length=255)
     perfil = models.CharField(max_length=30)
     data_pos = models.DateField()
-    centro = models.CharField(max_length=10)
-    bolsa = models.CharField(max_length=10)
+    centro = models.CharField(max_length=30)
+    bolsa = models.CharField(max_length=30)
     plano_trabalho = models.TextField(max_length=255)
     declaracao_ciencia_orientador = models.CharField(max_length=3)
     id_form_termo = models.ForeignKey(FormTermo, on_delete=models.CASCADE, null=False)

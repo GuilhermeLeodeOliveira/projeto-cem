@@ -19,6 +19,9 @@
     </h1>
 
     <div>
+
+        <p>Email: {{login.email_inst}}</p>
+
         {% if login.perfil == "aluno" %}
         
         <p> Celular: {{user.celular}} </p>
@@ -39,7 +42,10 @@
             <p>Matrícula Siape: {{user.matricula_siape}}</p>
             <p>Ramal do Laboratório: {{user.ramal_lab}}</p>
             <p>Centroo: {{user.centro}}</p>
+            {% if user.info_projeto %}
             <p>Projeto: {{user.info_projeto}}</p>
+            {% endif %}
+            
             <p>Lista de Publicação: {{user.lista_publi}}</p> 
         
 
