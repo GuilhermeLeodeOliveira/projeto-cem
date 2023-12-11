@@ -13,10 +13,6 @@ def cad_equipamento(request):
         user_authenticated = False
         return HttpResponse('Precisa estar logado para acessar essa função')
 
-
-def equipamentos(request):
-    return render(request, 'equipamentos.html')
-
 def cadastrar_equipamento(request):
 
     novo_equipamento = Equipamento()
@@ -49,7 +45,7 @@ def cadastrar_equipamento(request):
     menssagem_sucesso_cadastro = 'Equipamento cadastrado com sucesso'
     return render(request, 'cad_equipamento.html', {'menssagem_sucesso_cadastro': menssagem_sucesso_cadastro})
 
-def tela_equipamentos(request):
+def equipamentos(request):
     if 'chave' in request.session:
         equipamentos = Equipamento.objects.all()
         return render(request, 'tela_equipamentos.html', {'equipamentos': equipamentos})
