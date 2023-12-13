@@ -127,6 +127,10 @@ th{
     width: 100%;
 }
 
+.tbody-solicitacoes{
+    text-align: center;
+}
+
 td{
     border: #000 solid 1px;
 }

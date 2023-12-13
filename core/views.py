@@ -68,6 +68,9 @@ def selecionar_tela(request):
     elif opcao == "opcao4":
         request.session['perfil'] = "user_externo"
         return render(request, 'cad_user_externo.html')
+    elif opcao == "opcao5":
+        request.session['perfil'] = "pos_doc"
+        return render(request, 'cad_user_pos_doc.html')
     
 def cad_docente(request):
     return render(request, 'cad_docente.html')
@@ -76,245 +79,344 @@ def form_termo(request):
     perfil = request.session.get('perfil', 'valor_padrão')
 
     if perfil == "docente":
+        
         verifica_email = request.POST.get('email_inst')
-        if Login.objects.filter(email_inst=verifica_email).exists():
-            # Trate o erro de e-mail duplicado, por exemplo, exiba uma mensagem de erro
-            mensagem = 'O email que você digitou já possui cadastro'
-            return render(request, 'cad_docente.html', {'mensagem': mensagem})
-        
-        if not request.session.get('recadastro'):
-            email = request.POST.get('email_inst')
-            senha = request.POST.get('senha')
-            novo_login = preLogin()
-            novo_login.email_inst = request.POST.get('email_inst')
-            novo_login.senha = request.POST.get('senha')
-            novo_login.perfil = 'docente'
-            novo_login.password_change_required = False
-            novo_login.save()
-        else:
-            login = request.session.get('recadastro')
-            user = Login.objects.get(id_login=login)
-            user.perfil = 'docente'
-            user.password_change_required = False
-            user.save()
 
-            email = user.email_inst
-            senha = user.senha
-
-            novo_login = preLogin()
-            novo_login.email_inst = user.email_inst
-            novo_login.senha = user.senha
-            novo_login.perfil = user.perfil
-            novo_login.password_change_required = user.password_change_required
-            novo_login.save()
-        
-
-        novo_docente = preCadDocente()
-        novo_docente.primeiro_nome = request.POST.get('primeiro_nome')
-        novo_docente.segundo_nome = request.POST.get('segundo_nome')
-        novo_docente.celular = request.POST.get('tel')
-
-        novo_docente.matricula_siape = request.POST.get('mat_siape')
-        novo_docente.ramal_lab = request.POST.get('lab')
-
-        if request.POST.get('centro') == 'outros_centro' and request.POST.get('input_outros_centro'):
-            novo_docente.centro = request.POST.get('input_outros_centro')
-        
-        elif request.POST.get('centro') == 'outros_centro' and not request.POST.get('input_outros_centro'):
-            mensagem_centro = 'Se você é de outro centro, precisa preencher o campo dizendo qual é'
-            return render(request, 'cad_docente.html', {'mensagem_centro': mensagem_centro})
-        
-        elif request.POST.get('centro') != 'outros_centro' and request.POST.get('input_outros_centro'):
-            mensagem_centro = 'Não pode inserir nada no campo de texto sem escolher a opção outros'
-            return render(request, 'cad_docente.html', {'mensagem_centro': mensagem_centro})
-        
-        elif request.POST.get('centro') != 'outros_centro' and not request.POST.get('input_outros_centro'):
-            novo_docente.centro = request.POST.get('centro')
-
-        novo_docente.possui_projeto = request.POST.get('possui_projeto')
-
-        if request.POST.get('possui_projeto') == 'sim' and request.POST.get('projeto') and request.POST.get('titulo') and request.POST.get('vigencia'):
-            projeto = request.POST.get('projeto')
-            titulo = request.POST.get('titulo')
-            vigencia = request.POST.get('vigencia')
-            texto_composto = f"{projeto} - {titulo} - {vigencia}"
-            novo_docente.info_projeto = texto_composto
-
-        elif request.POST.get('possui_projeto') == 'nao' and not request.POST.get('projeto') and not request.POST.get('titulo') and not request.POST.get('vigencia'):
-
-            if request.POST.get('projeto') and request.POST.get('titulo') and request.POST.get('vigencia'):
-                mensagem_possui_projeto = 'Se você não possui projeto, não pode escrever nada nos campos projeto, titulo e vigencia'
-                return render(request, 'cad_docente.html', {'mensagem_possui_projeto': mensagem_possui_projeto})
-
-            novo_docente.possui_projeto = request.POST.get('possui_projeto')
-            novo_docente.info_projeto = ''
-
-        elif request.POST.get('possui_projeto') == 'sim' and not request.POST.get('projeto') and not request.POST.get('titulo') and not request.POST.get('vigencia'):
-            mensagem_possui_projeto = 'Se você possui projeto, precisa digitar nos campos projeto, titulo e vigencia'
-            return render(request, 'cad_docente.html', {'mensagem_possui_projeto': mensagem_possui_projeto})
-
-        lista_publi = request.POST.get('publicacoes')
-        novo_docente.lista_publi = lista_publi
-    
-        login = preLogin.objects.get(email_inst=email, senha=senha)
-        novo_docente.id_login = login
-
-        request.session['login'] = login.id_pre_login
-
-        novo_docente.save()
-        request.session['chave'] = novo_docente.id_pre_cad_docente
-    
-    elif perfil == "tecnico":
-        verifica_email = request.POST.get('email_inst')
-        if Login.objects.filter(email_inst=verifica_email).exists():
-            # Trate o erro de e-mail duplicado, por exemplo, exiba uma mensagem de erro
-            mensagem = 'O email que você digitou já possui cadastro'
-            return render(request, 'cad_tecnico.html', {'mensagem': mensagem})
-
-        if not request.session.get('recadastro'):
-            email = request.POST.get('email_inst')
-            senha = request.POST.get('senha')
-            novo_login = preLogin()
-            novo_login.email_inst = request.POST.get('email_inst')
-            novo_login.senha = request.POST.get('senha')
-            novo_login.perfil = 'tecnico'
-            novo_login.password_change_required = False
-            novo_login.save()
-        else:
-            login = request.session.get('recadastro')
-            user = Login.objects.get(id_login=login)
-            user.perfil = 'tecnico'
-            user.password_change_required = False
-            user.save()
-
-            email = user.email_inst
-            senha = user.senha
-
-            novo_login = preLogin()
-            novo_login.email_inst = user.email_inst
-            novo_login.senha = user.senha
-            novo_login.perfil = user.perfil
-            novo_login.password_change_required = user.password_change_required
-            novo_login.save()
-        
-
-        novo_tecnico = preCadTecnico()
-        novo_tecnico.primeiro_nome = request.POST.get('primeiro_nome')
-        novo_tecnico.segundo_nome = request.POST.get('segundo_nome')
-        novo_tecnico.celular = request.POST.get('tel')
-
-        novo_tecnico.matricula_siape = request.POST.get('mat_siape')
-        novo_tecnico.ramal_lab = request.POST.get('lab')
-
-        if request.POST.get('centro') == 'outros_centro' and request.POST.get('input_outros_centro'):
-            novo_tecnico.centro = request.POST.get('input_outros_centro')
-        
-        elif request.POST.get('centro') == 'outros_centro' and not request.POST.get('input_outros_centro'):
-            mensagem_centro = 'Se você é de outro centro, precisa preencher o campo dizendo qual é'
-            return render(request, 'cad_docente.html', {'mensagem_centro': mensagem_centro})
-        
-        elif request.POST.get('centro') != 'outros_centro' and request.POST.get('input_outros_centro'):
-            mensagem_centro = 'Não pode inserir nada no campo de texto sem escolher a opção outros'
-            return render(request, 'cad_docente.html', {'mensagem_centro': mensagem_centro})
-        
-        elif request.POST.get('centro') != 'outros_centro' and not request.POST.get('input_outros_centro'):
-            novo_tecnico.centro = request.POST.get('centro')
-
-        novo_tecnico.possui_projeto = request.POST.get('possui_projeto')
-    
-        login = preLogin.objects.filter(email_inst=email, senha=senha).first()
-        novo_tecnico.id_login = login
-
-        request.session['login'] = login.id_pre_login
-
-        novo_tecnico.save()
-        request.session['chave'] = novo_tecnico.id_pre_cad_tecnico
-   
-    elif perfil == "aluno_pos_dout_ic":
-        verifica_email = request.POST.get('email_inst')
-        if Login.objects.get(email_inst=verifica_email).exists():
-            # Trate o erro de e-mail duplicado, por exemplo, exiba uma mensagem de erro
+        try:
+            login_obj = Login.objects.get(email_inst=verifica_email)
+            # Se o objeto existe, faça algo com login_obj
             mensagem = 'O email que você digitou já possui cadastro'
             return render(request, 'cad_aluno_pos_dout_ic.html', {'mensagem': mensagem})
-
-        if not request.session.get('recadastro'):
-            email = request.POST.get('email_inst')
-            senha = request.POST.get('senha')
-            novo_login = preLogin()
-            novo_login.email_inst = request.POST.get('email_inst')
-            novo_login.senha = request.POST.get('senha')
-            novo_login.perfil = 'aluno'
-            novo_login.password_change_required = False
-            novo_login.save()
-        else:
-            login = request.session.get('recadastro')
-            user = Login.objects.get(id_login=login)
-            user.perfil = 'docente'
-            user.password_change_required = False
-            user.save()
-
-            email = user.email_inst
-            senha = user.senha
-
-            novo_login = preLogin()
-            novo_login.email_inst = user.email_inst
-            novo_login.senha = user.senha
-            novo_login.perfil = user.perfil
-            novo_login.password_change_required = user.password_change_required
-            novo_login.save()
-
-        novo_aluno_pos_ic = preCadAlunoPosIC()
-        novo_aluno_pos_ic.primeiro_nome = request.POST.get('primeiro_nome')
-        novo_aluno_pos_ic.segundo_nome = request.POST.get('segundo_nome')
-        novo_aluno_pos_ic.celular = request.POST.get('tel')
-        novo_aluno_pos_ic.matricula_ufabc = request.POST.get('matricula_ufabc')
-        novo_aluno_pos_ic.ramal_lab = request.POST.get('lab')
-        novo_aluno_pos_ic.nome_orientador = request.POST.get('nome_supervisor')
-        novo_aluno_pos_ic.data_pos = request.POST.get('data_inicio')
-
-        if request.POST.get('centro') == 'outro_centro':
-            if request.POST.get('input_outro_centro'):
-
-                novo_aluno_pos_ic.centro = request.POST.get('input_outro_centro')
+        except Login.DoesNotExist:
+            # Se o objeto não existe, trate o caso aqui
+            
+            if not request.session.get('recadastro'):
+                email = request.POST.get('email_inst')
+                senha = request.POST.get('senha')
+                novo_login = preLogin()
+                novo_login.email_inst = request.POST.get('email_inst')
+                novo_login.senha = request.POST.get('senha')
+                novo_login.perfil = 'docente'
+                novo_login.password_change_required = False
+                novo_login.save()
             else:
-                mensagem_outro_centro = 'Se você possui outro tipo de centro, precisa digitar qual é'
-                return render(request, 'cad_aluno_pos_dout_ic.html', {'mensagem_outro_centro': mensagem_outro_centro})
-        else:
-            novo_aluno_pos_ic.centro = request.POST.get('centro')
+                login = request.session.get('recadastro')
+                user = Login.objects.get(id_login=login)
+                user.perfil = 'docente'
+                user.password_change_required = False
+                user.save()
 
+                email = user.email_inst
+                senha = user.senha
 
-        if request.POST.get('bolsa') == 'outra_bolsa':
-            if request.POST.get('input_outra_bolsa'):
+                novo_login = preLogin()
+                novo_login.email_inst = user.email_inst
+                novo_login.senha = user.senha
+                novo_login.perfil = user.perfil
+                novo_login.password_change_required = user.password_change_required
+                novo_login.save()
+            
 
-                novo_aluno_pos_ic.bolsa = request.POST.get('input_outra_bolsa')
-            else:
-                mensagem_outra_bolsa = 'Se você possui outro tipo de bolsa, precisa digitar qual é'
-                return render(request, 'cad_aluno_pos_dout_ic.html', {'mensagem_outra_bolsa': mensagem_outra_bolsa})
-        else:
-            novo_aluno_pos_ic.bolsa = request.POST.get('bolsa')
+            novo_docente = preCadDocente()
+            novo_docente.primeiro_nome = request.POST.get('primeiro_nome')
+            novo_docente.segundo_nome = request.POST.get('segundo_nome')
+            novo_docente.celular = request.POST.get('tel')
 
-        if request.POST.get('perfil') == 'outro_perfil':
-            if request.POST.get('input_outro_perfil'):
+            novo_docente.matricula_siape = request.POST.get('mat_siape')
+            novo_docente.ramal_lab = request.POST.get('lab')
 
-                novo_aluno_pos_ic.perfil = request.POST.get('input_outro_perfil')
-            else:
-                mensagem_outro_perfil = 'Se você possui outro tipo de perfil, precisa digitar qual é'
-                return render(request, 'cad_aluno_pos_dout_ic.html', {'mensagem_outro_perfil': mensagem_outro_perfil})
-        else:
-            novo_aluno_pos_ic.perfil = request.POST.get('perfil')
+            if request.POST.get('centro') == 'outros_centro' and request.POST.get('input_outros_centro'):
+                novo_docente.centro = request.POST.get('input_outros_centro')
+            
+            elif request.POST.get('centro') == 'outros_centro' and not request.POST.get('input_outros_centro'):
+                mensagem_centro = 'Se você é de outro centro, precisa preencher o campo dizendo qual é'
+                return render(request, 'cad_docente.html', {'mensagem_centro': mensagem_centro})
+            
+            elif request.POST.get('centro') != 'outros_centro' and request.POST.get('input_outros_centro'):
+                mensagem_centro = 'Não pode inserir nada no campo de texto sem escolher a opção outros'
+                return render(request, 'cad_docente.html', {'mensagem_centro': mensagem_centro})
+            
+            elif request.POST.get('centro') != 'outros_centro' and not request.POST.get('input_outros_centro'):
+                novo_docente.centro = request.POST.get('centro')
+
+            novo_docente.possui_projeto = request.POST.get('possui_projeto')
+
+            if request.POST.get('possui_projeto') == 'sim' and request.POST.get('projeto') and request.POST.get('titulo') and request.POST.get('vigencia'):
+                projeto = request.POST.get('projeto')
+                titulo = request.POST.get('titulo')
+                vigencia = request.POST.get('vigencia')
+                texto_composto = f"{projeto} - {titulo} - {vigencia}"
+                novo_docente.info_projeto = texto_composto
+
+            elif request.POST.get('possui_projeto') == 'nao' and not request.POST.get('projeto') and not request.POST.get('titulo') and not request.POST.get('vigencia'):
+
+                if request.POST.get('projeto') and request.POST.get('titulo') and request.POST.get('vigencia'):
+                    mensagem_possui_projeto = 'Se você não possui projeto, não pode escrever nada nos campos projeto, titulo e vigencia'
+                    return render(request, 'cad_docente.html', {'mensagem_possui_projeto': mensagem_possui_projeto})
+
+                novo_docente.possui_projeto = request.POST.get('possui_projeto')
+                novo_docente.info_projeto = ''
+
+            elif request.POST.get('possui_projeto') == 'sim' and not request.POST.get('projeto') and not request.POST.get('titulo') and not request.POST.get('vigencia'):
+                mensagem_possui_projeto = 'Se você possui projeto, precisa digitar nos campos projeto, titulo e vigencia'
+                return render(request, 'cad_docente.html', {'mensagem_possui_projeto': mensagem_possui_projeto})
+
+            lista_publi = request.POST.get('publicacoes')
+            novo_docente.lista_publi = lista_publi
         
+            login = preLogin.objects.get(email_inst=email, senha=senha)
+            novo_docente.id_login = login
+
+            request.session['login'] = login.id_pre_login
+
+            novo_docente.save()
+            request.session['chave_cad'] = novo_docente.id_pre_cad_docente
+    
+    elif perfil == "tecnico":
         
-        novo_aluno_pos_ic.plano_trabalho = request.POST.get('plano_trabalho')
-        novo_aluno_pos_ic.declaracao_ciencia_orientador = request.POST.get('declaracao_orientador')
+        verifica_email = request.POST.get('email_inst')
 
-        login = preLogin.objects.filter(email_inst=email, senha=senha).first()
-        novo_aluno_pos_ic.id_login = login
+        try:
+            login_obj = Login.objects.get(email_inst=verifica_email)
+            # Se o objeto existe, faça algo com login_obj
+            mensagem = 'O email que você digitou já possui cadastro'
+            return render(request, 'cad_aluno_pos_dout_ic.html', {'mensagem': mensagem})
+        except Login.DoesNotExist:
+            # Se o objeto não existe, trate o caso aqui
 
-        request.session['login'] = login.id_pre_login
+            if not request.session.get('recadastro'):
+                email = request.POST.get('email_inst')
+                senha = request.POST.get('senha')
+                novo_login = preLogin()
+                novo_login.email_inst = request.POST.get('email_inst')
+                novo_login.senha = request.POST.get('senha')
+                novo_login.perfil = 'tecnico'
+                novo_login.password_change_required = False
+                novo_login.save()
+            else:
+                login = request.session.get('recadastro')
+                user = Login.objects.get(id_login=login)
+                user.perfil = 'tecnico'
+                user.password_change_required = False
+                user.save()
 
-        novo_aluno_pos_ic.save()
-        request.session['chave'] = novo_aluno_pos_ic.id_pre_cad_aluno_pos_ic
-        return render(request, 'form_termo.html')
+                email = user.email_inst
+                senha = user.senha
+
+                novo_login = preLogin()
+                novo_login.email_inst = user.email_inst
+                novo_login.senha = user.senha
+                novo_login.perfil = user.perfil
+                novo_login.password_change_required = user.password_change_required
+                novo_login.save()
+            
+
+            novo_tecnico = preCadTecnico()
+            novo_tecnico.primeiro_nome = request.POST.get('primeiro_nome')
+            novo_tecnico.segundo_nome = request.POST.get('segundo_nome')
+            novo_tecnico.celular = request.POST.get('tel')
+
+            novo_tecnico.matricula_siape = request.POST.get('mat_siape')
+            novo_tecnico.ramal_lab = request.POST.get('lab')
+
+            if request.POST.get('centro') == 'outros_centro' and request.POST.get('input_outros_centro'):
+                novo_tecnico.centro = request.POST.get('input_outros_centro')
+            
+            elif request.POST.get('centro') == 'outros_centro' and not request.POST.get('input_outros_centro'):
+                mensagem_centro = 'Se você é de outro centro, precisa preencher o campo dizendo qual é'
+                return render(request, 'cad_docente.html', {'mensagem_centro': mensagem_centro})
+            
+            elif request.POST.get('centro') != 'outros_centro' and request.POST.get('input_outros_centro'):
+                mensagem_centro = 'Não pode inserir nada no campo de texto sem escolher a opção outros'
+                return render(request, 'cad_docente.html', {'mensagem_centro': mensagem_centro})
+            
+            elif request.POST.get('centro') != 'outros_centro' and not request.POST.get('input_outros_centro'):
+                novo_tecnico.centro = request.POST.get('centro')
+
+            novo_tecnico.possui_projeto = request.POST.get('possui_projeto')
+        
+            login = preLogin.objects.filter(email_inst=email, senha=senha).first()
+            novo_tecnico.id_login = login
+
+            request.session['login'] = login.id_pre_login
+
+            novo_tecnico.save()
+            request.session['chave_cad'] = novo_tecnico.id_pre_cad_tecnico
+
+    elif perfil == "aluno_pos_dout_ic":
+        
+        verifica_email = request.POST.get('email_inst')
+
+        try:
+            login_obj = Login.objects.get(email_inst=verifica_email)
+
+            # Se o objeto existe, faça algo com login_obj
+            mensagem = 'O email que você digitou já possui cadastro'
+            return render(request, 'cad_aluno_pos_dout_ic.html', {'mensagem': mensagem})
+        except Login.DoesNotExist:
+            # Se o objeto não existe, trate o caso aqui
+                
+            if not request.session.get('recadastro'):
+                email = request.POST.get('email_inst')
+                senha = request.POST.get('senha')
+                novo_login = preLogin()
+                novo_login.email_inst = request.POST.get('email_inst')
+                novo_login.senha = request.POST.get('senha')
+                novo_login.perfil = 'aluno ou pos doc'
+                novo_login.password_change_required = False
+                novo_login.save()
+            else:
+                login = request.session.get('recadastro')
+                user = Login.objects.get(id_login=login)
+                user.perfil = 'aluno ou pos doc'
+                user.password_change_required = False
+                user.save()
+
+                email = user.email_inst
+                senha = user.senha
+
+                novo_login = preLogin()
+                novo_login.email_inst = user.email_inst
+                novo_login.senha = user.senha
+                novo_login.perfil = user.perfil
+                novo_login.password_change_required = user.password_change_required
+                novo_login.save()
+
+            novo_aluno_pos_ic = preCadAlunoPosIC()
+            novo_aluno_pos_ic.primeiro_nome = request.POST.get('primeiro_nome')
+            novo_aluno_pos_ic.segundo_nome = request.POST.get('segundo_nome')
+            novo_aluno_pos_ic.celular = request.POST.get('tel')
+            novo_aluno_pos_ic.matricula_ufabc = request.POST.get('matricula_ufabc')
+            novo_aluno_pos_ic.ramal_lab = request.POST.get('lab')
+            novo_aluno_pos_ic.nome_orientador = request.POST.get('nome_supervisor')
+            novo_aluno_pos_ic.data_pos = request.POST.get('data_inicio')
+
+            if request.POST.get('centro') == 'outro_centro':
+                if request.POST.get('input_outro_centro'):
+
+                    novo_aluno_pos_ic.centro = request.POST.get('input_outro_centro')
+                else:
+                    mensagem_outro_centro = 'Se você possui outro tipo de centro, precisa digitar qual é'
+                    return render(request, 'cad_aluno_pos_dout_ic.html', {'mensagem_outro_centro': mensagem_outro_centro})
+            else:
+                novo_aluno_pos_ic.centro = request.POST.get('centro')
+
+
+            if request.POST.get('bolsa') == 'outra_bolsa':
+                if request.POST.get('input_outra_bolsa'):
+
+                    novo_aluno_pos_ic.bolsa = request.POST.get('input_outra_bolsa')
+                else:
+                    mensagem_outra_bolsa = 'Se você possui outro tipo de bolsa, precisa digitar qual é'
+                    return render(request, 'cad_aluno_pos_dout_ic.html', {'mensagem_outra_bolsa': mensagem_outra_bolsa})
+            else:
+                novo_aluno_pos_ic.bolsa = request.POST.get('bolsa')
+
+            if request.POST.get('perfil') == 'outro_perfil':
+                if request.POST.get('input_outro_perfil'):
+
+                    novo_aluno_pos_ic.perfil = request.POST.get('input_outro_perfil')
+                else:
+                    mensagem_outro_perfil = 'Se você possui outro tipo de perfil, precisa digitar qual é'
+                    return render(request, 'cad_aluno_pos_dout_ic.html', {'mensagem_outro_perfil': mensagem_outro_perfil})
+            else:
+                novo_aluno_pos_ic.perfil = request.POST.get('perfil')
+            
+            
+            novo_aluno_pos_ic.plano_trabalho = request.POST.get('plano_trabalho')
+            novo_aluno_pos_ic.declaracao_ciencia_orientador = request.POST.get('declaracao_orientador')
+
+            login = preLogin.objects.filter(email_inst=email, senha=senha).first()
+            novo_aluno_pos_ic.id_login = login
+
+            request.session['login'] = login.id_pre_login
+
+            novo_aluno_pos_ic.save()
+            request.session['chave_cad'] = novo_aluno_pos_ic.id_pre_cad_aluno_pos_ic
+            return render(request, 'form_termo.html')
+
+    elif perfil == "pos_doc":
+        
+        verifica_email = request.POST.get('email_inst')
+
+        try:
+            login_obj = Login.objects.get(email_inst=verifica_email)
+            mensagem = 'O email que você digitou já possui cadastro'
+            return render(request, 'cad_user_pos_doc.html', {'mensagem': mensagem})
+            # Se o objeto existe, faça algo com login_obj
+        except Login.DoesNotExist:
+            # Se o objeto não existe, trate o caso aqui
+
+            if not request.session.get('recadastro'):
+                email = request.POST.get('email_inst')
+                senha = request.POST.get('senha')
+                novo_login = preLogin()
+                novo_login.email_inst = request.POST.get('email_inst')
+                novo_login.senha = request.POST.get('senha')
+                novo_login.perfil = 'aluno ou pos doc'
+                novo_login.password_change_required = False
+                novo_login.save()
+            else:
+                login = request.session.get('recadastro')
+                user = Login.objects.get(id_login=login)
+                user.perfil = 'aluno ou pos doc'
+                user.password_change_required = False
+                user.save()
+
+                email = user.email_inst
+                senha = user.senha
+
+                novo_login = preLogin()
+                novo_login.email_inst = user.email_inst
+                novo_login.senha = user.senha
+                novo_login.perfil = user.perfil
+                novo_login.password_change_required = user.password_change_required
+                novo_login.save()
+
+            novo_aluno_pos_ic = preCadAlunoPosIC()
+            novo_aluno_pos_ic.primeiro_nome = request.POST.get('primeiro_nome')
+            novo_aluno_pos_ic.segundo_nome = request.POST.get('segundo_nome')
+            novo_aluno_pos_ic.celular = request.POST.get('tel')
+            novo_aluno_pos_ic.matricula_ufabc = request.POST.get('matricula_ufabc')
+            novo_aluno_pos_ic.ramal_lab = request.POST.get('lab')
+            novo_aluno_pos_ic.nome_orientador = request.POST.get('nome_supervisor')
+            novo_aluno_pos_ic.data_pos = request.POST.get('data_inicio')
+
+            if request.POST.get('centro') == 'outro_centro':
+                if request.POST.get('input_outro_centro'):
+
+                    novo_aluno_pos_ic.centro = request.POST.get('input_outro_centro')
+                else:
+                    mensagem_outro_centro = 'Se você possui outro tipo de centro, precisa digitar qual é'
+                    return render(request, 'cad_user_pos_doc.html', {'mensagem_outro_centro': mensagem_outro_centro})
+            else:
+                novo_aluno_pos_ic.centro = request.POST.get('centro')
+
+
+            if request.POST.get('bolsa') == 'outra_bolsa':
+                if request.POST.get('input_outra_bolsa'):
+
+                    novo_aluno_pos_ic.bolsa = request.POST.get('input_outra_bolsa')
+                else:
+                    mensagem_outra_bolsa = 'Se você possui outro tipo de bolsa, precisa digitar qual é'
+                    return render(request, 'cad_user_pos_doc.html', {'mensagem_outra_bolsa': mensagem_outra_bolsa})
+            else:
+                novo_aluno_pos_ic.bolsa = request.POST.get('bolsa')
+
+            
+            novo_aluno_pos_ic.perfil = 'pós doc'
+                        
+            novo_aluno_pos_ic.plano_trabalho = request.POST.get('plano_trabalho')
+            novo_aluno_pos_ic.declaracao_ciencia_orientador = request.POST.get('declaracao_orientador')
+
+            login = preLogin.objects.filter(email_inst=email, senha=senha).first()
+            novo_aluno_pos_ic.id_login = login
+
+            request.session['login'] = login.id_pre_login
+
+            novo_aluno_pos_ic.save()
+            request.session['chave_cad'] = novo_aluno_pos_ic.id_pre_cad_aluno_pos_ic
+            return render(request, 'form_termo.html')
     
     elif perfil == "user_externo":
 
@@ -380,9 +482,9 @@ def form_termo(request):
         request.session['login'] = login.id_pre_login
 
         novo_user_externo.save()
-        request.session['chave'] = novo_user_externo.id_pre_cad_user_externo
+        request.session['chave_cad'] = novo_user_externo.id_pre_cad_user_externo
 
-    chave = request.session.get('chave', 'valor_padrão')
+    chave = request.session.get('chave_cad', 'valor_padrão')
     
     return render(request, 'form_termo.html')
 
@@ -397,7 +499,7 @@ def cadastrar_usuario(request):
 
     chave_termo = novo_termo.id_form_termo
 
-    chave = request.session.get('chave', 'valor_padrão')
+    chave = request.session.get('chave_cad', 'valor_padrão')
     perfil = request.session.get('perfil', 'valor_padrão')
     pre_login = request.session.get('login')
 
@@ -470,6 +572,41 @@ def cadastrar_usuario(request):
         
         novo_tecnico.id_login = login
         novo_tecnico.save()
+
+    elif perfil == "pos_doc":
+
+
+        if not request.session.get('recadastro'):
+                    
+            login = preLogin.objects.filter(id_pre_login=request.session.get('login')).first()
+
+            novo_login = Login()
+            novo_login.email_inst = login.email_inst
+            novo_login.senha = make_password(login.senha)
+            novo_login.perfil = login.perfil
+            novo_login.password_change_required = False
+            novo_login.data_cadastro = datetime.now()
+            novo_login.save()
+
+        pos_dout_ic = preCadAlunoPosIC.objects.filter(id_pre_cad_aluno_pos_ic=chave).first()
+
+        novo_pos_dout_ic = AlunoPosIC()
+        novo_pos_dout_ic.primeiro_nome = pos_dout_ic.primeiro_nome
+        novo_pos_dout_ic.segundo_nome = pos_dout_ic.segundo_nome
+        novo_pos_dout_ic.celular = pos_dout_ic.celular
+        novo_pos_dout_ic.matricula_ufabc = pos_dout_ic.matricula_ufabc
+        novo_pos_dout_ic.ramal_lab = pos_dout_ic.ramal_lab
+        novo_pos_dout_ic.nome_orientador = pos_dout_ic.nome_orientador
+        novo_pos_dout_ic.perfil = pos_dout_ic.perfil
+        novo_pos_dout_ic.data_pos = pos_dout_ic.data_pos
+        novo_pos_dout_ic.centro = pos_dout_ic.centro
+        novo_pos_dout_ic.bolsa = pos_dout_ic.bolsa
+        novo_pos_dout_ic.plano_trabalho = pos_dout_ic.plano_trabalho
+        novo_pos_dout_ic.declaracao_ciencia_orientador = pos_dout_ic.declaracao_ciencia_orientador
+        novo_pos_dout_ic.id_form_termo = novo_termo
+        login = Login.objects.get(email_inst=novo_login.email_inst, senha=novo_login.senha)
+        novo_pos_dout_ic.id_login = login
+        novo_pos_dout_ic.save()
 
     elif perfil == "aluno_pos_dout_ic":
 
@@ -574,7 +711,7 @@ def verifica_login_user(request):
                 # Se as credenciais estiverem corretas, redirecione para a página desejada
                 # Neste exemplo, redirecione para a página inicial ('home')
                 if usuario.password_change_required==False:
-                    if usuario.perfil == "docente" or usuario.perfil == "aluno" or usuario.perfil == "user_externo":
+                    if usuario.perfil == "docente" or usuario.perfil == "user_externo" or usuario.perfil == "aluno ou pos doc":
                         request.session['chave'] = usuario.id_login
                         usuario.data_ultimo_login = datetime.now()
                         usuario.save()
@@ -623,7 +760,7 @@ def perfil_user(request):
             user = PosDout.objects.get(id_pos_dout=chave)
             #return render(request, 'perfil_user.html', {'pos_doutorando': pos_doutorando})
         
-        elif login.perfil == 'aluno':
+        elif login.perfil == 'aluno ou pos doc':
             
             user = AlunoPosIC.objects.get(id_login=chave)
             #return render(request, 'perfil_user.html', {'aluno_pos_ic': aluno_pos_ic})
@@ -687,7 +824,7 @@ def edita_dados_user(request):
         #return render(request, 'perfil_user.html', {'pos_doutorando': pos_doutorando})
         return render(request, 'edita_dados_tecnico.html', {'user': user, 'login': login})
     
-    elif login.perfil == 'aluno':
+    elif login.perfil == 'aluno ou pos doc':
         
         user = AlunoPosIC.objects.get(id_login=chave)
         #return render(request, 'perfil_user.html', {'aluno_pos_ic': aluno_pos_ic})
@@ -742,7 +879,7 @@ def editando_dados(request):
 
         docente.save()
 
-    elif login.perfil == "aluno":
+    elif login.perfil == "aluno ou pos doc":
 
         primeiro_nome = request.POST.get('primeiro_nome')
         segundo_nome = request.POST.get('segundo_nome')

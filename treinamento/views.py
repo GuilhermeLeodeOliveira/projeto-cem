@@ -43,7 +43,6 @@ def treinamento(request):
     else:
         return HttpResponse('Precisa estar logado para acessar essa função')
     
-
 def solicitacoes(request):
     
     if 'chave' in request.session:
@@ -52,11 +51,17 @@ def solicitacoes(request):
         solicitacoes = Solicitacoes.objects.all()
 
         for solicitacao in solicitacoes:
-            aluno = AlunoPosIC.objects.filter(id_login=solicitacao.id_login)
-            docentes = Docente.objects.filter(id_login=solicitacao.id_login)
-            
+            aluno_associado = None
+
+            # Verificando se a solicitação está associada a um aluno
+            if solicitacao.id_login.perfil == 'aluno ou pos doc':
+                aluno_associado = AlunoPosIC.objects.filter(id_login=solicitacao.id_login).first()
+
+            solicitacao.aluno_nome = aluno_associado.primeiro_nome if aluno_associado else None
+
         equipamentos = Equipamento.objects.all()
-        return render(request, 'solicitacoes.html', {'equipamentos':equipamentos, 'solicitacoes': solicitacoes})
+        return render(request, 'solicitacoes.html', {'equipamentos': equipamentos, 'solicitacoes': solicitacoes})
+
 
 def solicitar_treinamento(request):
     
@@ -137,27 +142,23 @@ def gerar_csv(request):
         if "usuario" in request.POST:
             # Separe os valores com base no caractere "_"
             valores_usuarios = request.POST.getlist("usuario")
-            
+            nome = None
 
             for valor in valores_usuarios:
                 
-                nome, equipamento = valor.split("_")  # Separe o nome do equipamento_id
+                email, equipamento = valor.split("_")  # Separe o nome do equipamento_id
 
                 #solicitacao = Solicitacoes.objects.all()
 
-                if Solicitacoes.objects.filter(id_Docente__nome=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
-                    docente = Docente.objects.filter(nome=nome).first()
-                    email = docente.email_inst
+                if Login.objects.filter(email_inst=email).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
+                    login = Login.objects.get(email_inst=email)
+                    aluno_pos_ic = AlunoPosIC.objects.get(id_login=login.id_login)
+                    nome = aluno_pos_ic.primeiro_nome
                     
 
-                elif Solicitacoes.objects.filter(id_AlunoPosIC__nome=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
-                    aluno_pos_ic = AlunoPosIC.objects.filter(nome=nome).first()
-                    email = aluno_pos_ic.email_inst
-                    
-
-                elif Solicitacoes.objects.filter(id_UserExterno__nome=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
-                    user_externo = UserExterno.objects.filter(nome=nome).first()
-                    email = user_externo.email_inst
+                #elif Solicitacoes.objects.filter(id_UserExterno__nome=email).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
+                #    user_externo = UserExterno.objects.filter(nome=email).first()
+                #    email = user_externo.email_inst
                     
 
                 usuarios_selecionados.append([nome, email, equipamento])
@@ -194,27 +195,25 @@ def agendar_treinamento(request):
         if "usuario" in request.POST:
             # Separe os valores com base no caractere "_"
             valores_usuarios = request.POST.getlist("usuario")
-
+            nome = None
 
             for valor in valores_usuarios:
-
-                nome, equipamento = valor.split("_")  # Separe o nome do equipamento_id
+                
+                email, equipamento = valor.split("_")  # Separe o nome do equipamento_id
 
                 #solicitacao = Solicitacoes.objects.all()
 
-                if Solicitacoes.objects.filter(id_Docente__nome=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
-                    docente = Docente.objects.filter(nome=nome).first()
-                    email = docente.email_inst
+                if Login.objects.filter(email_inst=email).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
+                    login = Login.objects.get(email_inst=email)
+                    aluno_pos_ic = AlunoPosIC.objects.get(id_login=login.id_login)
+                    nome = aluno_pos_ic.primeiro_nome
                     
 
-                elif Solicitacoes.objects.filter(id_AlunoPosIC__nome=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
-                    aluno_pos_ic = AlunoPosIC.objects.filter(nome=nome).first()
-                    email = aluno_pos_ic.email_inst
                     
 
-                elif Solicitacoes.objects.filter(id_UserExterno__nome=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
-                    user_externo = UserExterno.objects.filter(nome=nome).first()
-                    email = user_externo.email_inst
+                #elif Solicitacoes.objects.filter(id_UserExterno__nome=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
+                #    user_externo = UserExterno.objects.filter(nome=nome).first()
+                #    email = user_externo.email_inst
                     
                     
                 usuarios_selecionados.append([nome, email, equipamento])
@@ -242,39 +241,42 @@ def concluir_agendamento(request):
             novo_treinamento.hora_termino_treinamento = request.POST.get(f'termino_{nome}_{email}_{equipamento}')
             novo_treinamento.local_treinamento = request.POST.get(f'local_{nome}_{email}_{equipamento}')
             
-            if Solicitacoes.objects.filter(id_Docente__nome=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
-                docente = Docente.objects.get(nome=nome)
-                novo_treinamento.id_Docente = docente
-                solicitacao = Solicitacoes.objects.get(id_Docente__nome=nome, id_Docente__email_inst=email, id_equipamento__nome=equipamento)
-                if solicitacao:
-                    # Modifique o status da solicitação
-                    solicitacao.status = 'em processo'
-                    solicitacao.save()
-                novo_treinamento.id_solicitacao=solicitacao
+            #if Solicitacoes.objects.filter(id_Docente__nome=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
+            #    docente = Docente.objects.get(nome=nome)
+            #    novo_treinamento.id_Docente = docente
+            #    solicitacao = Solicitacoes.objects.get(id_Docente__nome=nome, id_Docente__email_inst=email, id_equipamento__nome=equipamento)
+            #    if solicitacao:
+            #        # Modifique o status da solicitação
+            #        solicitacao.status = 'em processo'
+            #        solicitacao.save()
+            #    novo_treinamento.id_solicitacao=solicitacao
             
-            elif Solicitacoes.objects.filter(id_AlunoPosIC__nome=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
-                aluno_pos_ic = AlunoPosIC.objects.get(nome=nome)
+            if Treinamento.objects.filter(id_login__email=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
+                login = Login.objects.get(email_inst=email)
+                aluno_pos_ic = AlunoPosIC.objects.get(id_login=login.id_login)
+                nome = aluno_pos_ic.primeiro_nome
+
                 novo_treinamento.id_AlunoPosIC = aluno_pos_ic
-                solicitacao = Solicitacoes.objects.get(id_AlunoPosIC__nome=nome, id_AlunoPosIC__email_inst=email, id_equipamento__nome=equipamento)
+                solicitacao = Solicitacoes.objects.get(id_login=login.id_login, id_equipamento__nome=equipamento)
                 if solicitacao:
                     # Modifique o status da solicitação
                     solicitacao.status = 'em processo'
                     solicitacao.save()
                 novo_treinamento.id_solicitacao=solicitacao
             
-            elif Solicitacoes.objects.filter(id_UserExterno__nome=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
-                user_externo = UserExterno.objects.get(nome=nome)
-                novo_treinamento.id_UserExterno = user_externo
-                solicitacao = Solicitacoes.objects.get(id_UserExterno__nome=nome, id_UserExterno__email_inst=email, id_equipamento__nome=equipamento)
-                if solicitacao:
-                    # Modifique o status da solicitação
-                    solicitacao.status = 'em processo'
-                    solicitacao.save()
-                novo_treinamento.id_solicitacao=solicitacao
+           #elif Solicitacoes.objects.filter(id_UserExterno__nome=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
+           #    user_externo = UserExterno.objects.get(nome=nome)
+           #    novo_treinamento.id_UserExterno = user_externo
+           #    solicitacao = Solicitacoes.objects.get(id_UserExterno__nome=nome, id_UserExterno__email_inst=email, id_equipamento__nome=equipamento)
+           #    if solicitacao:
+           #        # Modifique o status da solicitação
+           #        solicitacao.status = 'em processo'
+           #        solicitacao.save()
+           #    novo_treinamento.id_solicitacao=solicitacao
 
             equip = Equipamento.objects.get(nome=equipamento)
             novo_treinamento.id_equipamento = equip
-            
+            novo_treinamento.id_login = login.id_login
             novo_treinamento.save()
             
         # Limpe a lista de usuários selecionados da sessão após o processamento
@@ -297,31 +299,32 @@ def finalizar_treinamento(request):
             
             for valor in valores_usuarios:
                 
-                nome, equipamento = valor.split("_")  # Separe o nome do equipamento_id
+                email, equipamento = valor.split("_")  # Separe o nome do equipamento_id
 
                 #solicitacao = Solicitacoes.objects.all()
 
-                if Solicitacoes.objects.filter(id_Docente__nome=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
-                    solicitacao = Solicitacoes.objects.get(id_Docente__nome=nome, id_equipamento__nome = equipamento)
-                    if solicitacao.status == "em processo":
-                        docente = Docente.objects.filter(nome=nome).first()
-                        email = docente.email_inst
+                #if Solicitacoes.objects.filter(id_Docente__nome=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
+                #    solicitacao = Solicitacoes.objects.get(id_Docente__nome=nome, id_equipamento__nome = equipamento)
+                #    if solicitacao.status == "em processo":
+                #        docente = Docente.objects.filter(nome=nome).first()
+                #        email = docente.email_inst
                         
 
-                elif Solicitacoes.objects.filter(id_AlunoPosIC__nome=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
-                    solicitacao = Solicitacoes.objects.get(id_Aluno__nome = nome, id_equipamento__nome = equipamento)
+                if Treinamento.objects.filter(id_login__email=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
+                    login = Login.objects.get(email_inst=email)
+                    solicitacao = Solicitacoes.objects.get(id_login = login.id_login, id_equipamento__nome = equipamento)
                     if solicitacao.status == "em processo":
-                        aluno_pos_ic = AlunoPosIC.objects.filter(nome=nome).first()
-                        email = aluno_pos_ic.email_inst
+                        aluno_pos_ic = AlunoPosIC.objects.filter(id_login=login.id_login).first()
+                        
 
 
-                elif Solicitacoes.objects.filter(id_UserExterno__nome=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
-                    solicitacao = Solicitacoes.objects.get(id_UserExterno__nome=nome, id_equipamento__nome=equipamento)
-                    if solicitacao.status == "em processo":
-                        user_externo = UserExterno.objects.filter(nome=nome).first()
-                        email = user_externo.email_inst
+                #elif Solicitacoes.objects.filter(id_UserExterno__nome=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
+                #    solicitacao = Solicitacoes.objects.get(id_UserExterno__nome=nome, id_equipamento__nome=equipamento)
+                #    if solicitacao.status == "em processo":
+                #        user_externo = UserExterno.objects.filter(nome=nome).first()
+                #        email = user_externo.email_inst
 
-                usuarios_selecionados.append([nome, email, equipamento])
+                usuarios_selecionados.append([aluno_pos_ic.primeiro_nome, email, equipamento])
 
             # Armazene a lista de usuários selecionados na sessão
             request.session['usuarios_selecionados'] = usuarios_selecionados
@@ -348,41 +351,42 @@ def concluir_treinamento(request):
             justificativa = request.POST.get(f'justificativa_{nome}_{email}_{equipamento}')
             aptidao = request.POST.get(f'aptidao_{nome}_{email}_{equipamento}')
 
-            if Treinamento.objects.filter(id_Docente__nome=nome).exists() and Treinamento.objects.filter(id_equipamento__nome=equipamento).exists():
-                treinamento = Treinamento.objects.get(id_Docente__nome=nome, id_equipamento__nome=equipamento)
+            #if Treinamento.objects.filter(id_Docente__nome=nome).exists() and Treinamento.objects.filter(id_equipamento__nome=equipamento).exists():
+            #    treinamento = Treinamento.objects.get(id_Docente__nome=nome, id_equipamento__nome=equipamento)
+            #    treinamento.compareceu = compareceu
+            #    treinamento.justificativa = justificativa
+            #    treinamento.aptidao = aptidao
+            #    solicitacao = Solicitacoes.objects.get(id_Docente__nome=nome, id_Docente__email_inst=email, id_equipamento__nome=equipamento)
+            #    if solicitacao:
+            #        # Modifique o status da solicitação
+            #        solicitacao.status = 'finalizado'
+            #        solicitacao.save()
+            #    treinamento.save()
+            
+            if Treinamento.objects.filter(id_login__email_inst=email).exists() and Treinamento.objects.filter(id_equipamento__nome=equipamento).exists():
+                
+                treinamento = Treinamento.objects.get(id_login__email_inst=email, id_equipamento__nome=equipamento)
                 treinamento.compareceu = compareceu
                 treinamento.justificativa = justificativa
                 treinamento.aptidao = aptidao
-                solicitacao = Solicitacoes.objects.get(id_Docente__nome=nome, id_Docente__email_inst=email, id_equipamento__nome=equipamento)
+                solicitacao = Solicitacoes.objects.get(id_login__email_inst=email, id_equipamento__nome=equipamento)
                 if solicitacao:
                     # Modifique o status da solicitação
                     solicitacao.status = 'finalizado'
                     solicitacao.save()
                 treinamento.save()
             
-            elif Treinamento.objects.filter(id_AlunoPosIC__nome=nome).exists() and Treinamento.objects.filter(id_equipamento__nome=equipamento).exists():
-                treinamento = Treinamento.objects.get(id_AlunoPosIC__nome=nome, id_equipamento__nome=equipamento)
-                treinamento.compareceu = compareceu
-                treinamento.justificativa = justificativa
-                treinamento.aptidao = aptidao
-                solicitacao = Solicitacoes.objects.get(id_AlunoPosIC__nome=nome, id_AlunoPosIC__email_inst=email, id_equipamento__nome=equipamento)
-                if solicitacao:
-                    # Modifique o status da solicitação
-                    solicitacao.status = 'finalizado'
-                    solicitacao.save()
-                treinamento.save()
-            
-            elif Treinamento.objects.filter(id_UserExterno__nome=nome).exists() and Treinamento.objects.filter(id_equipamento__nome=equipamento).exists():
-                treinamento = Treinamento.objects.get(id_UserExterno__nome=nome, id_equipamento__nome=equipamento)
-                treinamento.compareceu = compareceu
-                treinamento.justificativa = justificativa
-                treinamento.aptidao = aptidao
-                solicitacao = Solicitacoes.objects.get(id_UserExterno__nome=nome, id_UserExterno__email_inst=email, id_equipamento__nome=equipamento)
-                if solicitacao:
-                    # Modifique o status da solicitação
-                    solicitacao.status = 'finalizado'
-                    solicitacao.save()
-                treinamento.save()
+            #elif Treinamento.objects.filter(id_UserExterno__nome=nome).exists() and Treinamento.objects.filter(id_equipamento__nome=equipamento).exists():
+            #    treinamento = Treinamento.objects.get(id_UserExterno__nome=nome, id_equipamento__nome=equipamento)
+            #    treinamento.compareceu = compareceu
+            #    treinamento.justificativa = justificativa
+            #    treinamento.aptidao = aptidao
+            #    solicitacao = Solicitacoes.objects.get(id_UserExterno__nome=nome, id_UserExterno__email_inst=email, id_equipamento__nome=equipamento)
+            #    if solicitacao:
+            #        # Modifique o status da solicitação
+            #        solicitacao.status = 'finalizado'
+            #        solicitacao.save()
+            #    treinamento.save()
 
             
             
