@@ -23,12 +23,12 @@ def treinamento(request):
         # Verifique o tipo de perfil e obtenha as solicitações correspondentes
         if login.perfil == 'docente':
             user = Docente.objects.get(id_login=chave)
-            solicitacoes_usuario = Solicitacoes.objects.filter(id_Docente=user.id_docente)
+            solicitacoes_usuario = Solicitacoes.objects.filter(id_login=login)
         elif login.perfil == 'pos_doutorando':
             solicitacoes_usuario = Solicitacoes.objects.filter(id_PosDout=chave)
-        elif login.perfil == 'aluno':
+        elif login.perfil == 'aluno' or login.perfil == 'aluno ou pos doc':
             user = AlunoPosIC.objects.get(id_login=chave)
-            solicitacoes_usuario = Solicitacoes.objects.filter(id_AlunoPosIC=user)
+            solicitacoes_usuario = Solicitacoes.objects.filter(id_login=login)
         elif login.perfil == 'user_externo':
             solicitacoes_usuario = Solicitacoes.objects.filter(id_UserExterno=chave)
         else:
@@ -77,19 +77,11 @@ def solicitar_treinamento(request):
             # Verifique se já existe uma solicitação para o usuário e o equipamento
             usuario = None
 
-            if login.perfil == 'docente':
-                usuario = Docente.objects.get(id_login=chave)
-                campo_usuario = 'id_Docente'
-            elif login.perfil == 'aluno':
-                usuario = AlunoPosIC.objects.get(id_aluno_pos_ic=chave)
-                campo_usuario = 'id_AlunoPosIC'
-            elif perfil_user == 'user_externo':
-                usuario = UserExterno.objects.get(id_user_externo=chave)
-                campo_usuario = 'id_UserExterno'
+            
 
             equipamento = Equipamento.objects.get(nome=equipamento_nome)
 
-            if Solicitacoes.objects.filter(**{campo_usuario: usuario, 'id_equipamento': equipamento}).exists():
+            if Solicitacoes.objects.filter(id_login=login, **{'id_equipamento': equipamento}).exists():
                 # Já existe uma solicitação para esse usuário e equipamento
                 # Você pode decidir o que fazer aqui, redirecionar para uma página de erro, etc.
                 return HttpResponse('Você já realizou uma solicitação para esse equipamento')
@@ -112,7 +104,7 @@ def solicitar_treinamento(request):
 
             chave = request.session['chave']
 
-            nova_solicitacao.id_login = chave                
+            nova_solicitacao.id_login = login                
 
             nova_solicitacao.id_equipamento = equipamento
 
