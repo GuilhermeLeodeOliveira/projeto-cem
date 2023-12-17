@@ -49,19 +49,10 @@
 
                             {% if solicitacao.id_login.perfil == 'docente' %}
                         
-                                <td>{{ id_login.id_docente.primeiro_nome }}</td>
-                                <td>{{ solicitacao.id_login.email_inst }}</td>
+                                <td>{{ solicitacao.docente_nome }}</td>
                                 <td>{{ solicitacao.id_equipamento }}</td>
                                 <td>{{ solicitacao.status }}</td>
-                                <td><input type="checkbox" name="usuario" value="{{ solicitacao.id_Docente.nome }}_{{ solicitacao.id_equipamento }}" id=""></td>
-
-                            {% elif solicitacao.id_PosDout %}
-                        
-                                <td>{{solicitacao.id_PosDout.nome}}</td>
-                                <td>{{solicitacao.id_PosDout.email_inst}}</td>
-                                <td>{{ solicitacao.id_equipamento }}</td>
-                                <td>{{ solicitacao.status }}</td>
-                                <td><input type="checkbox" name="usuario" value="{{ solicitacao.id_PosDout.primeiro_nome }}_{{ solicitacao.id_equipamento }}" id=""></td>
+                                <td><input type="checkbox" name="usuario" value="{{ solicitacao.id_login.email_inst }}_{{ solicitacao.id_equipamento }}" id=""></td>
 
                             {% elif solicitacao.id_login.perfil == 'aluno ou pos doc' %}
                             

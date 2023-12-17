@@ -56,8 +56,12 @@ def solicitacoes(request):
             # Verificando se a solicitação está associada a um aluno
             if solicitacao.id_login.perfil == 'aluno ou pos doc':
                 aluno_associado = AlunoPosIC.objects.filter(id_login=solicitacao.id_login).first()
+                solicitacao.aluno_nome = aluno_associado.primeiro_nome if aluno_associado else None
+            elif solicitacao.id_login.perfil == 'docente':
+                docente_associado = Docente.objects.filter(id_login=solicitacao.id_login).first()
+                solicitacao.docente_nome = docente_associado.primeiro_nome if docente_associado else None
 
-            solicitacao.aluno_nome = aluno_associado.primeiro_nome if aluno_associado else None
+            #solicitacao.aluno_nome = aluno_associado.primeiro_nome if aluno_associado else None
 
         equipamentos = Equipamento.objects.all()
         return render(request, 'solicitacoes.html', {'equipamentos': equipamentos, 'solicitacoes': solicitacoes})
@@ -121,7 +125,6 @@ def solicitacoes_user(request):
 
     solicitacoes = Solicitacoes.objects.filter(id_login=login)        
     treinamento = Treinamento.objects.filter(id_login=login)
-
 
     return render(request, 'solicitacoes_user.html', {'solicitacoes': solicitacoes, 'treinamento': treinamento})
 
@@ -197,11 +200,22 @@ def agendar_treinamento(request):
 
                 if Login.objects.filter(email_inst=email).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
                     login = Login.objects.get(email_inst=email)
-                    aluno_pos_ic = AlunoPosIC.objects.get(id_login=login.id_login)
-                    nome = aluno_pos_ic.primeiro_nome
                     
+                    try:
+                        aluno_pos_ic = AlunoPosIC.objects.get(id_login=login)
+                        nome = aluno_pos_ic.primeiro_nome
+                    except AlunoPosIC.DoesNotExist:
+                        aluno_pos_ic = None
+                        nome = None
 
-                    
+                    if aluno_pos_ic is None:
+                        try:
+                            docente = Docente.objects.get(id_login=login)
+                            nome = docente.primeiro_nome
+                        except Docente.DoesNotExist:
+                            # Tratar o caso em que nem AlunoPosIC nem Docente foram encontrados
+                            return HttpResponse("Usuário não encontrado") 
+
 
                 #elif Solicitacoes.objects.filter(id_UserExterno__nome=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
                 #    user_externo = UserExterno.objects.filter(nome=nome).first()
@@ -243,12 +257,24 @@ def concluir_agendamento(request):
             #        solicitacao.save()
             #    novo_treinamento.id_solicitacao=solicitacao
             
-            if Treinamento.objects.filter(id_login__email=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
+            if Solicitacoes.objects.filter(id_login__email_inst=email).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
                 login = Login.objects.get(email_inst=email)
-                aluno_pos_ic = AlunoPosIC.objects.get(id_login=login.id_login)
-                nome = aluno_pos_ic.primeiro_nome
+                
+                try:
+                    aluno_pos_ic = AlunoPosIC.objects.get(id_login=login)
+                    nome = aluno_pos_ic.primeiro_nome
+                except AlunoPosIC.DoesNotExist:
+                    aluno_pos_ic = None
+                    nome = None
 
-                novo_treinamento.id_AlunoPosIC = aluno_pos_ic
+                if aluno_pos_ic is None:
+                    try:
+                        docente = Docente.objects.get(id_login=login)
+                        nome = docente.primeiro_nome
+                    except Docente.DoesNotExist:
+                        # Tratar o caso em que nem AlunoPosIC nem Docente foram encontrados
+                        return HttpResponse("Usuário não encontrado") 
+                
                 solicitacao = Solicitacoes.objects.get(id_login=login.id_login, id_equipamento__nome=equipamento)
                 if solicitacao:
                     # Modifique o status da solicitação
@@ -266,10 +292,18 @@ def concluir_agendamento(request):
            #        solicitacao.save()
            #    novo_treinamento.id_solicitacao=solicitacao
 
-            equip = Equipamento.objects.get(nome=equipamento)
-            novo_treinamento.id_equipamento = equip
-            novo_treinamento.id_login = login.id_login
-            novo_treinamento.save()
+                equip = Equipamento.objects.get(nome=equipamento)
+                novo_treinamento.id_equipamento = equip
+                novo_treinamento.id_login = login
+
+                chave = request.session['chave']
+                login_tecnico = Login.objects.get(id_login=chave)
+
+                novo_treinamento.id_login_tecnico = login_tecnico
+                novo_treinamento.save()
+
+            else:
+                return HttpResponse('Erro interno, entre em contato com a CEM')
             
         # Limpe a lista de usuários selecionados da sessão após o processamento
         del request.session['usuarios_selecionados']
@@ -302,21 +336,31 @@ def finalizar_treinamento(request):
                 #        email = docente.email_inst
                         
 
-                if Treinamento.objects.filter(id_login__email=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
+                if Treinamento.objects.filter(id_login__email_inst=email).exists() and Treinamento.objects.filter(id_equipamento__nome=equipamento).exists():
+                    
                     login = Login.objects.get(email_inst=email)
                     solicitacao = Solicitacoes.objects.get(id_login = login.id_login, id_equipamento__nome = equipamento)
+                    
                     if solicitacao.status == "em processo":
-                        aluno_pos_ic = AlunoPosIC.objects.filter(id_login=login.id_login).first()
+
+                        try:
+                            user = AlunoPosIC.objects.get(id_login=login)
+                        except AlunoPosIC.DoesNotExist:
+                            try:
+                                user = Docente.objects.get(id_login=login)
+                            except Docente.DoesNotExist:
+                                # Lidar com o caso em que nem AlunoPosIC nem Docente foram encontrados
+                                return HttpResponse('Erro! Você está tentando passar um usuário não cadastrado, entre em contato com a CEM!')
+
                         
-
-
                 #elif Solicitacoes.objects.filter(id_UserExterno__nome=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
                 #    solicitacao = Solicitacoes.objects.get(id_UserExterno__nome=nome, id_equipamento__nome=equipamento)
                 #    if solicitacao.status == "em processo":
                 #        user_externo = UserExterno.objects.filter(nome=nome).first()
                 #        email = user_externo.email_inst
 
-                usuarios_selecionados.append([aluno_pos_ic.primeiro_nome, email, equipamento])
+
+                usuarios_selecionados.append([user.primeiro_nome, email, equipamento])
 
             # Armazene a lista de usuários selecionados na sessão
             request.session['usuarios_selecionados'] = usuarios_selecionados
