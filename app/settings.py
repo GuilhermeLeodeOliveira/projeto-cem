@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'django_extensions',
     'administracao',
     'treinamento',
+    'agendamentos',
+    'jsonfield',
 ]
 
 MIDDLEWARE = [

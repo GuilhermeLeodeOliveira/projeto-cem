@@ -297,7 +297,8 @@ def concluir_agendamento(request):
                 novo_treinamento.id_login = login
 
                 chave = request.session['chave']
-                login_tecnico = Login.objects.get(id_login=chave)
+                login = Login.objects.get(id_login=chave)
+                login_tecnico = Tecnico.objects.get(id_tecnico=login)
 
                 novo_treinamento.id_login_tecnico = login_tecnico
                 novo_treinamento.save()

@@ -588,6 +588,10 @@ def cadastrar_usuario(request):
             novo_login.data_cadastro = datetime.now()
             novo_login.save()
 
+        else: 
+            recadastro = request.session.get('recadastro')
+            login = Login.objects.get(id_login=recadastro)
+
         pos_dout_ic = preCadAlunoPosIC.objects.filter(id_pre_cad_aluno_pos_ic=chave).first()
 
         novo_pos_dout_ic = AlunoPosIC()
@@ -604,7 +608,7 @@ def cadastrar_usuario(request):
         novo_pos_dout_ic.plano_trabalho = pos_dout_ic.plano_trabalho
         novo_pos_dout_ic.declaracao_ciencia_orientador = pos_dout_ic.declaracao_ciencia_orientador
         novo_pos_dout_ic.id_form_termo = novo_termo
-        login = Login.objects.get(email_inst=novo_login.email_inst, senha=novo_login.senha)
+        
         novo_pos_dout_ic.id_login = login
         novo_pos_dout_ic.save()
 
