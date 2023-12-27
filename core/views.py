@@ -954,3 +954,21 @@ def editando_dados(request):
 
 
     return redirect(perfil_user)
+
+def troca_senha(request):
+    return render(request, 'troca_senha.html')
+
+def trocando_senha(request):
+    email = request.POST.get('email')
+    senha = request.POST.get('senha')
+
+    login = Login.objects.get(email_inst=email)
+
+    senha = make_password(senha)
+
+    login.senha = senha
+    login.save()
+
+    menssagem_sucesso_cadastro = 'Alteração de senha completa'
+
+    return render(request, 'index.html', {'menssagem_sucesso_cadastro': menssagem_sucesso_cadastro})

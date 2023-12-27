@@ -55,6 +55,4 @@ btnSubmit.addEventListener("click", function() {
         event.preventDefault(); // Impede o envio do formulário se o usuário cancelar
     }
 
-    
-
 });

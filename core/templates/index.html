@@ -27,7 +27,13 @@
                 <input type="submit" value="logar" placeholder="senha" class="login_input">
             </div>
         </form>
-        <p class="text-center">Ainda não possui conta? <a class="" href="{% url "cadastro" %}">Cadastre-se</a></p>
+        <p class="text-center font-pequena">
+          Ainda não possui conta? <a class="" href="{% url "cadastro" %}">Cadastre-se</a><br>
+          <!--
+          Esqueceu a senha?<a class="" href="{% url "troca_senha" %}">Esqueci minha senha</a>
+          -->
+        </p>
+        
     </div>
 </div>
 

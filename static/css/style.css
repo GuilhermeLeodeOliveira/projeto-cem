@@ -139,6 +139,10 @@ td{
     
 }
 
+.font-pequena{
+    font-size: small;
+}
+
 .finalizar-treinamento{
     border: #000 solid 1px;
     margin-top: 10px;
