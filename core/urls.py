@@ -33,5 +33,6 @@ urlpatterns = [
     path('editando_dados/', editando_dados, name='editando_dados'),
     path('troca_senha/', troca_senha, name='troca_senha'),
     path('trocando_senha/', trocando_senha, name='trocando_senha'),
+    path('agendamentos/', include('agendamentos.urls'), name='agendamentos'),
 
 ]
