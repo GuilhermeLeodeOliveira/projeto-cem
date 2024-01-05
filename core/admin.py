@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Usuario, ProgramaPosGraduacao, FormTermo, Docente, Login, preLogin
-from .models import AlunoPosIC, preCadDocente, preCadUserExterno, UserExterno
+from .models import AlunoPosIC, preCadDocente, preCadUserExterno, UserExterno, preCadAlunoPosIC
 # Register your models here.
 
 admin.site.register(Usuario)
@@ -13,3 +13,4 @@ admin.site.register(preCadUserExterno)
 admin.site.register(UserExterno)
 admin.site.register(Login)
 admin.site.register(preLogin)
+admin.site.register(preCadAlunoPosIC)

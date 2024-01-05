@@ -89,7 +89,7 @@ class AlunoPosIC(models.Model):
     data_pos = models.DateField()
     centro = models.CharField(max_length=30)
     bolsa = models.CharField(max_length=30)
-    plano_trabalho = models.TextField(max_length=255)
+    plano_trabalho = models.TextField()
     declaracao_ciencia_orientador = models.CharField(max_length=3)
     id_form_termo = models.ForeignKey(FormTermo, on_delete=models.CASCADE, null=False)
     id_login = models.ForeignKey(Login, on_delete=models.CASCADE, null=False, default=0)
@@ -114,7 +114,7 @@ class preCadAlunoPosIC(models.Model):
     data_pos = models.DateField()
     centro = models.CharField(max_length=10)
     bolsa = models.CharField(max_length=10)
-    plano_trabalho = models.TextField(max_length=255)
+    plano_trabalho = models.TextField()
     declaracao_ciencia_orientador = models.CharField(max_length=3)
     id_login = models.ForeignKey(preLogin, on_delete=models.CASCADE, null=False, default=0)
 
