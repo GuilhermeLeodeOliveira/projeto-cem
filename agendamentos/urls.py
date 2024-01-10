@@ -5,5 +5,6 @@ from . import views
 
 urlpatterns = [
     path('agendamentos/', agendamentos, name='agendamentos'),
+    path('agendamento/calendario_equipamento/<int:id_equipamento>/', views.calendario_equipamento, name='calendario_equipamento')
 
 ]

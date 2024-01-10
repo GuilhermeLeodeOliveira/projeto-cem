@@ -2,8 +2,9 @@ import csv
 from django.template import loader, Context
 
 from datetime import datetime
-from django.shortcuts import render, redirect, reverse
-#from .models import 
+from django.shortcuts import render, redirect, reverse, get_object_or_404
+
+from .models import Agendamento
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.http import JsonResponse
 from equipamentos.models import Equipamento
@@ -34,11 +35,13 @@ def agendamentos(request):
         else:
             solicitacoes_usuario = None
 
-        # Se houver solicitações para o usuário, exclua os equipamentos associados a essas solicitações
-        if solicitacoes_usuario:
-            equipamentos = Equipamento.objects.exclude(id_equipamento__in=solicitacoes_usuario.values('id_equipamento'))
-        else:
-            equipamentos = Equipamento.objects.all()
+        
+        equipamentos = Equipamento.objects.all()
         return render(request, 'agendamento.html', {'equipamentos': equipamentos})
     else:
         return HttpResponse('Precisa estar logado para acessar essa função')
+    
+def calendario_equipamento(request, id_equipamento):
+    agendamentos = Agendamento.objects.all()
+    equipamento = get_object_or_404(Equipamento, id_equipamento=id_equipamento)
+    return render(request, 'agendamentos/calendario_equipamento.html', {'equipamento': equipamento, 'agendamentos': agendamentos})

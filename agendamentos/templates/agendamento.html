@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block conteudo %}
+
+<div class="container">
+    <h1>Equipamentos</h1>
+    <div class="d-flex justfy-content-between form_solicita_treinamento">
+        <select name="equipamento" id="equipamento" onchange="filtrarEquipamentos()">
+            <option value="">Digite um nome</option>
+            {% for equipamento in equipamentos %}
+            <option value="{{ equipamento.nome }}">{{ equipamento.nome }}</option>
+            {% endfor %}
+        </select>
+        
+        <select name="apelido" id="apelido" onchange="filtrarEquipamentos()">
+            <option value="">Digite um apelido</option>
+            {% for equipamento in equipamentos %}
+            <option value="{{ equipamento.apelido }}">{{ equipamento.apelido }}</option>
+            {% endfor %}
+        </select>
+        
+        <select name="divisao" id="divisao" onchange="filtrarEquipamentos()">
+            <option value="">Digite uma divisão</option>
+            {% for equipamento in equipamentos %}
+            <option value="{{ equipamento.divisao }}">{{ equipamento.divisao }}</option>
+            {% endfor %}
+        </select>
+
+        <select name="localizacao" id="localizacao" onchange="filtrarEquipamentos()">
+            <option value="">Selecione uma localização</option>
+            <option value="Santo André">Santo André</option>
+            <option value="São Bernardo">São Bernardo</option>
+        </select>
+    </div>
+    <div class="tela">
+        
+        <table class="solicitacoes text-center" id="tabelaSolicitacoes">
+            <thead class="">
+                <tr class="">
+                    <th>Nome</th>
+                    <th>Apelido</th>
+                    <th>Divisão</th>
+                    <th>Localização</th>
+                </tr>
+            </thead>
+            <tbody>
+            <tbody id="tabelaEquipamentos">
+                {% for equipamento in equipamentos %}
+                    <tr>
+                        <td><a class="equipamento" href="{% url 'calendario_equipamento' id_equipamento=equipamento.id_equipamento %}">{{ equipamento.nome }}</a></td>
+                        <td>{{ equipamento.apelido }}</td>
+                        <td>{{ equipamento.divisao }}</td>
+                        <td>{{ equipamento.localizacao }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+  </div>
+    
+
+    <script>
+        function filtrarEquipamentos() {
+            let equipamentoSelecionado = document.getElementById("equipamento").value;
+            let apelidoSelecionado = document.getElementById("apelido").value;
+            let divisaoSelecionada = document.getElementById("divisao").value;
+        
+            let linhas = document.querySelectorAll("#tabelaEquipamentos tr");
+        
+            linhas.forEach(function(linha) {
+                let colunaNome = linha.querySelector("td:nth-child(1)");
+                let colunaApelido = linha.querySelector("td:nth-child(2)");
+                let colunaDivisao = linha.querySelector("td:nth-child(3)");
+        
+                if (
+                    (!equipamentoSelecionado || colunaNome.textContent === equipamentoSelecionado) &&
+                    (!apelidoSelecionado || colunaApelido.textContent === apelidoSelecionado) &&
+                    (!divisaoSelecionada || colunaDivisao.textContent === divisaoSelecionada)
+                ) {
+                    linha.style.display = "";
+                } else {
+                    linha.style.display = "none";
+                }
+            });
+        }
+
+        function filtrarEquipamentos() {
+            let localizacaoSelecionada = document.getElementById("localizacao").value;
+      
+            let linhas = document.querySelectorAll("#tabelaEquipamentos tr");
+      
+            linhas.forEach(function (linha) {
+              let colunaLocalizacao = linha.querySelector("td:nth-child(4)");  // Assumindo que a localização está na 4ª coluna
+      
+              if (
+                !localizacaoSelecionada ||
+                (localizacaoSelecionada === "Santo André" && colunaLocalizacao.textContent === "Santo André") ||
+                (localizacaoSelecionada === "São Bernardo" && colunaLocalizacao.textContent === "São Bernardo")
+              ) {
+                linha.style.display = "";
+              } else {
+                linha.style.display = "none";
+              }
+            });
+        }
+        
+    </script>
+    
+
+{% endblock %}
