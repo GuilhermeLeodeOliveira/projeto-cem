@@ -1,0 +1,22 @@
+{% extends 'administracao/base.html' %}
+
+{% load static %}
+
+{% block conteudo %}
+
+<div class="container">
+    
+    <form action="{% url 'cadastrar_calendario' %}" method="post">
+        {% csrf_token %}
+        <label for="ano">Digite o ano:</label><input type="number" name="ano" id="ano">
+        <label for="mes">Digite o mês:</label><input type="number" name="mes" id="mes">
+        <label for="qtdDias">Digite a QUANTIDADE DE DIAS nesse mês:</label><input type="number" name="qtdDias" id="qtdDias">
+        
+        <label for="diasOff"></label>
+        
+        <input type="submit" value="Cadastrar">
+    </form>
+
+</div>
+
+{% endblock %}
