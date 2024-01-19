@@ -1,7 +1,7 @@
 from django.contrib import admin
-from .models import Agendamento, DiaOff, Calendario
+from .models import Agendamento, Dia, Mes
 # Register your models here.
 
 admin.site.register(Agendamento)
-admin.site.register(DiaOff)
-admin.site.register(Calendario)
+admin.site.register(Dia)
+admin.site.register(Mes)

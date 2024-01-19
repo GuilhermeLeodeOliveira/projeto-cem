@@ -15,13 +15,20 @@ class Agendamento(models.Model):
     id_equipamento = models.ForeignKey(Equipamento, on_delete=models.CASCADE, blank=False, null=False)
     id_login = models.ForeignKey(Login, on_delete=models.CASCADE, blank=False, null=False, related_name='login_tecnico')
 
-class DiaOff(models.Model):
-    id_dia_off = models.AutoField(primary_key=True)
-    data = models.IntegerField()
-
-class Calendario(models.Model):
-    id_calendario = models.AutoField(primary_key=True)
+class Mes(models.Model):
+    id_mes = models.AutoField(primary_key=True)
+    nome = models.CharField(max_length=50)
     ano = models.IntegerField()
-    mes = models.IntegerField()
-    quantidade_dias = models.IntegerField()
-    dia_off = models.ManyToManyField(DiaOff, blank=True, null=True)
+
+    def __str__(self):
+        return self.nome
+
+class Dia(models.Model):
+    id_dia = models.AutoField(primary_key=True)
+    mes = models.ForeignKey(Mes, on_delete=models.CASCADE)
+    numero = models.IntegerField()
+    dia_da_semana = models.CharField(max_length=20)  # Pode ser 'segunda', 'terca', etc.
+    feriado = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.numero} - {self.dia_da_semana} ({'Feriado' if self.feriado else 'Dia útil'}) de {self.mes}"

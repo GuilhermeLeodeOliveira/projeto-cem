@@ -1,6 +1,6 @@
 from django.urls import path, include
 from .views import login_adm, verifica_login, dashboard, perfil_tecnico, encerrar_sessao_adm, edita_dados_tecnico
-from .views import editando_dados_tecnico, form_calendario, cadastrar_calendario
+from .views import editando_dados_tecnico, form_calendario
 from . import views
 
 urlpatterns = [
@@ -13,6 +13,5 @@ urlpatterns = [
     path('edita_dados_tecnico/', edita_dados_tecnico, name='edita_dados_tecnico'),
     path('editando_dados_tecnico/', editando_dados_tecnico, name='editando_dados_tecnico'),
     path('form_calendario/', form_calendario, name='form_calendario'),
-    path('cadastrar_calendario/', cadastrar_calendario, name='cadastrar_calendario'),
 
 ]

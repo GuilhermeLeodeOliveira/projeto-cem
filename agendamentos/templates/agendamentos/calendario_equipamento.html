@@ -2,9 +2,98 @@
 {% load static %}
 
 {% block conteudo %}
+  <div class="container">
+    <h1>{{ equipamento.nome }}</h1>
 
+    <div>
+      {% for mes in meses %}
+        <h2>{{ mes.nome }}</h2>
+        <table>
+          <thead>
+            <tr class="">
+              <th></th>
+              <th>8:00</th>
+              <th>8:30</th>
+              <th>9:00</th>
+              <th>9:30</th>
+              <th>10:00</th>
+              <th>10:30</th>
+              <th>11:00</th>
+              <th>11:30</th>
+              <th>12:00</th>
+              <th>12:30</th>
+              <th>13:00</th>
+              <th>13:30</th>
+              <th>14:00</th>
+              <th>14:30</th>
+              <th>15:00</th>
+              <th>15:30</th>
+              <th>16:00</th>
+              <th>16:30</th>
+              <th>17:00</th>
+              <th>17:30</th>
+              <th>18:00</th>
+              <th>18:30</th>
+              <th>19:00</th>
+              <th>19:30</th>
+              <th>20:00</th>
+              <th>20:30</th>
+              <th>21:00</th>
+              <th>21:30</th>
+              <th>22:00</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for dia in mes.dia_set.all|dictsort:'numero' %}
+              <tr>
+                {% if dia.feriado %}
+                  <td class="text-danger">{{ dia.numero }}</td>
+                {% elif dia.dia_da_semana == 'segunda' or dia.dia_da_semana == 'terca' or dia.dia_da_semana == 'quarta' or dia.dia_da_semana == 'quinta' or dia.dia_da_semana == 'sexta' %}
+                  <td class="text-success">{{ dia.numero }}</td>
+                {% else %}
+                  <td class="text-danger">{{ dia.numero }}</td>
+                {% endif %}
 
-<h1>{{equipamento.nome}}</h1>
+                {% for hora in horarios %}
+                  {% if dia.feriado %}
+                    <td>X</td>
+                  {% elif dia.dia_da_semana == 'segunda' or dia.dia_da_semana == 'terca' or dia.dia_da_semana == 'quarta' or dia.dia_da_semana == 'quinta' or dia.dia_da_semana == 'sexta' %}
+                  <td>
+                    <button class="btn-agendamento" onclick="openPopup('{{ dia.numero }}', '{{ hora }}', '{{ user.email }}')"></button>
+                  </td>
+                  {% else %}
+                    <td>X</td>
+                  {% endif %}
+                  
+                {% endfor %}
 
+                <!-- Coloque aqui o loop para os horários -->
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% endfor %}
+    </div>
+  </div>
 
+  <div id="reservationPopup" class="popup">
+    <h3 id="popupContent"></h3>
+    <button class="btn btn-danger" onclick="closePopup()">Fechar</button>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+  <script>
+    function openPopup(data, hora, email) {
+      var content = 'Data: ' + data + '<br>Horário: ' + hora + '<br>Email: ' + email
+      $('#popupContent').html(content)
+      $('#reservationPopup').show()
+    }
+    
+    function closePopup() {
+      $('#reservationPopup').hide()
+    }
+  </script>
 {% endblock %}

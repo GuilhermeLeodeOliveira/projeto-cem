@@ -149,6 +149,41 @@ td{
     padding: 10px;
 }
 
+h2{
+    text-align: center;
+}
+
+/* Seletor para remover o ponto (marcador) de todas as listas não ordenadas */
+ul, ol {
+    list-style-type: none;
+}
+
+/* Seletor específico para remover o ponto (marcador) de uma lista não ordenada */
+ul.no-bullet {
+    list-style-type: none;
+}
+
+th, td{
+    font-size:small;
+    text-align: center;
+}
+
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    z-index: 1000;
+}
+
+.btn-agendamento{
+    height: 20px;
+    width: 20px;
+}
+
 @media (max-width: 1000px){
 
     .form-equipamento .forms-cadastro .questao label {

@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from core.models import Login
 from django.urls import reverse
 from datetime import datetime
-from agendamentos.models import Agendamento, DiaOff, Calendario
+from agendamentos.models import Agendamento, Mes, Dia
 
 # Create your views here.
 def login_adm(request):
@@ -126,18 +126,18 @@ def form_calendario(request):
     return render(request, 'form_calendario.html', context)
 
 
-def cadastrar_calendario(request):
-    if request.method == 'POST':
-        ano = request.POST.get('ano')
-        mes = request.POST.get('mes')
-        qtdDias = request.POST.get('qtdDias')
-
-        novo_calendario = Calendario()
-        novo_calendario.ano = ano
-        novo_calendario.mes = mes
-        novo_calendario.quantidade_dias = qtdDias
-        novo_calendario.save()
-
-        return HttpResponse('Cadastro concluído com sucesso.')
-
-    return render(request, 'form_calendario.html', {'form_calendario': form_calendario})
+#def cadastrar_calendario(request):
+#    if request.method == 'POST':
+#        ano = request.POST.get('ano')
+#        mes = request.POST.get('mes')
+#        qtdDias = request.POST.get('qtdDias')
+#
+#        novo_calendario = Calendario()
+#        novo_calendario.ano = ano
+#        novo_calendario.mes = mes
+#        novo_calendario.quantidade_dias = qtdDias
+#        novo_calendario.save()
+#
+#        return HttpResponse('Cadastro concluído com sucesso.')
+#
+#    return render(request, 'form_calendario.html', {'form_calendario': form_calendario})

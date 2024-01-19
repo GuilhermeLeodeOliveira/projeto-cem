@@ -4,7 +4,7 @@ from django.template import loader, Context
 from datetime import datetime
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 
-from .models import Agendamento
+from .models import Agendamento, Dia, Mes
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.http import JsonResponse
 from equipamentos.models import Equipamento
@@ -44,4 +44,22 @@ def agendamentos(request):
 def calendario_equipamento(request, id_equipamento):
     agendamentos = Agendamento.objects.all()
     equipamento = get_object_or_404(Equipamento, id_equipamento=id_equipamento)
-    return render(request, 'agendamentos/calendario_equipamento.html', {'equipamento': equipamento, 'agendamentos': agendamentos})
+    
+    data_atual = datetime.now().date()
+    hora_atual = datetime.now().time()
+
+    # Extrai o mês e o ano da data atual
+    mes_atual = data_atual.month
+    ano_atual = data_atual.year
+
+    # Filtra os objetos Calendario com base no ano e mês atual ou maiores
+    meses = Mes.objects.all()
+
+    horarios = []
+    hora_inicial = 8.0  # Começando às 8:00
+
+    while hora_inicial <= 22.0:
+        horarios.append(f'{int(hora_inicial)}:{int((hora_inicial % 1) * 60):02d}')
+        hora_inicial += 0.5  # Incremento de 30 minutos
+
+    return render(request, 'agendamentos/calendario_equipamento.html', {'equipamento': equipamento, 'agendamentos': agendamentos, 'meses': meses, 'data_atual': data_atual, 'hora_atual': hora_atual, 'horarios': horarios})
