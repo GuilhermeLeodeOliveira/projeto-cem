@@ -11,7 +11,7 @@ class Agendamento(models.Model):
     hora_termino_agendamento = models.TimeField()
     data_solicitacao_agendamento = models.DateField()
     hora_solicitacao_agendamento = models.TimeField()
-    additional_info = models.JSONField()
+    additional_info = models.TextField()
     id_equipamento = models.ForeignKey(Equipamento, on_delete=models.CASCADE, blank=False, null=False)
     id_login = models.ForeignKey(Login, on_delete=models.CASCADE, blank=False, null=False, related_name='login_tecnico')
 

@@ -177,7 +177,40 @@ th, td{
     background-color: white;
     padding: 20px;
     z-index: 1000;
+    border: 1px solid #ccc;
+    box-shadow: 5px 5px 10px #000;
+    max-height: 80vh; /* Defina uma altura máxima como porcentagem da altura da tela */
+    overflow: auto;
+    width: 50%;
 }
+
+textarea.popup-agendamento{
+    height: 100px;
+}
+
+.btn-agendar{
+    border-radius: 5px;
+    background-color: #276d23;
+    color: #FFF;
+    font-size: larger;
+    border: solid #000 0px;
+    text-decoration: none;
+    padding: 10px 20px 10px 20px;
+    margin-bottom: 5px;
+}
+
+.reservationForm {
+    
+}
+  
+.reservationForm label {
+    width: 40%;
+}
+  
+.reservationForm input {
+    width: 60%;
+}
+  
 
 .btn-agendamento{
     height: 20px;
