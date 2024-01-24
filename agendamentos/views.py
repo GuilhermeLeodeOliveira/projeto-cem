@@ -48,8 +48,7 @@ def calendario_equipamento(request, id_equipamento):
     # Obtenha os objetos relevantes do banco de dados
     equipamento = get_object_or_404(Equipamento, id_equipamento=id_equipamento)
     agendamentos = Agendamento.objects.all()
-    meses = Mes.objects.all()
-
+    
     # Obtenha a data e a hora atuais
     data_atual = datetime.now().date()
     hora_atual = datetime.now().time()
@@ -57,6 +56,8 @@ def calendario_equipamento(request, id_equipamento):
     # Obtenha o mês e o ano atuais
     mes_atual = data_atual.month
     ano_atual = data_atual.year
+
+    meses = Mes.objects.filter(ano__gte=ano_atual, nome__gte=mes_atual)
 
     # Consulte o banco de dados para obter todos os dias anteriores ao dia atual
     dias_anteriores = Dia.objects.filter(mes__ano__lte=ano_atual, mes__nome__lte=mes_atual, numero__lte=data_atual.day)
@@ -102,8 +103,7 @@ def realizar_agendamento(request):
     # Verifica se já existe um agendamento para a data e horário fornecidos
     agendamento_existente = Agendamento.objects.filter(
         data_agendada=data,
-        hora_inicio_agendamento__lte=horaInicio,
-        hora_termino_agendamento__gte=horarioTermino
+        hora_inicio_agendamento__lte=horaInicio
     ).exists()
 
     if agendamento_existente:

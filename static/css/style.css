@@ -217,6 +217,37 @@ textarea.popup-agendamento{
     width: 20px;
 }
 
+.custom-next-btn, .custom-prev-btn{
+    color: #000; /* Cor do texto */
+    
+}
+
+.custom-next-btn:hover, .custom-prev-btn:hover{
+    color: #000; /* Cor do texto ao passar o mouse */
+    
+}
+
+.carousel-control-prev, .carousel-control-next {
+    position: absolute;
+    top: 50%;
+    left: 85%;
+    transform: translateY(-50%);
+    font-size: 30px; /* Ajuste o tamanho conforme necessário */
+    color: #000; /* Ajuste a cor conforme necessário */
+    border: none; /* Remova a borda */
+    text-decoration: none;
+    width: 20px;
+    cursor: pointer;
+}
+  
+.carousel-control-prev {
+    right: 0;
+}
+  
+.carousel-control-prev.custom-prev-btn {
+    left: 6%; /* Ajuste conforme necessário */
+}
+    
 @media (max-width: 1000px){
 
     .form-equipamento .forms-cadastro .questao label {

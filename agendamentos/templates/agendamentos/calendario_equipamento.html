@@ -2,75 +2,83 @@
 {% load static %}
 
 {% block conteudo %}
-  <div class="container">
-    <h1>{{ equipamento.nome }}</h1>
+  <h1>{{ equipamento.nome }}</h1>
 
-    <div>
+  <div id="carouselExample" class="carousel">
+    <div class="carousel-inner">
       {% for mes in meses %}
-        <h2>Mês: {{ mes.nome }} Ano: {{ mes.ano }}</h2>
-        <table>
-          <thead>
-            <tr class="">
-              <th></th>
-              <th>8:00</th>
-              <th>8:30</th>
-              <th>9:00</th>
-              <th>9:30</th>
-              <th>10:00</th>
-              <th>10:30</th>
-              <th>11:00</th>
-              <th>11:30</th>
-              <th>12:00</th>
-              <th>12:30</th>
-              <th>13:00</th>
-              <th>13:30</th>
-              <th>14:00</th>
-              <th>14:30</th>
-              <th>15:00</th>
-              <th>15:30</th>
-              <th>16:00</th>
-              <th>16:30</th>
-              <th>17:00</th>
-              <th>17:30</th>
-              <th>18:00</th>
-              <th>18:30</th>
-              <th>19:00</th>
-              <th>19:30</th>
-              <th>20:00</th>
-              <th>20:30</th>
-              <th>21:00</th>
-              <th>21:30</th>
-              <th>22:00</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for dia in mes.dia_set.all|dictsort:'numero' %}
-              <tr>
-                {% if dia.feriado %}
-                  <td class="text-danger">{{ dia.numero }}</td>
-                {% elif dia.dia_da_semana == 'segunda' or dia.dia_da_semana == 'terca' or dia.dia_da_semana == 'quarta' or dia.dia_da_semana == 'quinta' or dia.dia_da_semana == 'sexta' %}
-                  <td class="text-success">{{ dia.numero }}</td>
-                {% else %}
-                  <td class="text-danger">{{ dia.numero }}</td>
-                {% endif %}
+        <div class="container">
+          <div class="carousel-item {% if forloop.first %}{% endif %}">
+            <h2 id="mes-{{ mes.id }}" data-mes="{{ mes.nome }}" data-ano="{{ mes.ano }}">Mês: {{ mes.nome }} Ano: {{ mes.ano }}</h2>
+            <table>
+              <thead>
+                <tr class="">
+                  <th></th>
+                  <th>8:00</th>
+                  <th>8:30</th>
+                  <th>9:00</th>
+                  <th>9:30</th>
+                  <th>10:00</th>
+                  <th>10:30</th>
+                  <th>11:00</th>
+                  <th>11:30</th>
+                  <th>12:00</th>
+                  <th>12:30</th>
+                  <th>13:00</th>
+                  <th>13:30</th>
+                  <th>14:00</th>
+                  <th>14:30</th>
+                  <th>15:00</th>
+                  <th>15:30</th>
+                  <th>16:00</th>
+                  <th>16:30</th>
+                  <th>17:00</th>
+                  <th>17:30</th>
+                  <th>18:00</th>
+                  <th>18:30</th>
+                  <th>19:00</th>
+                  <th>19:30</th>
+                  <th>20:00</th>
+                  <th>20:30</th>
+                  <th>21:00</th>
+                  <th>21:30</th>
+                  <th>22:00</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for dia in mes.dia_set.all|dictsort:'numero' %}
+                  <tr>
+                    {% if dia.feriado %}
+                      <td class="text-danger">{{ dia.numero }}</td>
+                    {% elif dia.dia_da_semana == 'segunda' or dia.dia_da_semana == 'terca' or dia.dia_da_semana == 'quarta' or dia.dia_da_semana == 'quinta' or dia.dia_da_semana == 'sexta' %}
+                      <td class="text-success">{{ dia.numero }}</td>
+                    {% else %}
+                      <td class="text-danger">{{ dia.numero }}</td>
+                    {% endif %}
 
-                {% for hora in horarios %}
-                  {% if dia.feriado %}
-                    <td>X</td>
-                  {% elif dia.dia_da_semana == 'segunda' or dia.dia_da_semana == 'terca' or dia.dia_da_semana == 'quarta' or dia.dia_da_semana == 'quinta' or dia.dia_da_semana == 'sexta' %}
-                    <td>
-                      <button class="btn-agendamento" onclick="openPopup('{{ dia.numero }}', '{{ hora }}', '{{ user.email }}')"></button>
-                    </td>
-                  {% else %}
-                    <td>X</td>
-                  {% endif %}
+                    {% for hora in horarios %}
+                      {% if dia.feriado %}
+                        <td>X</td>
+                      {% elif dia.dia_da_semana == 'segunda' or dia.dia_da_semana == 'terca' or dia.dia_da_semana == 'quarta' or dia.dia_da_semana == 'quinta' or dia.dia_da_semana == 'sexta' %}
+                        <td>
+                          <button class="btn-agendamento" onclick="openPopup('{{ mes.nome }}', '{{ mes.id }}', '{{ dia.numero }}', '{{ hora }}', '{{ user.email }}')"></button>
+                        </td>
+                      {% else %}
+                        <td>X</td>
+                      {% endif %}
+                    {% endfor %}
+                  </tr>
                 {% endfor %}
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+              </tbody>
+            </table>
+          </div>
+        </div>
       {% endfor %}
     </div>
+    <a class="carousel-control-prev custom-prev-btn" onclick="changeSlide(-1)">❮</a>
+
+
+    <a class="carousel-control-next custom-next-btn" onclick="changeSlide(1)">❯</a>
   </div>
 
   <!-- Modifique o pop-up para incluir um formulário -->
@@ -106,62 +114,122 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
   <script>
+    // Lista de meses
+    var meses = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
+    
     // Função para converter nome do mês para formato de dois dígitos
     function mesParaNumero(mes) {
-      var meses = {
-          janeiro: '01',
-          fevereiro: '02',
-          março: '03',
-          abril: '04',
-          maio: '05',
-          junho: '06',
-          julho: '07',
-          agosto: '08',
-          setembro: '09',
-          outubro: '10',
-          novembro: '11',
-          dezembro: '12'
-      }
-
-      // Remove caracteres especiais e converte para minúsculas
-      var mesFormatado = mes.replace(/[^\w\s]/gi, '').toLowerCase();
-
-      return meses[mesFormatado] || mes;
-  }
-
-  // Função para formatar a data como "YYYY-MM-DD"
-  function formatarData(dia, mes, ano) {
+      return (meses.indexOf(mes.toLowerCase()) + 1).toString().padStart(2, '0')
+    }
+    
+    // Função para formatar a data como "YYYY-MM-DD"
+    function formatarData(dia, mes, ano) {
       // Adicione zeros à esquerda se necessário
-      mes = mes.padStart(2, '0');
-      dia = dia.padStart(2, '0');
+      mes = mes.padStart(2, '0')
+      dia = dia.padStart(2, '0')
+    
+      return ano + '-' + mes + '-' + dia
+    }
+    
+    // Função para abrir o popup
+    function openPopup(mesNome, mesId, dia, hora, email) {
+      // Mapear nome do mês para número
+      var mesNumerico
+      switch (mesNome.toLowerCase()) {
+        case 'janeiro':
+          mesNumerico = '01'
+          break
+        case 'fevereiro':
+          mesNumerico = '02'
+          break
+        case 'março':
+          mesNumerico = '03'
+          break
+        case 'abril':
+          mesNumerico = '04'
+          break
+        case 'maio':
+          mesNumerico = '05'
+          break
+        case 'junho':
+          mesNumerico = '06'
+          break
+        case 'julho':
+          mesNumerico = '07'
+          break
+        case 'agosto':
+          mesNumerico = '08'
+          break
+        case 'setembro':
+          mesNumerico = '09'
+          break
+        case 'outubro':
+          mesNumerico = '10'
+          break
+        case 'novembro':
+          mesNumerico = '11'
+          break
+        case 'dezembro':
+          mesNumerico = '12'
+          break
+        default:
+          mesNumerico = '01' // Valor padrão em caso de correspondência não encontrada
+      }
+    
+      // Encontrar o elemento h2 que contém informações de Mês e Ano
+      var mesAnoElement = $('h2#mes-' + mesId)
+    
+      if (mesAnoElement.length > 0) {
+        // Obter os valores dos atributos de dados
+        var ano = mesAnoElement.data('ano')
+    
+        // Formate a data como "YYYY-MM-DD"
+        var dataFormatada = formatarData(dia, mesNumerico, ano)
+    
+        // Preencha os campos do formulário
+        $('#dataInput').val(dataFormatada)
+        $('#dataHidden').val(dataFormatada) // Use um campo oculto para enviar a data no formulário
+        $('#emailParagraph').text('Email: ' + email)
+        $('#horarioInicio').val(hora)
+    
+        // Exiba o pop-up
+        $('#reservationPopup').show()
+      }
+    }
+    function closePopup() {
+      $('#reservationPopup').hide()
+    }
+  </script>
 
-      return ano + '-' + mes + '-' + dia;
-  }
-
-  // ...
-
-  // Função para abrir o popup
-  function openPopup(dia, hora, email) {
-      // Obtenha o mês e o ano do título
-      var mesAno = $('h2:contains("Mês:")').text().split('Ano: ');
-      var mes = mesAno[0].replace('Mês: ', '').trim();
-      var ano = mesAno[1].trim();
-
-      // Converta o nome do mês para o formato de dois dígitos
-      var mesNumerico = mesParaNumero(mes);
-
-      // Formate a data como "YYYY-MM-DD"
-      var dataFormatada = formatarData(dia, mesNumerico, ano);
-
-      // Preencha os campos do formulário
-      $('#dataInput').val(dataFormatada);
-      $('#dataHidden').val(dataFormatada); // Use um campo oculto para enviar a data no formulário
-      $('#emailParagraph').text('Email: ' + email);
-      $('#horarioInicio').val(hora);
-
-      // Exiba o pop-up
-      $('#reservationPopup').show();
-  }
-
+  <script>
+    var slideIndex = 0
+    
+    function showSlides() {
+      var slides = document.querySelectorAll('.carousel-item')
+    
+      for (var i = 0; i < slides.length; i++) {
+        slides[i].style.display = 'none'
+      }
+    
+      slides[slideIndex].style.display = 'block'
+    }
+    
+    function changeSlide(n) {
+      slideIndex += n
+    
+      var slides = document.querySelectorAll('.carousel-item')
+    
+      if (slideIndex >= slides.length) {
+        slideIndex = 0
+      }
+    
+      if (slideIndex < 0) {
+        slideIndex = slides.length - 1
+      }
+    
+      showSlides()
+    }
+    
+    showSlides()
   </script>
 {% endblock %}
