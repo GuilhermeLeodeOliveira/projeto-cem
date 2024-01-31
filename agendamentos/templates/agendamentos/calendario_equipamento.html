@@ -67,13 +67,11 @@
                                 {% with achou_agendamento=True %}
                                   <div class="bg-danger">X</div>
                                 {% endwith %}
-                                
                               {% endif %}
-                              
                             {% endfor %}
                             {% if not achou_agendamento %}
-                                <button class="btn-agendamento" onclick="openPopup('{{ mes.nome }}', '{{ mes.id }}', '{{ dia.numero }}', '{{ hora }}', '{{ user.email }}')"></button>
-                              {% endif %}
+                              <button class="btn-agendamento" onclick="openPopup('{{ mes.nome }}', '{{ mes.id }}', '{{ dia.numero }}', '{{ hora }}', '{{ user.email }}')"></button>
+                            {% endif %}
                           {% else %}
                             X
                           {% endif %}
