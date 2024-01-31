@@ -10,7 +10,7 @@
         <div class="container">
           <div class="carousel-item {% if forloop.first %}{% endif %}">
             <h2 id="mes-{{ mes.id }}" data-mes="{{ mes.nome }}" data-ano="{{ mes.ano }}">Mês: {{ mes.nome }} Ano: {{ mes.ano }}</h2>
-            <table>
+            <table class="mb-3">
               <thead>
                 <tr class="">
                   <th></th>
@@ -49,23 +49,36 @@
                 {% for dia in mes.dia_set.all|dictsort:'numero' %}
                   <tr>
                     {% if dia.feriado %}
-                      <td class="text-danger">{{ dia.numero }}</td>
+                      <td class="">{{ dia.numero }}</td>
                     {% elif dia.dia_da_semana == 'segunda' or dia.dia_da_semana == 'terca' or dia.dia_da_semana == 'quarta' or dia.dia_da_semana == 'quinta' or dia.dia_da_semana == 'sexta' %}
-                      <td class="text-success">{{ dia.numero }}</td>
+                      <td class="">{{ dia.numero }}</td>
                     {% else %}
-                      <td class="text-danger">{{ dia.numero }}</td>
+                      <td class="">{{ dia.numero }}</td>
                     {% endif %}
 
                     {% for hora in horarios %}
-                      {% if dia.feriado %}
-                        <td>X</td>
-                      {% elif dia.dia_da_semana == 'segunda' or dia.dia_da_semana == 'terca' or dia.dia_da_semana == 'quarta' or dia.dia_da_semana == 'quinta' or dia.dia_da_semana == 'sexta' %}
-                        <td>
-                          <button class="btn-agendamento" onclick="openPopup('{{ mes.nome }}', '{{ mes.id }}', '{{ dia.numero }}', '{{ hora }}', '{{ user.email }}')"></button>
+                      {% with achou_agendamento=False %}
+                        <td class="p-2">
+                          {% if dia.feriado %}
+                            X
+                          {% elif dia.dia_da_semana == 'segunda' or dia.dia_da_semana == 'terca' or dia.dia_da_semana == 'quarta' or dia.dia_da_semana == 'quinta' or dia.dia_da_semana == 'sexta' %}
+                            {% for agendamento in agendamento_existente %}
+                              {% if dia.numero == agendamento.data_agendada|date:'d' and mes.numero == agendamento.data_agendada|date:'m' and agendamento.hora_inicio_agendamento|time:'H:i' <= hora and agendamento.hora_termino_agendamento|time:'H:i' >= hora %}
+                                {% with achou_agendamento=True %}
+                                  <div class="bg-danger">X</div>
+                                {% endwith %}
+                                
+                              {% endif %}
+                              
+                            {% endfor %}
+                            {% if not achou_agendamento %}
+                                <button class="btn-agendamento" onclick="openPopup('{{ mes.nome }}', '{{ mes.id }}', '{{ dia.numero }}', '{{ hora }}', '{{ user.email }}')"></button>
+                              {% endif %}
+                          {% else %}
+                            X
+                          {% endif %}
                         </td>
-                      {% else %}
-                        <td>X</td>
-                      {% endif %}
+                      {% endwith %}
                     {% endfor %}
                   </tr>
                 {% endfor %}
@@ -76,7 +89,6 @@
       {% endfor %}
     </div>
     <a class="carousel-control-prev custom-prev-btn" onclick="changeSlide(-1)">❮</a>
-
 
     <a class="carousel-control-next custom-next-btn" onclick="changeSlide(1)">❯</a>
   </div>

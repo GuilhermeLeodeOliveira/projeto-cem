@@ -9,15 +9,12 @@ h1 {
     margin: 0;
     padding: 0;
     list-style: none;
-    border: #000 solid 1px;
     width: 100%;
 }
 
 .sub-link{
     color: inherit; /* ou outra cor desejada */
     text-decoration: none;
-    display: flex;
-    justify-content:space-around;
 }
 
 .sub-item{
@@ -230,7 +227,7 @@ textarea.popup-agendamento{
 .carousel-control-prev, .carousel-control-next {
     position: absolute;
     top: 50%;
-    left: 85%;
+    left: 90%;
     transform: translateY(-50%);
     font-size: 30px; /* Ajuste o tamanho conforme necessário */
     color: #000; /* Ajuste a cor conforme necessário */

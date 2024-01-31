@@ -3,7 +3,8 @@ from django.template import loader, Context
 
 from datetime import datetime
 from django.shortcuts import render, redirect, reverse, get_object_or_404
-
+from datetime import timedelta
+from core.views import perfil_user
 from .models import Agendamento, Dia, Mes
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.http import JsonResponse
@@ -41,22 +42,30 @@ def agendamentos(request):
     else:
         return HttpResponse('Precisa estar logado para acessar essa função')
     
-def calendario_equipamento(request, id_equipamento):
+def mesParaNumero(mes_nome):
+    meses = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
+    return str(meses.index(mes_nome.lower()) + 1).zfill(2)
 
+
+def mesParaNumero(mes_nome):
+    meses = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
+    return str(meses.index(mes_nome.lower()) + 1).zfill(2)
+
+def calendario_equipamento(request, id_equipamento):
     request.session['id_equipamento'] = id_equipamento
 
     # Obtenha os objetos relevantes do banco de dados
     equipamento = get_object_or_404(Equipamento, id_equipamento=id_equipamento)
-    agendamentos = Agendamento.objects.all()
-    
+
     # Obtenha a data e a hora atuais
     data_atual = datetime.now().date()
-    hora_atual = datetime.now().time()
 
     # Obtenha o mês e o ano atuais
     mes_atual = data_atual.month
     ano_atual = data_atual.year
+    dia_atual = data_atual.day
 
+    # Filtra os meses com ano maior ou igual ao atual e nome maior ou igual ao mês atual
     meses = Mes.objects.filter(ano__gte=ano_atual, nome__gte=mes_atual)
 
     # Consulte o banco de dados para obter todos os dias anteriores ao dia atual
@@ -68,21 +77,26 @@ def calendario_equipamento(request, id_equipamento):
     # Crie uma lista de horários
     horarios = []
     hora_inicial = 8.0  # Começando às 8:00
-
     while hora_inicial <= 22.0:
-        horarios.append(f'{int(hora_inicial)}:{int((hora_inicial % 1) * 60):02d}')
+        hora_formatada = f'{int(hora_inicial)}:{int((hora_inicial % 1) * 60):02d}'
+        horarios.append(hora_formatada.zfill(5))  # Adiciona zeros à esquerda se necessário
         hora_inicial += 0.5  # Incremento de 30 minutos
+        
+    # Filtra os agendamentos para o equipamento, dia e hora específicos
+    agendamento_existente = Agendamento.objects.filter(id_equipamento=equipamento)
+    
+    value = datetime.now().date()
 
     # Passe os dados relevantes para o template
     contexto = {
         'equipamento': equipamento,
-        'agendamentos': agendamentos,
         'meses': meses,
-        'data_atual': data_atual,
-        'hora_atual': hora_atual,
         'horarios': horarios,
         'lista_dias_anteriores': lista_dias_anteriores,
+        'value': value,
+        'agendamento_existente': agendamento_existente,
     }
+
 
     return render(request, 'agendamentos/calendario_equipamento.html', contexto)
 
@@ -103,7 +117,7 @@ def realizar_agendamento(request):
     # Verifica se já existe um agendamento para a data e horário fornecidos
     agendamento_existente = Agendamento.objects.filter(
         data_agendada=data,
-        hora_inicio_agendamento__lte=horaInicio
+        hora_inicio_agendamento=horaInicio
     ).exists()
 
     if agendamento_existente:
@@ -125,8 +139,32 @@ def realizar_agendamento(request):
 
     # Restante do seu código...
 
-    
-
     # Redireciona de volta para a view calendario_equipamento
     return redirect('calendario_equipamento', id_equipamento=id_equipamento)
+    
+
+def agendamentos_user(request):
+    if 'chave' in request.session:
+
+        chave = request.session['chave']
+        login = Login.objects.get(id_login=chave)
+
+        if login.perfil == 'docente':
+            user = Docente.objects.get(id_login=chave)
+            #return render(request, 'perfil_user.html', {'docente': docente})
+        
+        elif login.perfil == 'aluno ou pos doc':
+            
+            user = AlunoPosIC.objects.get(id_login=chave)
+            #return render(request, 'perfil_user.html', {'aluno_pos_ic': aluno_pos_ic})
+
+        elif login.perfil == 'user_externo':
+            user = UserExterno.objects.get(id_login=chave)
+            #return render(request, 'perfil_user.html', {'user_externo': user_externo})
+
+        agendamentos = Agendamento.objects.filter(id_login=login)
+
+
+        
+        return render(request, 'agendamentos_user.html', {'user': user, 'login': login, 'agendamentos': agendamentos})
 

@@ -44,7 +44,6 @@
                     <th>Localização</th>
                 </tr>
             </thead>
-            <tbody>
             <tbody id="tabelaEquipamentos">
                 {% for equipamento in equipamentos %}
                     <tr>
@@ -61,52 +60,35 @@
   </div>
     
 
-    <script>
-        function filtrarEquipamentos() {
-            let equipamentoSelecionado = document.getElementById("equipamento").value;
-            let apelidoSelecionado = document.getElementById("apelido").value;
-            let divisaoSelecionada = document.getElementById("divisao").value;
-        
-            let linhas = document.querySelectorAll("#tabelaEquipamentos tr");
-        
-            linhas.forEach(function(linha) {
-                let colunaNome = linha.querySelector("td:nth-child(1)");
-                let colunaApelido = linha.querySelector("td:nth-child(2)");
-                let colunaDivisao = linha.querySelector("td:nth-child(3)");
-        
-                if (
-                    (!equipamentoSelecionado || colunaNome.textContent === equipamentoSelecionado) &&
-                    (!apelidoSelecionado || colunaApelido.textContent === apelidoSelecionado) &&
-                    (!divisaoSelecionada || colunaDivisao.textContent === divisaoSelecionada)
-                ) {
-                    linha.style.display = "";
-                } else {
-                    linha.style.display = "none";
-                }
-            });
-        }
+  <script>
+    function filtrarEquipamentos() {
+        let equipamentoSelecionado = document.getElementById("equipamento").value;
+        let apelidoSelecionado = document.getElementById("apelido").value;
+        let divisaoSelecionada = document.getElementById("divisao").value;
+        let localizacaoSelecionada = document.getElementById("localizacao").value;
 
-        function filtrarEquipamentos() {
-            let localizacaoSelecionada = document.getElementById("localizacao").value;
-      
-            let linhas = document.querySelectorAll("#tabelaEquipamentos tr");
-      
-            linhas.forEach(function (linha) {
-              let colunaLocalizacao = linha.querySelector("td:nth-child(4)");  // Assumindo que a localização está na 4ª coluna
-      
-              if (
-                !localizacaoSelecionada ||
-                (localizacaoSelecionada === "Santo André" && colunaLocalizacao.textContent === "Santo André") ||
-                (localizacaoSelecionada === "São Bernardo" && colunaLocalizacao.textContent === "São Bernardo")
-              ) {
+        let linhas = document.querySelectorAll("#tabelaEquipamentos tr");
+
+        linhas.forEach(function (linha) {
+            let colunaNome = linha.querySelector("td:nth-child(1)");
+            let colunaApelido = linha.querySelector("td:nth-child(2)");
+            let colunaDivisao = linha.querySelector("td:nth-child(3)");
+            let colunaLocalizacao = linha.querySelector("td:nth-child(4)");
+
+            if (
+                (!equipamentoSelecionado || colunaNome.textContent.includes(equipamentoSelecionado)) &&
+                (!apelidoSelecionado || colunaApelido.textContent.includes(apelidoSelecionado)) &&
+                (!divisaoSelecionada || colunaDivisao.textContent.includes(divisaoSelecionada)) &&
+                (!localizacaoSelecionada || colunaLocalizacao.textContent.includes(localizacaoSelecionada))
+            ) {
                 linha.style.display = "";
-              } else {
+            } else {
                 linha.style.display = "none";
-              }
-            });
-        }
-        
-    </script>
+            }
+        });
+    }
+</script>
+
     
 
 {% endblock %}

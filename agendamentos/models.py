@@ -15,9 +15,11 @@ class Agendamento(models.Model):
     id_equipamento = models.ForeignKey(Equipamento, on_delete=models.CASCADE, blank=False, null=False)
     id_login = models.ForeignKey(Login, on_delete=models.CASCADE, blank=False, null=False, related_name='login_tecnico')
 
+
 class Mes(models.Model):
     id_mes = models.AutoField(primary_key=True)
     nome = models.CharField(max_length=50)
+    numero = models.CharField(max_length=2, default = 0)
     ano = models.IntegerField()
 
     def __str__(self):
@@ -26,7 +28,7 @@ class Mes(models.Model):
 class Dia(models.Model):
     id_dia = models.AutoField(primary_key=True)
     mes = models.ForeignKey(Mes, on_delete=models.CASCADE)
-    numero = models.IntegerField()
+    numero = models.CharField(max_length=2, default = 0)
     dia_da_semana = models.CharField(max_length=20)  # Pode ser 'segunda', 'terca', etc.
     feriado = models.BooleanField(default=False)
 

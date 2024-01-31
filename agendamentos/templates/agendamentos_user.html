@@ -4,7 +4,7 @@
 {% block conteudo %}
 
 <div class="container">
-    <h1>Meus Treinamentos</h1>
+    <h1>Meus Agendamentos</h1>
 
     
     <div class="tela">
@@ -12,20 +12,23 @@
             <thead class="">
                 <tr class="">
                     <th>Data</th>
-                    <th>Hora</th>
-                    <th>Status</th>
+                    <th>Início</th>
+                    <th>Término</th>
                     <th>Equipamento</th>
                 </tr>
             </thead>
             <tbody>
                 <!-- Linhas da tabela com dados aqui -->
-                {% for solicitacao in solicitacoes %}
+                {% for agendamento in agendamentos %}
                 <tr>
                     
-                    <td>{{solicitacao.data}}</td>
-                    <td>{{solicitacao.hora}}</td>
-                    <td>{{solicitacao.status}}</td>
-                    <td>{{solicitacao.id_equipamento}}</td>
+
+
+
+                    <td>{{agendamento.data_agendada}}</td>
+                    <td>{{agendamento.hora_inicio_agendamento}}</td>
+                    <td>{{agendamento.hora_termino_agendamento}}</td>
+                    <td>{{agendamento.id_equipamento}}</td>
                 </tr>
                 {% endfor %}
             </tbody>
