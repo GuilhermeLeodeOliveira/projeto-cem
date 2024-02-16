@@ -20,7 +20,7 @@ def verifica_login(request):
         
         if adm.email == email and adm.senha == senha:
             request.session['chave'] = adm.id_adm
-
+            request.session['perfil'] = 'adm'
             return redirect('dashboard')
         else:
             return HttpResponse('email ou senha incorretos')
@@ -69,9 +69,7 @@ def perfil_tecnico(request):
 
 def encerrar_sessao_adm(request):
     request.session.flush()
-    url = reverse('home')
-                        # Redirecione para a URL obtida
-    return redirect(url)
+    return render(request, 'login_adm.html')
 
 def edita_dados_tecnico(request):
     chave = request.session['chave']

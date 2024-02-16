@@ -41,25 +41,34 @@
               </ul>
             </li>
             -->
-            {% if request.session.perfil == 'tecnico' %}
+            
             <li class="nav-item">
               <a class="nav-link" href="{% url "cad_equipamento" %}">Cadastrar Equipamento</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{% url "equipamentos" %}">Equipamentos</a>
             </li>
-            
+            {% if request.session.perfil == 'tecnico' %}
             <li class="nav-item">
               <a class="nav-link" href="{% url "perfil_tecnico" %}">Perfil</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url "encerrar_sessao" %}">Sair</a>
-            </li>
+            
             {% else %}
+            
             <li class="nav-item">
               <a class="nav-link active" aria-current="page" href="{% url "dashboard" %}">Dashboard</a>
             </li>
+
             {% endif %}
+
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'agendamentos' %}">Agendamentos</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="{% url "encerrar_sessao" %}">Sair</a>
+            </li>
+            
           </ul>
         </div>
       </div>
@@ -69,11 +78,17 @@
     <table class="sub-nav">
       <tr>
           <td class="sub-item">
-              <a href="{% url 'solicitacoes' %}" class="sub-link">Solicitações</a>
+              <a href="{% url 'solicitacoes' %}" class="sub-link">Treinamentos</a>
           </td>
+          {% if request.session.perfil == 'tecnico' %}
           <td class="sub-item">
               <a href="{% url 'edita_dados_tecnico' %}" class="sub-link">Editar Meus Dados</a>
           </td>
+          {% else %}
+          <td class="sub-item">
+            <a href="{% url 'form_calendario' %}" class="sub-link">Cadastrar Calendário</a>
+          </td>
+          {% endif %}
       </tr>
     </table>
     {% endif %}

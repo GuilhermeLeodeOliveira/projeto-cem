@@ -5,6 +5,7 @@ from datetime import datetime
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from datetime import timedelta
 from core.views import perfil_user
+from administracao.views import Adm, Tecnico
 from .models import Agendamento, Dia, Mes
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.http import JsonResponse
@@ -60,6 +61,14 @@ def calendario_equipamento(request, id_equipamento):
     # Obtenha a data e a hora atuais
     data_atual = datetime.now().date()
 
+    chave = request.session['chave']
+
+    if 'perfil' in request.session and request.session['perfil'] == 'aluno ou pos doc' or request.session['perfil'] == 'tecnico':
+        login = Login.objects.get(id_login=chave)
+
+    else:
+        login = Adm.objects.get(id_adm=chave)
+    
     # Obtenha o mês e o ano atuais
     mes_atual = data_atual.month
     ano_atual = data_atual.year
@@ -95,6 +104,7 @@ def calendario_equipamento(request, id_equipamento):
         'lista_dias_anteriores': lista_dias_anteriores,
         'value': value,
         'agendamento_existente': agendamento_existente,
+        'login': login,
     }
 
 

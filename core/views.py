@@ -761,7 +761,7 @@ def perfil_user(request):
             #return render(request, 'perfil_user.html', {'docente': docente})
         
         elif login.perfil == 'aluno ou pos doc':
-            
+            request.session['perfil'] = "aluno ou pos doc"
             user = AlunoPosIC.objects.get(id_login=chave)
             #return render(request, 'perfil_user.html', {'aluno_pos_ic': aluno_pos_ic})
 

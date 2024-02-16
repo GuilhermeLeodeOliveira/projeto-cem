@@ -57,26 +57,26 @@
                     {% endif %}
 
                     {% for hora in horarios %}
-                      {% with achou_agendamento=False %}
                         <td class="p-2">
                           {% if dia.feriado %}
                             X
                           {% elif dia.dia_da_semana == 'segunda' or dia.dia_da_semana == 'terca' or dia.dia_da_semana == 'quarta' or dia.dia_da_semana == 'quinta' or dia.dia_da_semana == 'sexta' %}
                             {% for agendamento in agendamento_existente %}
+                             
                               {% if dia.numero == agendamento.data_agendada|date:'d' and mes.numero == agendamento.data_agendada|date:'m' and agendamento.hora_inicio_agendamento|time:'H:i' <= hora and agendamento.hora_termino_agendamento|time:'H:i' >= hora %}
-                                {% with achou_agendamento=True %}
-                                  <div class="bg-danger">X</div>
-                                {% endwith %}
+                                
+                                <div class="bg-danger">X</div>
+                                <button class="btn-agendamento" onclick="openPopup('{{ mes.nome }}', '{{ mes.id }}', '{{ dia.numero }}', '{{ agendamento.hora_inicio_agendamento }}', '{{agendamento.hora_termino_agendamento}}', '{{ agendamento.id_login.email_inst }}', '{{agendamento.additional_info}}')"></button>
+                                
                               {% endif %}
+                              
                             {% endfor %}
-                            {% if not achou_agendamento %}
-                              <button class="btn-agendamento" onclick="openPopup('{{ mes.nome }}', '{{ mes.id }}', '{{ dia.numero }}', '{{ hora }}', '{{ user.email }}')"></button>
-                            {% endif %}
+                            <button class="btn-agendamento" onclick="openPopup('{{ mes.nome }}', '{{ mes.id }}', '{{ dia.numero }}', '{{ hora }}', '{{ 00 }}', '{{ login.email_inst }}', {{00}})"></button>
+                             
                           {% else %}
                             X
                           {% endif %}
                         </td>
-                      {% endwith %}
                     {% endfor %}
                   </tr>
                 {% endfor %}
@@ -93,9 +93,13 @@
 
   <!-- Modifique o pop-up para incluir um formulário -->
   <div id="reservationPopup" class="popup">
-    <p id="emailParagraph"></p>
     <form action="{% url 'realizar_agendamento' %}" method="post" id="reservationForm" class="reservationForm">
       {% csrf_token %}
+      <div class="mb-3 d-flex justify-content-around">
+        <label for="email">Email:</label>
+        <input type="email" name="email" id="email" value="" readonly required />
+        <input type="hidden" name="emailHidden" id="dataHidden" value="" />
+      </div>
       <div class="mb-3 d-flex justify-content-around">
         <label for="dataInput">Data:</label>
         <input type="date" name="data" id="dataInput" value="" readonly required />
@@ -112,7 +116,7 @@
       </div>
 
       <p>Digite alguma informação nescessária:</p>
-      <textarea name="informacao_adicional" class="popup-agendamento" id="" required></textarea>
+      <textarea id="additional_info" name="informacao_adicional" class="popup-agendamento" id="" required></textarea>
 
       <button type="submit" class="btn-agendar">Reservar</button>
     </form>
@@ -142,7 +146,7 @@
     }
     
     // Função para abrir o popup
-    function openPopup(mesNome, mesId, dia, hora, email) {
+    function openPopup(mesNome, mesId, dia, horaInicio, horaTermino, email, additional_info) {
       // Mapear nome do mês para número
       var mesNumerico
       switch (mesNome.toLowerCase()) {
@@ -199,8 +203,15 @@
         // Preencha os campos do formulário
         $('#dataInput').val(dataFormatada)
         $('#dataHidden').val(dataFormatada) // Use um campo oculto para enviar a data no formulário
-        $('#emailParagraph').text('Email: ' + email)
-        $('#horarioInicio').val(hora)
+        $('#horarioInicio').val(horaInicio)
+        $('#horarioTermino').val(horaTermino)
+        $('#additional_info').val(additional_info)
+
+        // Preencha o campo de e-mail com o valor do agendamento
+        $('#email').val(email);
+        
+        // Adicione o e-mail do agendamento ao campo oculto para enviar no formulário
+        $('#emailHidden').val(email);
     
         // Exiba o pop-up
         $('#reservationPopup').show()
