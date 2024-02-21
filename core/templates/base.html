@@ -51,7 +51,7 @@
             {% endif %}
             {% if request.session.chave %}
               
-              {% if request.session.perfil == 'aluno ou pos doc' %}
+              {% if request.session.perfil == 'aluno ou pos doc' or request.session.perfil == 'docente' %}
             
                 <li class="nav-item">
                   <a class="nav-link" href="{% url 'perfil_user' %}">Perfil</a>
@@ -95,16 +95,16 @@
       <table class="sub-nav">
         <tr class="d-flex justfy-content-between">
 
-          {% if request.session.perfil == 'aluno ou pos doc' %}
-          <td class="sub-item">
-            <a href="{% url 'solicitacoes_user' %}" class="sub-link">Meus Treinamentos</a>
-          </td>
-          <td class="sub-item">
-            <a href="{% url 'edita_dados_user' %}" class="sub-link">Editar Meus Dados</a>
-          </td>
-          <td class="sub-item">
-            <a href="{% url 'agendamentos_user' %}" class="sub-link">Meus Agendamentos</a>
-          </td>
+          {% if request.session.perfil == 'aluno ou pos doc' or request.session.perfil == 'docente' %}
+            <td class="sub-item">
+              <a href="{% url 'solicitacoes_user' %}" class="sub-link">Meus Treinamentos</a>
+            </td>
+            <td class="sub-item">
+              <a href="{% url 'edita_dados_user' %}" class="sub-link">Editar Meus Dados</a>
+            </td>
+            <td class="sub-item">
+              <a href="{% url 'agendamentos_user' %}" class="sub-link">Meus Agendamentos</a>
+            </td>
           {% else %}
             <td class="sub-item">
               <a href="{% url 'solicitacoes' %}" class="sub-link">Treinamentos</a>

@@ -9,7 +9,7 @@ from django.http import JsonResponse
 from equipamentos.models import Equipamento
 from core.models import Docente, AlunoPosIC, UserExterno, Login
 from .models import Solicitacoes, Treinamento
-
+from administracao.models import Tecnico
 
 # Create your views here.
 
@@ -258,10 +258,10 @@ def concluir_agendamento(request):
             #    novo_treinamento.id_solicitacao=solicitacao
             
             if Solicitacoes.objects.filter(id_login__email_inst=email).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
-                login = Login.objects.get(email_inst=email)
+                login_usuario = Login.objects.get(email_inst=email)
                 
                 try:
-                    aluno_pos_ic = AlunoPosIC.objects.get(id_login=login)
+                    aluno_pos_ic = AlunoPosIC.objects.get(id_login=login_usuario)
                     nome = aluno_pos_ic.primeiro_nome
                 except AlunoPosIC.DoesNotExist:
                     aluno_pos_ic = None
@@ -269,13 +269,13 @@ def concluir_agendamento(request):
 
                 if aluno_pos_ic is None:
                     try:
-                        docente = Docente.objects.get(id_login=login)
+                        docente = Docente.objects.get(id_login=login_usuario)
                         nome = docente.primeiro_nome
                     except Docente.DoesNotExist:
                         # Tratar o caso em que nem AlunoPosIC nem Docente foram encontrados
                         return HttpResponse("Usuário não encontrado") 
                 
-                solicitacao = Solicitacoes.objects.get(id_login=login.id_login, id_equipamento__nome=equipamento)
+                solicitacao = Solicitacoes.objects.get(id_login=login_usuario.id_login, id_equipamento__nome=equipamento)
                 if solicitacao:
                     # Modifique o status da solicitação
                     solicitacao.status = 'em processo'
@@ -294,13 +294,17 @@ def concluir_agendamento(request):
 
                 equip = Equipamento.objects.get(nome=equipamento)
                 novo_treinamento.id_equipamento = equip
-                novo_treinamento.id_login = login
+                novo_treinamento.id_login = login_usuario
 
                 chave = request.session['chave']
-                login = Login.objects.get(id_login=chave)
-                login_tecnico = Tecnico.objects.get(id_tecnico=login)
+                if request.session['perfil'] == 'tecnico':    
+                    login_tecnico = Login.objects.get(id_login=chave)
+                    login_tecnico = Tecnico.objects.get(id_login=login_tecnico)
 
-                novo_treinamento.id_login_tecnico = login_tecnico
+                    novo_treinamento.id_login_tecnico = login_tecnico
+                else:
+                    return HttpResponse('um administrativo ainda não pode realizar um treinamento')
+
                 novo_treinamento.save()
 
             else:

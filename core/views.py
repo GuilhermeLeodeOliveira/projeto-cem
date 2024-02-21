@@ -757,6 +757,7 @@ def perfil_user(request):
         login = Login.objects.get(id_login=chave)
 
         if login.perfil == 'docente':
+            request.session['perfil'] = "docente"
             user = Docente.objects.get(id_login=chave)
             #return render(request, 'perfil_user.html', {'docente': docente})
         
