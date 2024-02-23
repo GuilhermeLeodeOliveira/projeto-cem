@@ -5,6 +5,7 @@ from core.models import Login
 from django.urls import reverse
 from datetime import datetime
 from agendamentos.models import Agendamento, Mes, Dia
+from django.contrib.auth.hashers import check_password
 
 # Create your views here.
 def login_adm(request):
@@ -25,16 +26,17 @@ def verifica_login(request):
         else:
             return HttpResponse('email ou senha incorretos')
         
-    elif Tecnico.objects.filter(email=email).exists():
+    elif Login.objects.filter(email_inst=email).exists():
         
-        tecnico = Tecnico.objects.get(email=email)
+        login = Login.objects.get(email_inst=email)
         
-        if tecnico.email == email and tecnico.senha == senha:
+        if login.email_inst == email and check_password(senha, login.senha):
+            tecnico = Tecnico.objects.get(id_login=login)
             request.session['chave'] = tecnico.id_tecnico
             
             return redirect('perfil_tecnico')
         else:
-            return HttpResponse('Email ou senha incorretos')
+            return HttpResponse(f'Email ou senha incorretos. Email: {email}, Senha: {senha}')
         
     else:
         return HttpResponse('Usuário não cadastrado')
@@ -60,8 +62,8 @@ def perfil_tecnico(request):
     
     chave = request.session['chave']
     request.session['perfil'] = 'tecnico'
-    user = Tecnico.objects.get(id_login=chave)
-    login = Login.objects.get(id_login=chave)
+    user = Tecnico.objects.get(id_tecnico=chave)
+    login = Login.objects.get(id_login=user.id_login.id_login)
     login.data_ultimo_login = datetime.now()
     login.save()
 

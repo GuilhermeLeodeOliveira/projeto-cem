@@ -95,7 +95,19 @@ function atualizarAcaoFormulario() {
         btnSubmit.style.display = 'block';
         checkboxes.forEach(checkbox => checkbox.checked = false);
 
-    } else if (selectedValue === "finalizado") {
+    } else if (selectedValue === "em prova") {
+        agendarForm.action = '/administracao/solicitacoes/finalizar_prova/';
+        btnSubmit.value = 'Finalizar prova';
+        btnSubmit.style.display = 'block';
+        checkboxes.forEach(checkbox => checkbox.checked = false);
+
+    }else if (selectedValue === "prova realizada") {
+        agendarForm.action = '/administracao/solicitacoes/agendar_treinamento/';
+        btnSubmit.value = 'Agendar';
+        btnSubmit.style.display = 'block';
+        checkboxes.forEach(checkbox => checkbox.checked = false);
+
+    }else if (selectedValue === "finalizado") {
         agendarForm.action = '/administracao/solicitacoes/concluir_treinamento/';
         btnSubmit.style.display = 'none';
         checkboxes.forEach(checkbox => checkbox.checked = false);

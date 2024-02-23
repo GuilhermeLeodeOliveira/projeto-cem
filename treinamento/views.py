@@ -8,7 +8,7 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.http import JsonResponse
 from equipamentos.models import Equipamento
 from core.models import Docente, AlunoPosIC, UserExterno, Login
-from .models import Solicitacoes, Treinamento
+from .models import Solicitacoes, Treinamento, Prova
 from administracao.models import Tecnico
 
 # Create your views here.
@@ -124,7 +124,7 @@ def solicitacoes_user(request):
     login = Login.objects.get(id_login=chave)
 
     solicitacoes = Solicitacoes.objects.filter(id_login=login)        
-    treinamento = Treinamento.objects.filter(id_login=login)
+    treinamento = Treinamento.objects.filter(id_login_usuario=login)
 
     return render(request, 'solicitacoes_user.html', {'solicitacoes': solicitacoes, 'treinamento': treinamento})
 
@@ -191,42 +191,193 @@ def agendar_treinamento(request):
             # Separe os valores com base no caractere "_"
             valores_usuarios = request.POST.getlist("usuario")
             nome = None
+            # Verificar se a solicitação existe e está pendente e se o equipamento tem prova
+            agenda_prova = False
+            for valor in valores_usuarios:
+                email, equipamento = valor.split("_")
+                
+                if Solicitacoes.objects.filter(id_equipamento__nome=equipamento, id_login__email_inst=email, status='pendente').exists() and Equipamento.objects.get(nome=equipamento).tem_prova is True:
+                    
+                    agenda_prova = True
 
+                    if Login.objects.filter(email_inst=email).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
+                    
+                        login = Login.objects.get(email_inst=email)
+                        
+                        try:
+                            aluno_pos_ic = AlunoPosIC.objects.get(id_login=login)
+                            nome = aluno_pos_ic.primeiro_nome
+                        except AlunoPosIC.DoesNotExist:
+                            aluno_pos_ic = None
+                            nome = None
+
+                        if aluno_pos_ic is None:
+                            try:
+                                docente = Docente.objects.get(id_login=login)
+                                nome = docente.primeiro_nome
+                            except Docente.DoesNotExist:
+                                return HttpResponse("Usuário não encontrado")
+
+                        usuarios_selecionados.append([nome, email, equipamento])
+                    
+                else:
+                    
+                    # Se ambas as condições são verdadeiras, continue com o restante do processamento
+                    if Login.objects.filter(email_inst=email).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
+                        login = Login.objects.get(email_inst=email)
+                        
+                        try:
+                            aluno_pos_ic = AlunoPosIC.objects.get(id_login=login)
+                            nome = aluno_pos_ic.primeiro_nome
+                        except AlunoPosIC.DoesNotExist:
+                            aluno_pos_ic = None
+                            nome = None
+
+                        if aluno_pos_ic is None:
+                            try:
+                                docente = Docente.objects.get(id_login=login)
+                                nome = docente.primeiro_nome
+                            except Docente.DoesNotExist:
+                                return HttpResponse("Usuário não encontrado")
+
+                    usuarios_selecionados.append([nome, email, equipamento])
+                    request.session['usuarios_selecionados'] = usuarios_selecionados
+            if agenda_prova is True:    
+                return render(request, 'agendar_prova.html', {'usuarios_selecionados': usuarios_selecionados})
+            else:
+                return render(request, 'agendar_treinamento.html', {'usuarios_selecionados': usuarios_selecionados})
+
+def agendar_prova(request):
+    if request.method == "POST":
+        # Recupere a lista de usuários selecionados da sessão
+        usuarios_selecionados = request.session.get('usuarios_selecionados', [])
+        
+        # Itere sobre os usuários selecionados e processe os dados
+        for usuario in usuarios_selecionados:
+            
+            nova_prova = Prova()  # Inicialize um novo objeto para cada usuário
+            nome = usuario[0]
+            email = usuario[1]
+            equipamento = usuario[2]
+            
+            # Obtenha os dados específicos do formulário para este usuário
+            nova_prova.data_prova = request.POST.get(f'data_{nome}_{email}_{equipamento}')
+            nova_prova.hora_inicio_prova = request.POST.get(f'inicio_{nome}_{email}_{equipamento}')
+            nova_prova.hora_termino_prova = request.POST.get(f'termino_{nome}_{email}_{equipamento}')
+            nova_prova.local_prova = request.POST.get(f'local_{nome}_{email}_{equipamento}')
+            
+            #if Solicitacoes.objects.filter(id_Docente__nome=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
+            #    docente = Docente.objects.get(nome=nome)
+            #    novo_treinamento.id_Docente = docente
+            #    solicitacao = Solicitacoes.objects.get(id_Docente__nome=nome, id_Docente__email_inst=email, id_equipamento__nome=equipamento)
+            #    if solicitacao:
+            #        # Modifique o status da solicitação
+            #        solicitacao.status = 'em processo'
+            #        solicitacao.save()
+            #    novo_treinamento.id_solicitacao=solicitacao
+            
+            if Solicitacoes.objects.filter(id_login__email_inst=email).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
+                login_usuario = Login.objects.get(email_inst=email)
+                
+                try:
+                    aluno_pos_ic = AlunoPosIC.objects.get(id_login=login_usuario)
+                    nome = aluno_pos_ic.primeiro_nome
+                except AlunoPosIC.DoesNotExist:
+                    aluno_pos_ic = None
+                    nome = None
+
+                if aluno_pos_ic is None:
+                    try:
+                        docente = Docente.objects.get(id_login=login_usuario)
+                        nome = docente.primeiro_nome
+                    except Docente.DoesNotExist:
+                        # Tratar o caso em que nem AlunoPosIC nem Docente foram encontrados
+                        return HttpResponse("Usuário não encontrado") 
+                
+                solicitacao = Solicitacoes.objects.get(id_login=login_usuario.id_login, id_equipamento__nome=equipamento)
+                if solicitacao:
+                    # Modifique o status da solicitação
+                    solicitacao.status = 'em prova'
+                    solicitacao.save()
+                nova_prova.id_solicitacao=solicitacao
+            
+           #elif Solicitacoes.objects.filter(id_UserExterno__nome=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
+           #    user_externo = UserExterno.objects.get(nome=nome)
+           #    novo_treinamento.id_UserExterno = user_externo
+           #    solicitacao = Solicitacoes.objects.get(id_UserExterno__nome=nome, id_UserExterno__email_inst=email, id_equipamento__nome=equipamento)
+           #    if solicitacao:
+           #        # Modifique o status da solicitação
+           #        solicitacao.status = 'em processo'
+           #        solicitacao.save()
+           #    novo_treinamento.id_solicitacao=solicitacao
+
+                equip = Equipamento.objects.get(nome=equipamento)
+                nova_prova.id_equipamento = equip
+                nova_prova.id_login_usuario = login_usuario
+
+                chave = request.session['chave']
+                if request.session['perfil'] == 'tecnico':  
+                    tecnico = Tecnico.objects.get(id_tecnico=chave)  
+
+                    nova_prova.id_tecnico = tecnico
+                else:
+                    return HttpResponse('um administrativo ainda não pode realizar um treinamento')
+
+                nova_prova.save()
+
+            else:
+                return HttpResponse('Erro interno, entre em contato com a CEM')
+            
+        # Limpe a lista de usuários selecionados da sessão após o processamento
+        del request.session['usuarios_selecionados']
+        # Adicione qualquer lógica adicional ou redirecionamento aqui
+        
+        return redirect('solicitacoes')  # Crie um template para exibir uma mensagem de sucesso, se necessário
+
+    return HttpResponse('Método não permitido')
+
+def finalizar_prova(request):
+    if request.method == "POST":
+        usuarios_selecionados = []
+        # Recupere a lista de usuários selecionados da sessão
+        if "usuario" in request.POST:
+            valores_usuarios = request.POST.getlist("usuario")
+                
             for valor in valores_usuarios:
                 
-                email, equipamento = valor.split("_")  # Separe o nome do equipamento_id
-
-                #solicitacao = Solicitacoes.objects.all()
-
-                if Login.objects.filter(email_inst=email).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
+                email, equipamento = valor.split("_")
+                
+                if Prova.objects.filter(id_login_usuario__email_inst=email).exists() and Prova.objects.filter(id_equipamento__nome=equipamento).exists():
+                    
                     login = Login.objects.get(email_inst=email)
+                    solicitacao = Solicitacoes.objects.get(id_login = login.id_login, id_equipamento__nome = equipamento)
                     
-                    try:
-                        aluno_pos_ic = AlunoPosIC.objects.get(id_login=login)
-                        nome = aluno_pos_ic.primeiro_nome
-                    except AlunoPosIC.DoesNotExist:
-                        aluno_pos_ic = None
-                        nome = None
+                    if solicitacao.status == "em prova":
 
-                    if aluno_pos_ic is None:
                         try:
-                            docente = Docente.objects.get(id_login=login)
-                            nome = docente.primeiro_nome
-                        except Docente.DoesNotExist:
-                            # Tratar o caso em que nem AlunoPosIC nem Docente foram encontrados
-                            return HttpResponse("Usuário não encontrado") 
+                            user = AlunoPosIC.objects.get(id_login=login)
+                        except AlunoPosIC.DoesNotExist:
+                            try:
+                                user = Docente.objects.get(id_login=login)
+                            except Docente.DoesNotExist:
+                                # Lidar com o caso em que nem AlunoPosIC nem Docente foram encontrados
+                                return HttpResponse('Erro! Você está tentando passar um usuário não cadastrado, entre em contato com a CEM!')
 
-
+                        
                 #elif Solicitacoes.objects.filter(id_UserExterno__nome=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
-                #    user_externo = UserExterno.objects.filter(nome=nome).first()
-                #    email = user_externo.email_inst
-                    
-                    
-                usuarios_selecionados.append([nome, email, equipamento])
+                #    solicitacao = Solicitacoes.objects.get(id_UserExterno__nome=nome, id_equipamento__nome=equipamento)
+                #    if solicitacao.status == "em processo":
+                #        user_externo = UserExterno.objects.filter(nome=nome).first()
+                #        email = user_externo.email_inst
 
+
+                usuarios_selecionados.append([user.primeiro_nome, email, equipamento])
+
+            # Armazene a lista de usuários selecionados na sessão
             request.session['usuarios_selecionados'] = usuarios_selecionados
 
-            return render(request, 'agendar_treinamento.html', {'usuarios_selecionados': usuarios_selecionados})
+            return render(request, 'finalizar_prova.html', {'usuarios_selecionados': usuarios_selecionados})
+
 
 def concluir_agendamento(request):
     if request.method == "POST":
@@ -294,14 +445,13 @@ def concluir_agendamento(request):
 
                 equip = Equipamento.objects.get(nome=equipamento)
                 novo_treinamento.id_equipamento = equip
-                novo_treinamento.id_login = login_usuario
+                novo_treinamento.id_login_usuario = login_usuario
 
                 chave = request.session['chave']
                 if request.session['perfil'] == 'tecnico':    
-                    login_tecnico = Login.objects.get(id_login=chave)
-                    login_tecnico = Tecnico.objects.get(id_login=login_tecnico)
+                    tecnico = Tecnico.objects.get(id_tecnico=chave)  
 
-                    novo_treinamento.id_login_tecnico = login_tecnico
+                    novo_treinamento.id_tecnico = tecnico
                 else:
                     return HttpResponse('um administrativo ainda não pode realizar um treinamento')
 
@@ -317,6 +467,73 @@ def concluir_agendamento(request):
         return redirect('solicitacoes')  # Crie um template para exibir uma mensagem de sucesso, se necessário
 
     return HttpResponse('Método não permitido')
+
+
+def concluir_prova(request):
+    if request.method == "POST":
+        # Recupere a lista de usuários selecionados da sessão
+        usuarios_selecionados = request.session.get('usuarios_selecionados', [])
+        
+        # Itere sobre os usuários selecionados e processe os dados
+        for usuario in usuarios_selecionados:
+            
+            nome = usuario[0]
+            email = usuario[1]
+            equipamento = usuario[2]
+            
+            # Obtenha os dados específicos do formulário para este usuário
+            
+            compareceu = request.POST.get(f'compareceu_{nome}_{email}_{equipamento}')
+            justificativa = request.POST.get(f'justificativa_{nome}_{email}_{equipamento}')
+            aptidao = request.POST.get(f'aptidao_{nome}_{email}_{equipamento}')
+
+            #if Treinamento.objects.filter(id_Docente__nome=nome).exists() and Treinamento.objects.filter(id_equipamento__nome=equipamento).exists():
+            #    treinamento = Treinamento.objects.get(id_Docente__nome=nome, id_equipamento__nome=equipamento)
+            #    treinamento.compareceu = compareceu
+            #    treinamento.justificativa = justificativa
+            #    treinamento.aptidao = aptidao
+            #    solicitacao = Solicitacoes.objects.get(id_Docente__nome=nome, id_Docente__email_inst=email, id_equipamento__nome=equipamento)
+            #    if solicitacao:
+            #        # Modifique o status da solicitação
+            #        solicitacao.status = 'finalizado'
+            #        solicitacao.save()
+            #    treinamento.save()
+            
+            if Prova.objects.filter(id_login_usuario__email_inst=email).exists() and Prova.objects.filter(id_equipamento__nome=equipamento).exists():
+                
+                prova = Prova.objects.get(id_login_usuario__email_inst=email, id_equipamento__nome=equipamento)
+                prova.compareceu = compareceu
+                prova.justificativa = justificativa
+                prova.aptidao = aptidao
+                solicitacao = Solicitacoes.objects.get(id_login__email_inst=email, id_equipamento__nome=equipamento)
+                if solicitacao:
+                    # Modifique o status da solicitação
+                    solicitacao.status = 'prova realizada'
+                    solicitacao.save()
+                prova.save()
+            
+            #elif Treinamento.objects.filter(id_UserExterno__nome=nome).exists() and Treinamento.objects.filter(id_equipamento__nome=equipamento).exists():
+            #    treinamento = Treinamento.objects.get(id_UserExterno__nome=nome, id_equipamento__nome=equipamento)
+            #    treinamento.compareceu = compareceu
+            #    treinamento.justificativa = justificativa
+            #    treinamento.aptidao = aptidao
+            #    solicitacao = Solicitacoes.objects.get(id_UserExterno__nome=nome, id_UserExterno__email_inst=email, id_equipamento__nome=equipamento)
+            #    if solicitacao:
+            #        # Modifique o status da solicitação
+            #        solicitacao.status = 'finalizado'
+            #        solicitacao.save()
+            #    treinamento.save()
+
+            
+            
+        # Limpe a lista de usuários selecionados da sessão após o processamento
+        del request.session['usuarios_selecionados']
+        # Adicione qualquer lógica adicional ou redirecionamento aqui
+        
+        return redirect('solicitacoes')  # Crie um template para exibir uma mensagem de sucesso, se necessário
+
+    return HttpResponse('Método não permitido')
+
 
 def finalizar_treinamento(request):
     
@@ -341,11 +558,11 @@ def finalizar_treinamento(request):
                 #        email = docente.email_inst
                         
 
-                if Treinamento.objects.filter(id_login__email_inst=email).exists() and Treinamento.objects.filter(id_equipamento__nome=equipamento).exists():
+                if Treinamento.objects.filter(id_login_usuario__email_inst=email).exists() and Treinamento.objects.filter(id_equipamento__nome=equipamento).exists():
                     
                     login = Login.objects.get(email_inst=email)
                     solicitacao = Solicitacoes.objects.get(id_login = login.id_login, id_equipamento__nome = equipamento)
-                    
+            
                     if solicitacao.status == "em processo":
 
                         try:
@@ -404,9 +621,9 @@ def concluir_treinamento(request):
             #        solicitacao.save()
             #    treinamento.save()
             
-            if Treinamento.objects.filter(id_login__email_inst=email).exists() and Treinamento.objects.filter(id_equipamento__nome=equipamento).exists():
+            if Treinamento.objects.filter(id_login_usuario__email_inst=email).exists() and Treinamento.objects.filter(id_equipamento__nome=equipamento).exists():
                 
-                treinamento = Treinamento.objects.get(id_login__email_inst=email, id_equipamento__nome=equipamento)
+                treinamento = Treinamento.objects.get(id_login_usuario__email_inst=email, id_equipamento__nome=equipamento)
                 treinamento.compareceu = compareceu
                 treinamento.justificativa = justificativa
                 treinamento.aptidao = aptidao
