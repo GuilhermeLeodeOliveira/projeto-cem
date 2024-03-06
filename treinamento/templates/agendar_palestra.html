@@ -1,0 +1,82 @@
+{% extends 'administracao/base.html' %}
+{% load static %}
+
+{% block conteudo %}
+
+<div class="container">
+    <h1>Agendar Aula</h1>
+
+    <!-- Itere sobre os usuários selecionados e exiba as informações -->
+    <form action="{% url "agendar_palestra" %}" method="post" id="agendar-form">
+        {% csrf_token %}
+        {% for usuario in usuarios_selecionados %}
+            {% with i=forloop.counter0 %}
+                <div class="finalizar-treinamento">
+                    <h6>Nome: {{usuario.0}}, Email: {{usuario.1}}, Equipamento: {{usuario.2}}</h6>
+                    <div class="">
+                        <div class="mt-3">
+                            <label for="data_treinamento">Insira a data da aula:</label>
+                            <input type="date" name="data_{{usuario.0}}_{{usuario.1}}_{{usuario.2}}" id="data_treinamento_{{i}}" class="data-treinamento" required>
+                        </div>
+                        <div class="mt-3">
+                            <label for="hora_inicio_treinamento">Insira o horário de início da aula:</label>
+                            <input type="time" name="inicio_{{usuario.0}}_{{usuario.1}}_{{usuario.2}}" id="hora_inicio_treinamento_{{i}}" class="hora-treinamento" required>
+                        </div>
+                        <div class="mt-3">
+                            <label for="hora_termino_treinamento">Insira o horário do término da aula:</label>
+                            <input type="time" name="termino_{{usuario.0}}_{{usuario.1}}_{{usuario.2}}" id="hora_termino_treinamento_{{i}}" class="hora-treinamento" required>
+                        </div>
+                        <div class="mt-3">
+                            <label for="local">Insira o local da aula:</label>
+                            <input type="text" name="local_{{usuario.0}}_{{usuario.1}}_{{usuario.2}}" id="local" required>
+                        </div>
+                        
+                    </div>
+                </div>
+            {% endwith %}
+        {% endfor %}
+        <input type="submit" value="Agendar" class="mt-3">
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Obtém os elementos de hora com a classe 'hora-treinamento'
+        var elementosHoraTreinamento = document.querySelectorAll('.hora-treinamento');
+
+        // Para cada elemento, define a validação de hora
+        elementosHoraTreinamento.forEach(function(elemento) {
+            elemento.addEventListener('input', function() {
+                // Obtém o valor da hora do elemento
+                var horaSelecionada = this.value;
+
+                // Define as horas mínimas e máximas permitidas
+                var horaMinima = '07:00';
+                var horaMaxima = '23:00';
+
+                // Verifica se a hora selecionada está dentro do intervalo permitido
+                if (horaSelecionada < horaMinima || horaSelecionada > horaMaxima) {
+                    alert('Por favor, selecione uma hora entre 07:00 e 23:00.');
+                    this.value = '';  // Limpa o valor se estiver fora do intervalo
+                }
+            });
+        });
+    });
+
+    
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Obtém a data atual no formato "YYYY-MM-DD"
+        var dataAtual = new Date().toISOString().split('T')[0];
+
+        // Obtém todos os elementos de data com a classe 'data-treinamento'
+        var elementosDataTreinamento = document.querySelectorAll('.data-treinamento');
+
+        // Para cada elemento, define o atributo 'min' para a data atual
+        elementosDataTreinamento.forEach(function(elemento) {
+            elemento.setAttribute('min', dataAtual);
+        });
+    });
+</script>
+
+{% endblock %}

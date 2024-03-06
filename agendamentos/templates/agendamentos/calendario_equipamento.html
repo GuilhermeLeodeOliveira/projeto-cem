@@ -7,83 +7,86 @@
   <div id="carouselExample" class="carousel">
     <div class="carousel-inner">
       {% for mes in meses %}
-        <div class="container">
-          <div class="carousel-item {% if forloop.first %}{% endif %}">
-            <h2 id="mes-{{ mes.id }}" data-mes="{{ mes.nome }}" data-ano="{{ mes.ano }}">Mês: {{ mes.nome }} Ano: {{ mes.ano }}</h2>
-            <table class="mb-3">
-              <thead>
-                <tr class="">
-                  <th></th>
-                  <th>8:00</th>
-                  <th>8:30</th>
-                  <th>9:00</th>
-                  <th>9:30</th>
-                  <th>10:00</th>
-                  <th>10:30</th>
-                  <th>11:00</th>
-                  <th>11:30</th>
-                  <th>12:00</th>
-                  <th>12:30</th>
-                  <th>13:00</th>
-                  <th>13:30</th>
-                  <th>14:00</th>
-                  <th>14:30</th>
-                  <th>15:00</th>
-                  <th>15:30</th>
-                  <th>16:00</th>
-                  <th>16:30</th>
-                  <th>17:00</th>
-                  <th>17:30</th>
-                  <th>18:00</th>
-                  <th>18:30</th>
-                  <th>19:00</th>
-                  <th>19:30</th>
-                  <th>20:00</th>
-                  <th>20:30</th>
-                  <th>21:00</th>
-                  <th>21:30</th>
-                  <th>22:00</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for dia in mes.dia_set.all|dictsort:'numero' %}
-                  <tr>
-                    {% if dia.feriado %}
-                      <td class="">{{ dia.numero }}</td>
-                    {% elif dia.dia_da_semana == 'segunda' or dia.dia_da_semana == 'terca' or dia.dia_da_semana == 'quarta' or dia.dia_da_semana == 'quinta' or dia.dia_da_semana == 'sexta' %}
-                      <td class="">{{ dia.numero }}</td>
-                    {% else %}
-                      <td class="">{{ dia.numero }}</td>
-                    {% endif %}
-
-                    {% for hora in horarios %}
-                        <td class="p-2">
-                          {% if dia.feriado %}
-                            X
-                          {% elif dia.dia_da_semana == 'segunda' or dia.dia_da_semana == 'terca' or dia.dia_da_semana == 'quarta' or dia.dia_da_semana == 'quinta' or dia.dia_da_semana == 'sexta' %}
-                            {% for agendamento in agendamento_existente %}
-                             
-                              {% if dia.numero == agendamento.data_agendada|date:'d' and mes.numero == agendamento.data_agendada|date:'m' and agendamento.hora_inicio_agendamento|time:'H:i' <= hora and agendamento.hora_termino_agendamento|time:'H:i' >= hora %}
-                                
-                                <div class="bg-danger">X</div>
-                                <button class="btn-agendamento" onclick="openPopup('{{ mes.nome }}', '{{ mes.id }}', '{{ dia.numero }}', '{{ agendamento.hora_inicio_agendamento }}', '{{agendamento.hora_termino_agendamento}}', '{{ agendamento.id_login.email_inst }}', '{{agendamento.additional_info}}')"></button>
-                                
-                              {% endif %}
-                              
-                            {% endfor %}
-                            <button class="btn-agendamento" onclick="openPopup('{{ mes.nome }}', '{{ mes.id }}', '{{ dia.numero }}', '{{ hora }}', '{{ 00 }}', '{{ login.email_inst }}', {{00}})"></button>
-                             
-                          {% else %}
-                            X
-                          {% endif %}
-                        </td>
-                    {% endfor %}
+        {% if mes.numero >= data_atual|date:'m' %}
+          <div class="container">
+            <div class="carousel-item {% if forloop.first %}{% endif %}">
+              <h2 id="mes-{{ mes.id }}" data-mes="{{ mes.nome }}" data-ano="{{ mes.ano }}">Mês: {{ mes.nome }} Ano: {{ mes.ano }}</h2>
+              <table class="mb-3">
+                <thead>
+                  <tr class="">
+                    <th></th>
+                    <th>8:00</th>
+                    <th>8:30</th>
+                    <th>9:00</th>
+                    <th>9:30</th>
+                    <th>10:00</th>
+                    <th>10:30</th>
+                    <th>11:00</th>
+                    <th>11:30</th>
+                    <th>12:00</th>
+                    <th>12:30</th>
+                    <th>13:00</th>
+                    <th>13:30</th>
+                    <th>14:00</th>
+                    <th>14:30</th>
+                    <th>15:00</th>
+                    <th>15:30</th>
+                    <th>16:00</th>
+                    <th>16:30</th>
+                    <th>17:00</th>
+                    <th>17:30</th>
+                    <th>18:00</th>
+                    <th>18:30</th>
+                    <th>19:00</th>
+                    <th>19:30</th>
+                    <th>20:00</th>
+                    <th>20:30</th>
+                    <th>21:00</th>
+                    <th>21:30</th>
+                    <th>22:00</th>
                   </tr>
-                {% endfor %}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {% for dia in mes.dia_set.all|dictsort:'numero' %}
+                   {% if dia.numero >= data_atual|date:"d" and mes.numero == data_atual|date:'m' or mes.numero > data_atual|date:'m'%}
+                      <tr>
+                        {% if dia.feriado %}
+                          <td class="">{{ dia.numero }}</td>
+                        {% elif dia.dia_da_semana == 'segunda' or dia.dia_da_semana == 'terca' or dia.dia_da_semana == 'quarta' or dia.dia_da_semana == 'quinta' or dia.dia_da_semana == 'sexta' %}
+                          <td class="">{{ dia.numero }}</td>
+                        {% else %}
+                          <td class="">{{ dia.numero }}</td>
+                        {% endif %}
+
+                        {% for hora in horarios %}
+                            <td id="button-data" class="">
+                              {% if dia.feriado %}
+                                X
+                              {% elif dia.dia_da_semana == 'segunda' or dia.dia_da_semana == 'terca' or dia.dia_da_semana == 'quarta' or dia.dia_da_semana == 'quinta' or dia.dia_da_semana == 'sexta' %}
+                                {% for agendamento in agendamento_existente %}
+                                
+                                  {% if dia.numero == agendamento.data_agendada|date:'d' and mes.numero == agendamento.data_agendada|date:'m' and agendamento.hora_inicio_agendamento|time:'H:i' <= hora and agendamento.hora_termino_agendamento|time:'H:i' >= hora %}
+                                    
+                                    <button class="btn-agendamento bg-danger" onclick="openPopup('{{ mes.nome }}', '{{ mes.id }}', '{{ dia.numero }}', '{{ agendamento.hora_inicio_agendamento }}', '{{agendamento.hora_termino_agendamento}}', '{{ agendamento.id_login.email_inst }}', '{{agendamento.additional_info}}')"></button>
+                                    
+                                  {% endif %}
+                                  
+                                {% endfor %}
+                                <button class="btn-agendamento bg-success" onclick="openPopup('{{ mes.nome }}', '{{ mes.id }}', '{{ dia.numero }}', '{{ hora }}', '{{ 00 }}', '{{ login.email_inst }}', {{00}})"></button>
+                                
+                              {% else %}
+                                X
+                              {% endif %}
+                            </td>
+                        {% endfor %}
+                      </tr>
+                    {% endif %}
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+        {% endif %}  
       {% endfor %}
     </div>
     <a class="carousel-control-prev custom-prev-btn" onclick="changeSlide(-1)">❮</a>
@@ -128,6 +131,20 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
   <script>
+    // Obtém todas as tags <td> com id "button-data"
+    var tdElements = document.querySelectorAll('td#button-data');
+
+    // Itera sobre cada tag <td>
+    tdElements.forEach(function(tdElement) {
+      // Obtém todos os botões dentro da tag <td>
+      var buttons = tdElement.querySelectorAll('button');
+
+      // Verifica se existem pelo menos dois botões
+      if (buttons.length > 1) {
+        // Torna o segundo botão invisível
+        buttons[1].style.display = 'none';
+      }
+    });
     // Lista de meses
     var meses = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
     

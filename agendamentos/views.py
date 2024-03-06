@@ -73,7 +73,7 @@ def calendario_equipamento(request, id_equipamento):
     mes_atual = data_atual.month
     ano_atual = data_atual.year
     dia_atual = data_atual.day
-
+    
     # Filtra os meses com ano maior ou igual ao atual e nome maior ou igual ao mês atual
     meses = Mes.objects.filter(ano__gte=ano_atual, nome__gte=mes_atual)
 
@@ -100,6 +100,7 @@ def calendario_equipamento(request, id_equipamento):
     contexto = {
         'equipamento': equipamento,
         'meses': meses,
+        'data_atual': data_atual,
         'horarios': horarios,
         'lista_dias_anteriores': lista_dias_anteriores,
         'value': value,
@@ -150,7 +151,7 @@ def realizar_agendamento(request):
     # Restante do seu código...
 
     # Redireciona de volta para a view calendario_equipamento
-    return redirect('calendario_equipamento', id_equipamento=id_equipamento)
+    return redirect(agendamentos_user)
     
 
 def agendamentos_user(request):

@@ -12,6 +12,20 @@ class Solicitacoes(models.Model):
     id_login = models.ForeignKey(Login, on_delete=models.CASCADE, blank=True, null=True)
     id_equipamento = models.ForeignKey(Equipamento, on_delete=models.CASCADE, blank=False, null=False)
     
+class Palestra(models.Model):
+    id_palestra = models.AutoField(primary_key=True)
+    data_palestra = models.DateField()
+    hora_inicio_palestra = models.TimeField()
+    hora_termino_palestra = models.TimeField()
+    local_palestra = models.CharField(max_length=50)
+    compareceu = models.CharField(max_length=5, blank=True, null=True)
+    justificativa = models.CharField(max_length=225, blank=True, null=True)
+    aptidao = models.CharField(max_length=10, blank=True, null=True)  
+    id_login_usuario = models.ForeignKey(Login, on_delete=models.CASCADE, blank=True, null=True)
+    id_equipamento = models.ForeignKey(Equipamento, on_delete=models.CASCADE, blank=False, null=False)
+    id_tecnico = models.ForeignKey(Tecnico, on_delete=models.CASCADE, blank=False, null=False)
+    id_solicitacao = models.ForeignKey(Solicitacoes, on_delete=models.CASCADE, blank=False, null=False)
+
 class Prova(models.Model):
     id_prova = models.AutoField(primary_key=True)
     data_prova = models.DateField()

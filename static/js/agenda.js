@@ -95,7 +95,19 @@ function atualizarAcaoFormulario() {
         btnSubmit.style.display = 'block';
         checkboxes.forEach(checkbox => checkbox.checked = false);
 
-    } else if (selectedValue === "em prova") {
+    } else if (selectedValue === "em palestra") {
+        agendarForm.action = '/administracao/solicitacoes/finalizar_palestra/';
+        btnSubmit.value = 'Finalizar palestra';
+        btnSubmit.style.display = 'block';
+        checkboxes.forEach(checkbox => checkbox.checked = false);
+
+    }else if (selectedValue === "palestra realizada") {
+        agendarForm.action = '/administracao/solicitacoes/agendar_treinamento/';
+        btnSubmit.value = 'Agendar Prova';
+        btnSubmit.style.display = 'block';
+        checkboxes.forEach(checkbox => checkbox.checked = false);
+
+    }else if (selectedValue === "em prova") {
         agendarForm.action = '/administracao/solicitacoes/finalizar_prova/';
         btnSubmit.value = 'Finalizar prova';
         btnSubmit.style.display = 'block';
@@ -103,7 +115,7 @@ function atualizarAcaoFormulario() {
 
     }else if (selectedValue === "prova realizada") {
         agendarForm.action = '/administracao/solicitacoes/agendar_treinamento/';
-        btnSubmit.value = 'Agendar';
+        btnSubmit.value = 'Agendar Treinamento';
         btnSubmit.style.display = 'block';
         checkboxes.forEach(checkbox => checkbox.checked = false);
 

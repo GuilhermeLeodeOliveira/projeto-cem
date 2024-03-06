@@ -19,6 +19,7 @@ class Equipamento(models.Model):
     chave = models.CharField(max_length=255, blank=True, null=True)
     patrimonio = models.CharField(max_length=255, blank=True, null=True)
     aquisicao = models.CharField(max_length=100, blank=True, null=True)
+    tem_palestra = models.BooleanField(default=False)
     tem_prova = models.BooleanField(default=False)
     prof = models.CharField(max_length=255, blank=True, null=True)
     tecnicos = models.ManyToManyField(Tecnico, blank=True, null=True)

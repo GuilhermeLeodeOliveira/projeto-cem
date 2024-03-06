@@ -49,6 +49,11 @@
             <li class="nav-item">
               <a class="nav-link" href="{% url "equipamentos" %}">Equipamentos</a>
             </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'agendamentos' %}">Agendamentos</a>
+            </li>
+
             {% if request.session.perfil == 'tecnico' %}
             <li class="nav-item">
               <a class="nav-link" href="{% url "perfil_tecnico" %}">Perfil</a>
@@ -61,10 +66,6 @@
             </li>
 
             {% endif %}
-
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'agendamentos' %}">Agendamentos</a>
-            </li>
 
             <li class="nav-item">
               <a class="nav-link" href="{% url "encerrar_sessao_adm" %}">Sair</a>
