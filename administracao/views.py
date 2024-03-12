@@ -1,11 +1,13 @@
 from django.shortcuts import render, redirect
 from .models import Adm, Tecnico
 from django.http import HttpResponse
-from core.models import Login
+from core.models import Login, AlunoPosIC, Docente, UserExterno
 from django.urls import reverse
 from datetime import datetime
 from agendamentos.models import Agendamento, Mes, Dia
 from django.contrib.auth.hashers import check_password
+from treinamento.models import Treinamento, Prova, Solicitacoes, Palestra
+
 
 # Create your views here.
 def login_adm(request):
@@ -48,8 +50,22 @@ def dashboard(request):
     else:
         user_authenticated = False
         return HttpResponse('Você precisa estar logado para acessa a página')
+
+    logins = Login.objects.filter(
+        password_change_required=False,
+        perfil='aluno ou pos doc'
+    ) | Login.objects.filter(
+        password_change_required=False,
+        perfil='docente'
+    )
+
+    alunos = AlunoPosIC.objects.all()
+    docentes = Docente.objects.all()
     
-    context = {'user_authenticated': user_authenticated}
+    context = {'user_authenticated': user_authenticated,
+                'logins': logins,
+                'alunos': alunos,
+                'docentes': docentes}
     return render(request, 'dashboard.html', context)
             
 def perfil_tecnico(request):
@@ -125,6 +141,48 @@ def form_calendario(request):
     context = {'user_authenticated': user_authenticated}
     return render(request, 'form_calendario.html', context)
 
+def visualizar_info_user(request, id_login):
+
+    info_treinamentos=0
+    info_provas=0
+    info_palestras=0
+    info_solicitacoes=0
+    info_agendamentos=0
+    user=0
+
+    if Treinamento.objects.filter(id_login_usuario=id_login).exists():
+        info_treinamentos = Treinamento.objects.filter(id_login_usuario=id_login)
+
+    if Prova.objects.filter(id_login_usuario=id_login).exists():
+        info_provas = Prova.objects.filter(id_login_usuario=id_login)
+
+    if Palestra.objects.filter(id_login_usuario=id_login).exists():
+        info_palestras = Palestra.objects.filter(id_login_usuario=id_login)
+
+    if Solicitacoes.objects.filter(id_login=id_login).exists():
+        info_solicitacoes = Solicitacoes.objects.filter(id_login=id_login)
+
+    if Agendamento.objects.filter(id_login=id_login).exists():
+        info_agendamentos = Agendamento.objects.filter(id_login=id_login)
+
+    login = Login.objects.get(id_login=id_login)
+    
+    if login.perfil == 'docente':
+        user = Docente.objects.get(id_login=id_login)
+
+    elif login.perfil == 'aluno ou pos doc':
+        user = AlunoPosIC.objects.get(id_login=id_login)
+
+    contexto = {
+        'info_treinamentos':info_treinamentos,
+        'info_provas':info_provas,
+        'info_palestras':info_palestras,
+        'info_solicitacoes':info_solicitacoes,
+        'info_agendamentos':info_agendamentos,
+        'user':user
+    }    
+
+    return render(request, 'administracao/info_user.html', contexto)
 
 #def cadastrar_calendario(request):
 #    if request.method == 'POST':

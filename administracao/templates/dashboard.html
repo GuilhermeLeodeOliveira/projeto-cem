@@ -5,7 +5,33 @@
 {% block conteudo %}
 
 <div class="container">
-    
+    <section class="users-cadastrados">
+        <h3>Usuários com cadastros ok</h3>
+        {% for login in logins %}
+            
+            <p>
+                <a href="{% url 'visualizar_info_user' id_login=login.id_login %}">
+                    {{login.id_login}}
+                    {{ login.email_inst }}
+                    {% if login.perfil == 'docente' %}
+                        {% for docente in docentes %}
+                            {% if docente.id_login.email_inst == login.email_inst %}
+                                {{ docente.primeiro_nome }}
+                            {% endif %}
+                        {% endfor %}
+                    {% elif login.perfil == 'aluno ou pos doc' %}
+                        {% for aluno in alunos %}
+                            {% if aluno.id_login.email_inst == login.email_inst %}
+                                {{ aluno.primeiro_nome }}
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </a>
+            </p>
+
+        
+        {% endfor %}
+    </section>
     <!--
         <h1>{{request.session.chave}}</h1>
     -->

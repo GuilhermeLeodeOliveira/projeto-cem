@@ -378,7 +378,7 @@ def finalizar_palestra(request):
             for valor in valores_usuarios:
                 
                 email, equipamento = valor.split("_")
-                
+               
                 if Palestra.objects.filter(id_login_usuario__email_inst=email).exists() and Palestra.objects.filter(id_equipamento__nome=equipamento).exists():
                     
                     login = Login.objects.get(email_inst=email)
@@ -757,7 +757,10 @@ def concluir_prova(request):
             
             
         # Limpe a lista de usuários selecionados da sessão após o processamento
-        del request.session['usuarios_selecionados']
+        if 'usuarios_selecionados' in request.session:
+            del request.session['usuarios_selecionados']
+        
+
         # Adicione qualquer lógica adicional ou redirecionamento aqui
         
         return redirect('solicitacoes')  # Crie um template para exibir uma mensagem de sucesso, se necessário

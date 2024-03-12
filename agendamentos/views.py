@@ -109,7 +109,7 @@ def calendario_equipamento(request, id_equipamento):
     }
 
 
-    return render(request, 'agendamentos/calendario_equipamento.html', contexto)
+    return render(request, 'agendamentos/calendario_equipamento.html', contexto)    
 
 
 def realizar_agendamento(request):
