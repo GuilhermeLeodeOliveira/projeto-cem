@@ -96,6 +96,21 @@ def calendario_equipamento(request, id_equipamento):
     
     value = datetime.now().date()
 
+    # Lista para armazenar os nomes dos usuários associados aos agendamentos
+    nomes_usuarios = []
+
+    # Itera sobre os agendamentos para obter os nomes dos usuários associados
+    for agendamento in agendamento_existente:
+        if agendamento.id_login.perfil == 'docente':
+            nome_usuario = Docente.objects.get(id_login=agendamento.id_login)  # Supondo que o nome do usuário seja armazenado no campo "primeiro_nome" do modelo Docente
+        elif agendamento.id_login.perfil == 'aluno ou pos doc':
+            nome_usuario = AlunoPosIC.objects.get(id_login=agendamento.id_login)  # Supondo que o nome do usuário seja armazenado no campo "primeiro_nome" do modelo AlunoPosIC
+        elif agendamento.id_login.perfil == 'user_externo':
+            nome_usuario = UserExterno.objects.get(id_login=agendamento.id_login)  # Supondo que o nome do usuário seja armazenado no campo "primeiro_nome" do modelo UserExterno
+        
+        nomes_usuarios.append(nome_usuario)
+
+
     # Passe os dados relevantes para o template
     contexto = {
         'equipamento': equipamento,
@@ -106,6 +121,7 @@ def calendario_equipamento(request, id_equipamento):
         'value': value,
         'agendamento_existente': agendamento_existente,
         'login': login,
+        'nomes_usuarios': nomes_usuarios,
     }
 
 
@@ -179,3 +195,34 @@ def agendamentos_user(request):
         
         return render(request, 'agendamentos_user.html', {'user': user, 'login': login, 'agendamentos': agendamentos})
 
+def verifica_perfil(request, email):
+    if request.session.get('perfil') == "tecnico":  # Verifica se a chave 'perfil' existe na sessão
+        # Faça o que precisa com o email aqui
+        return dados_user(request, email)
+    else:
+        return HttpResponse("nada")
+
+def dados_user(request, email):
+    try:
+        # Tente buscar o usuário pelo email na tabela de Login
+        login = Login.objects.get(email_inst=email)
+        
+        # Verifique se existe um aluno com este login
+        aluno = AlunoPosIC.objects.filter(id_login=login).first()
+        if aluno:
+            return render(request, 'administracao/dados_user.html', {'aluno': aluno, 'login':login})
+        
+        # Verifique se existe um docente com este login
+        docente = Docente.objects.filter(id_login=login).first()
+        if docente:
+            return render(request, 'administracao/dados_user.html', {'docente': docente, 'login':login})
+        
+        # Se não foi encontrado nem aluno nem docente, retorne uma mensagem de usuário não encontrado
+        return HttpResponse('Usuário não encontrado')
+        
+    except Login.DoesNotExist:
+        # Se não foi encontrado nenhum login com este email, retorne uma mensagem de usuário não encontrado
+        return HttpResponse('Usuário não encontrado')
+    except Exception as e:
+        # Se ocorrer qualquer outro erro, retorne uma mensagem de erro genérica
+        return HttpResponse(f'Ocorreu um erro: {e}')

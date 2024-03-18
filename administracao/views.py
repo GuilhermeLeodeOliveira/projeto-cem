@@ -34,7 +34,7 @@ def verifica_login(request):
         
         if login.email_inst == email and check_password(senha, login.senha):
             tecnico = Tecnico.objects.get(id_login=login)
-            request.session['chave'] = tecnico.id_tecnico
+            request.session['chave'] = login
             
             return redirect('perfil_tecnico')
         else:
@@ -78,7 +78,7 @@ def perfil_tecnico(request):
     
     chave = request.session['chave']
     request.session['perfil'] = 'tecnico'
-    user = Tecnico.objects.get(id_tecnico=chave)
+    user = Tecnico.objects.get(id_login=chave)
     login = Login.objects.get(id_login=user.id_login.id_login)
     login.data_ultimo_login = datetime.now()
     login.save()

@@ -3,7 +3,6 @@
 
 {% block conteudo %}
   <h1>{{ equipamento.nome }}</h1>
-
   <div id="carouselExample" class="carousel">
     <div class="carousel-inner">
       {% for mes in meses %}
@@ -72,6 +71,7 @@
                                   {% endif %}
                                   
                                 {% endfor %}
+                                
                                 <button class="btn-agendamento bg-success" onclick="openPopup('{{ mes.nome }}', '{{ mes.id }}', '{{ dia.numero }}', '{{ hora }}', '{{ 00 }}', '{{ login.email_inst }}', {{00}})"></button>
                                 
                               {% else %}
@@ -100,7 +100,9 @@
       {% csrf_token %}
       <div class="mb-3 d-flex justify-content-around">
         <label for="email">Email:</label>
+        <a id="verifica_perfil_link" target="_blank" rel="noopener noreferrer" class="teste" href="">
         <input type="email" name="email" id="email" value="" readonly required />
+        </a>
         <input type="hidden" name="emailHidden" id="dataHidden" value="" />
       </div>
       <div class="mb-3 d-flex justify-content-around">
@@ -269,5 +271,25 @@
     }
     
     showSlides()
+
+    
   </script>
+  <script>
+    var verificaPerfilUrl = "{% url 'verifica_perfil' email='PLACEHOLDER' %}";
+
+    document.getElementById('verifica_perfil_link').addEventListener('click', function(event) {
+      event.preventDefault();  // Evita o comportamento padrão de seguir o link
+
+      // Obter o email de onde quer que você o tenha
+      var email = document.getElementById('email').value;  // Por exemplo, assumindo que você tenha um input com id 'email'
+      
+      // Construa a URL com o email e redirecione
+      var url = verificaPerfilUrl.replace('PLACEHOLDER', encodeURIComponent(email));
+      
+      window.open(url, '_blank');
+    });
+
+      
+  </script>
+
 {% endblock %}

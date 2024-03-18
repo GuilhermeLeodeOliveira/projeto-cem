@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block conteudo %}
+
+<div class="container">
+    <!-- Verificar se há um usuário -->
+    {% if user %}
+
+        <!-- Verificar se o usuário é um AlunoPosIC -->
+        {% if aluno %}
+            <h1>Dados do Aluno de Pós-Graduação, IC ou Pós-Doc</h1>
+            <p>Nome: {{aluno.primeiro_nome}} {{aluno.segundo_nome}}</p>
+            <p>Celular: {{aluno.celular}}</p>
+            <p>Matrícula: {{aluno.matricula_ufabc}}</p>
+            <p>Ramal do Laboratório: {{aluno.ramal_lab}}</p>
+            <p>Nome do Orientador: {{aluno.nome_orientador}}</p>
+            <p>Data da pós:{{aluno.data_pos}}</p>
+            <p>Centro: {{aluno.centro}}</p>
+            <p>Bolsa:{{aluno.bolsa}}</p>
+            <p>Plano de Trabalho: {{aluno.plano_trabalho}}</p>
+        
+        <!-- Se o usuário não for um AlunoPosIC, verifique se é um Docente -->
+        {% elif docente %}
+            <h1>Dados do Docente</h1>
+            <p>Nome: {{docente.primeiro_nome}} {{docente.segundo_nome}}</p>
+            <p>Celular: {{docente.celular}}</p>
+            <p>Matrícula Siape: {{docente.matricula_siape}}</p>
+            <p>Ramal do Laboratório: {{docente.ramal_lab}}</p>
+            <p>Centro: {{docente.centro}}</p>
+            {% if docente.possui_projeto %}
+                <p>Projeto: {{docente.info_projeto}}</p>
+            {% endif %}
+            
+            <p>Lista de Publicações: {{docente.lista_publi}}</p>
+                    
+        
+        <!-- Se o usuário não for nem AlunoPosIC nem Docente, exiba uma mensagem de erro -->
+        {% else %}
+            <p>Usuário não encontrado.</p>
+        {% endif %}
+
+    {% else %}
+        <p>Usuário não encontrado.</p>
+    {% endif %}
+</div>
+
+{% endblock %}
