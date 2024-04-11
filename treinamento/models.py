@@ -14,7 +14,8 @@ class Solicitacoes(models.Model):
     
 class Palestra(models.Model):
     id_palestra = models.AutoField(primary_key=True)
-    data_palestra = models.DateField()
+    data_inicio_palestra = models.DateField()
+    data_termino_palestra = models.DateField(null=True)
     hora_inicio_palestra = models.TimeField()
     hora_termino_palestra = models.TimeField()
     local_palestra = models.CharField(max_length=50)
@@ -28,9 +29,11 @@ class Palestra(models.Model):
 
 class Prova(models.Model):
     id_prova = models.AutoField(primary_key=True)
-    data_prova = models.DateField()
+    data_inicio_prova = models.DateField()
+    data_termino_prova = models.DateField(null=True)
     hora_inicio_prova = models.TimeField()
     hora_termino_prova = models.TimeField()
+    info_adicional = models.TextField(null=True)
     local_prova = models.CharField(max_length=50)
     compareceu = models.CharField(max_length=5, blank=True, null=True)
     justificativa = models.CharField(max_length=225, blank=True, null=True)
@@ -45,6 +48,7 @@ class Treinamento(models.Model):
     data_treinamento = models.DateField()
     hora_inicio_treinamento = models.TimeField()
     hora_termino_treinamento = models.TimeField()
+    info_adicional = models.TextField(null=True)
     local_treinamento = models.CharField(max_length=50)
     compareceu = models.CharField(max_length=5, blank=True, null=True)
     justificativa = models.CharField(max_length=225, blank=True, null=True)

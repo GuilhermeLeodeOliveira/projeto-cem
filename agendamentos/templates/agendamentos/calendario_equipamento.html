@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block conteudo %}
-  <h1>{{ equipamento.nome }}</h1>
+  <h1>{{ equipamento.nome }} </h1>
   <div id="carouselExample" class="carousel">
     <div class="carousel-inner">
       {% for mes in meses %}
@@ -66,13 +66,13 @@
                                 
                                   {% if dia.numero == agendamento.data_agendada|date:'d' and mes.numero == agendamento.data_agendada|date:'m' and agendamento.hora_inicio_agendamento|time:'H:i' <= hora and agendamento.hora_termino_agendamento|time:'H:i' >= hora %}
                                     
-                                    <button class="btn-agendamento bg-danger" onclick="openPopup('{{ mes.nome }}', '{{ mes.id }}', '{{ dia.numero }}', '{{ agendamento.hora_inicio_agendamento }}', '{{agendamento.hora_termino_agendamento}}', '{{ agendamento.id_login.email_inst }}', '{{agendamento.additional_info}}')"></button>
+                                    <button class="btn-agendamento bg-danger" onclick="openPopup('{{ mes.nome }}', '{{ mes.id }}', '{{ dia.numero }}', '{{ agendamento.hora_inicio_agendamento }}', '{{agendamento.hora_termino_agendamento}}', '{{ agendamento.id_login.email_inst }}', '{{agendamento.nome_orientador}}', '{{agendamento.nome_usuario}}', '{{agendamento.additional_info}}')"></button>
                                     
                                   {% endif %}
                                   
                                 {% endfor %}
                                 
-                                <button class="btn-agendamento bg-success" onclick="openPopup('{{ mes.nome }}', '{{ mes.id }}', '{{ dia.numero }}', '{{ hora }}', '{{ 00 }}', '{{ login.email_inst }}', {{00}})"></button>
+                                <button class="btn-agendamento bg-success" onclick="openPopup('{{ mes.nome }}', '{{ mes.id }}', '{{ dia.numero }}', '{{ hora }}', '{{ 00 }}', '{{ login.email_inst }}', '{{orientador}}', '{{nome}}', '{{00}}')"></button>
                                 
                               {% else %}
                                 X
@@ -100,10 +100,21 @@
       {% csrf_token %}
       <div class="mb-3 d-flex justify-content-around">
         <label for="email">Email:</label>
-        <a id="verifica_perfil_link" target="_blank" rel="noopener noreferrer" class="teste" href="">
         <input type="email" name="email" id="email" value="" readonly required />
-        </a>
         <input type="hidden" name="emailHidden" id="dataHidden" value="" />
+      </div>
+
+      <!--{% if request.session.perfil is 'aluno' %}{% endif %}-->
+      
+      <div class="mb-3 d-flex justify-content-around">
+        <label for="nome">Nome:</label>
+        <input type="nome" name="nome" id="nome" value="" readonly required />
+        <input type="hidden" name="nomeHidden" id="nomeHidden" value="" />
+      </div>
+      <div class="mb-3 d-flex justify-content-around">
+        <label for="orientador">Orientador:</label>
+        <input type="orientador" name="orientador" id="orientador" value="" readonly required />
+        <input type="hidden" name="orientadorHidden" id="orientadorHidden" value="" />
       </div>
       <div class="mb-3 d-flex justify-content-around">
         <label for="dataInput">Data:</label>
@@ -120,12 +131,18 @@
         <input type="text" name="horarioTermino" id="horarioTermino" required />
       </div>
 
-      <p>Digite alguma informação nescessária:</p>
+      <p>Digite alguma informação necessária:</p>
       <textarea id="additional_info" name="informacao_adicional" class="popup-agendamento" id="" required></textarea>
 
       <button type="submit" class="btn-agendar">Reservar</button>
+      <!--
+        <a id="verifica_perfil_link" target="_blank" rel="noopener noreferrer" class="infos-usuarios" href="">Informações do Usuário</a>
+      -->
     </form>
+    
     <button class="btn btn-danger" onclick="closePopup()">Fechar</button>
+    <a class="btn-cancelar-agendamento bg-danger" id="cancelarAgendamentoLink" href="#" onclick="cancelarAgendamento('{{equipamento.nome}}');">Cancelar</a>
+     
   </div>
 
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
@@ -165,7 +182,7 @@
     }
     
     // Função para abrir o popup
-    function openPopup(mesNome, mesId, dia, horaInicio, horaTermino, email, additional_info) {
+    function openPopup(mesNome, mesId, dia, horaInicio, horaTermino, email, nome_orientador, nome_usuario, additional_info) {
       // Mapear nome do mês para número
       var mesNumerico
       switch (mesNome.toLowerCase()) {
@@ -228,10 +245,14 @@
 
         // Preencha o campo de e-mail com o valor do agendamento
         $('#email').val(email);
+        $('#nome').val(nome_usuario);
+        $('#orientador').val(nome_orientador);
         
         // Adicione o e-mail do agendamento ao campo oculto para enviar no formulário
         $('#emailHidden').val(email);
-    
+        $('#nomeHidden').val(nome_usuario);
+        $('#orientadorHidden').val(nome_orientador);
+        
         // Exiba o pop-up
         $('#reservationPopup').show()
       }
@@ -289,6 +310,20 @@
       window.open(url, '_blank');
     });
 
+    function cancelarAgendamento(equipamento) {
+      var email = document.getElementById('email').value;
+      var data = document.getElementById('dataInput').value;
+      var horarioInicio = document.getElementById('horarioInicio').value;
+      var horarioTermino = document.getElementById('horarioTermino').value;
+      var nome = document.getElementById('nome').value;
+      var orientador = document.getElementById('orientador').value;
+      
+      // Construa a URL com os parâmetros necessários
+      var url = "{% url 'cancelar_agendamento' %}?email=" + encodeURIComponent(email) + "&data=" + encodeURIComponent(data) + "&horarioInicio=" + encodeURIComponent(horarioInicio) + "&horarioTermino=" + encodeURIComponent(horarioTermino)+"&nome"+encodeURI(nome)+"&orientador"+encodeURI(orientador)+"&equipamento="+encodeURIComponent(equipamento);
+      
+      // Redirecione o usuário para a URL construída
+      window.location.href = url;
+  }
       
   </script>
 

@@ -246,14 +246,31 @@ textarea.popup-agendamento{
     left: 6%; /* Ajuste conforme necessário */
 }
 
-.teste{
-    width: 100%;
-    padding: 0; 
+.infos-usuarios{
+    padding: 13px;
+    text-align: center;
+    text-decoration: none;
+    color: #FFF;
+    background-color: #276d23;
+    border-radius: 6px;
+    font-size:large;
 }
 
 .in-name{
     width: 100%;
     margin: 0;
+}
+
+.info-adicional-aula{
+    height: 10%;
+}
+
+.btn-cancelar-agendamento{
+    color: #FFF;
+    padding: 8px;
+    text-decoration: none;
+    text-align: center;
+    border-radius: 6px;
 }
 
 @media (max-width: 1000px){

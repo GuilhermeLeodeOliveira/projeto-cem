@@ -15,12 +15,16 @@
                     <h6>Nome: {{usuario.0}}, Email: {{usuario.1}}, Equipamento: {{usuario.2}}</h6>
                     <div class="">
                         <div class="mt-3">
-                            <label for="data_treinamento">Insira a data da aula:</label>
-                            <input type="date" name="data_{{usuario.0}}_{{usuario.1}}_{{usuario.2}}" id="data_treinamento_{{i}}" class="data-treinamento" required>
+                            <label for="data_treinamento">Insira a data inicial da aula:</label>
+                            <input type="date" name="data_inicio_{{usuario.0}}_{{usuario.1}}_{{usuario.2}}" id="data_treinamento_{{i}}" class="data-treinamento" required>
                         </div>
                         <div class="mt-3">
                             <label for="hora_inicio_treinamento">Insira o horário de início da aula:</label>
                             <input type="time" name="inicio_{{usuario.0}}_{{usuario.1}}_{{usuario.2}}" id="hora_inicio_treinamento_{{i}}" class="hora-treinamento" required>
+                        </div>
+                        <div class="mt-3">
+                            <label for="data_treinamento">Insira a data de término da aula:</label>
+                            <input type="date" name="data_termino_{{usuario.0}}_{{usuario.1}}_{{usuario.2}}" id="data_treinamento_{{i}}" class="data-treinamento" required>
                         </div>
                         <div class="mt-3">
                             <label for="hora_termino_treinamento">Insira o horário do término da aula:</label>
@@ -30,7 +34,10 @@
                             <label for="local">Insira o local da aula:</label>
                             <input type="text" name="local_{{usuario.0}}_{{usuario.1}}_{{usuario.2}}" id="local" required>
                         </div>
-                        
+                        <div class="mt-3">
+                            <p>Insira alguma informação necessária:</p>
+                            <textarea name="info_adicional_aula_{{usuario.0}}_{{usuario.1}}_{{usuario.2}}" id="" class="info-adicional-aula"></textarea>
+                        </div>
                     </div>
                 </div>
             {% endwith %}

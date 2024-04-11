@@ -11,7 +11,10 @@ class Agendamento(models.Model):
     hora_termino_agendamento = models.TimeField()
     data_solicitacao_agendamento = models.DateField()
     hora_solicitacao_agendamento = models.TimeField()
+    status = models.CharField(max_length=15, null=True)
     additional_info = models.TextField()
+    nome_orientador = models.CharField(max_length=255, blank=True, null=True)
+    nome_usuario = models.CharField(max_length=255, blank=True, null=True)
     id_equipamento = models.ForeignKey(Equipamento, on_delete=models.CASCADE, blank=False, null=False)
     id_login = models.ForeignKey(Login, on_delete=models.CASCADE, blank=False, null=False, related_name='login_tecnico')
 
@@ -34,3 +37,10 @@ class Dia(models.Model):
 
     def __str__(self):
         return f"{self.numero} - {self.dia_da_semana} ({'Feriado' if self.feriado else 'Dia útil'}) de {self.mes}"
+
+class RegraAgendamento(models.Model):
+    id_regra_agendamento = models.AutoField(primary_key=True)
+    equipamento = models.OneToOneField(Equipamento, on_delete=models.CASCADE)
+    tipo_regra = models.CharField(max_length=250)
+    parametros = models.JSONField()
+    descricao = models.TextField()

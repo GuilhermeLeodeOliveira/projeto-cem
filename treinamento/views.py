@@ -293,9 +293,11 @@ def agendar_palestra(request):
             equipamento = usuario[2]
             
             # Obtenha os dados específicos do formulário para este usuário
-            nova_palestra.data_palestra = request.POST.get(f'data_{nome}_{email}_{equipamento}')
+            nova_palestra.data_inicio_palestra = request.POST.get(f'data_inicio_{nome}_{email}_{equipamento}')
+            nova_palestra.data_termino_palestra = request.POST.get(f'data_termino_{nome}_{email}_{equipamento}')
             nova_palestra.hora_inicio_palestra = request.POST.get(f'inicio_{nome}_{email}_{equipamento}')
             nova_palestra.hora_termino_palestra = request.POST.get(f'termino_{nome}_{email}_{equipamento}')
+            nova_palestra.info_adicional = request.POST.get(f'info_adicional_palestra_{nome}_{email}_{equipamento}')
             nova_palestra.local_palestra = request.POST.get(f'local_{nome}_{email}_{equipamento}')
             
             #if Solicitacoes.objects.filter(id_Docente__nome=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
@@ -349,7 +351,7 @@ def agendar_palestra(request):
 
                 chave = request.session['chave']
                 if request.session['perfil'] == 'tecnico':  
-                    tecnico = Tecnico.objects.get(id_tecnico=chave)  
+                    tecnico = Tecnico.objects.get(id_login=chave)  
 
                     nova_palestra.id_tecnico = tecnico
                 else:
@@ -491,9 +493,11 @@ def agendar_prova(request):
             equipamento = usuario[2]
             
             # Obtenha os dados específicos do formulário para este usuário
-            nova_prova.data_prova = request.POST.get(f'data_{nome}_{email}_{equipamento}')
+            nova_prova.data_inicio_prova = request.POST.get(f'data_inicio{nome}_{email}_{equipamento}')
+            nova_prova.data_termino_prova = request.POST.get(f'data_termino{nome}_{email}_{equipamento}')
             nova_prova.hora_inicio_prova = request.POST.get(f'inicio_{nome}_{email}_{equipamento}')
             nova_prova.hora_termino_prova = request.POST.get(f'termino_{nome}_{email}_{equipamento}')
+            nova_prova.info_adicional = request.POST.get(f'info_adicional_prova_{nome}_{email}_{equipamento}')
             nova_prova.local_prova = request.POST.get(f'local_{nome}_{email}_{equipamento}')
             
             #if Solicitacoes.objects.filter(id_Docente__nome=nome).exists() and Solicitacoes.objects.filter(id_equipamento__nome=equipamento).exists():
@@ -547,7 +551,7 @@ def agendar_prova(request):
 
                 chave = request.session['chave']
                 if request.session['perfil'] == 'tecnico':  
-                    tecnico = Tecnico.objects.get(id_tecnico=chave)  
+                    tecnico = Tecnico.objects.get(id_login=chave)  
 
                     nova_prova.id_tecnico = tecnico
                 else:
@@ -679,7 +683,7 @@ def concluir_agendamento(request):
 
                 chave = request.session['chave']
                 if request.session['perfil'] == 'tecnico':    
-                    tecnico = Tecnico.objects.get(id_tecnico=chave)  
+                    tecnico = Tecnico.objects.get(id_login=chave)  
 
                     novo_treinamento.id_tecnico = tecnico
                 else:

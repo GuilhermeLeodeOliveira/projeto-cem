@@ -62,10 +62,28 @@ def calendario_equipamento(request, id_equipamento):
     data_atual = datetime.now().date()
 
     chave = request.session['chave']
-
-    if 'perfil' in request.session and request.session['perfil'] == 'aluno ou pos doc' or request.session['perfil'] == 'tecnico':
+    contexto={}
+    if 'perfil' in request.session and request.session['perfil'] == 'aluno ou pos doc' or request.session['perfil'] == 'tecnico' or request.session['perfil'] == 'docente':
+    
         login = Login.objects.get(id_login=chave)
+        
+        if request.session['perfil'] == 'aluno ou pos doc':
+            nome = AlunoPosIC.objects.get(id_login=login).primeiro_nome
+            orientador = AlunoPosIC.objects.get(id_login=login).nome_orientador
 
+        elif request.session['perfil'] == 'docente':
+            nome = Docente.objects.get(id_login=login).primeiro_nome
+            orientador = Docente.objects.get(id_login=login).primeiro_nome
+        
+        elif request.session['perfil'] == 'tecnico':
+            nome = Tecnico.objects.get(id_login=login).primeiro_nome
+            orientador = Tecnico.objects.get(id_login=login).primeiro_nome
+
+        contexto.update({
+            'nome': nome,
+            'orientador': orientador,
+        })
+    
     else:
         login = Adm.objects.get(id_adm=chave)
     
@@ -92,27 +110,12 @@ def calendario_equipamento(request, id_equipamento):
         hora_inicial += 0.5  # Incremento de 30 minutos
         
     # Filtra os agendamentos para o equipamento, dia e hora específicos
-    agendamento_existente = Agendamento.objects.filter(id_equipamento=equipamento)
+    agendamento_existente = Agendamento.objects.filter(id_equipamento=equipamento).exclude(status="cancelado")
     
     value = datetime.now().date()
-
-    # Lista para armazenar os nomes dos usuários associados aos agendamentos
-    nomes_usuarios = []
-
-    # Itera sobre os agendamentos para obter os nomes dos usuários associados
-    for agendamento in agendamento_existente:
-        if agendamento.id_login.perfil == 'docente':
-            nome_usuario = Docente.objects.get(id_login=agendamento.id_login)  # Supondo que o nome do usuário seja armazenado no campo "primeiro_nome" do modelo Docente
-        elif agendamento.id_login.perfil == 'aluno ou pos doc':
-            nome_usuario = AlunoPosIC.objects.get(id_login=agendamento.id_login)  # Supondo que o nome do usuário seja armazenado no campo "primeiro_nome" do modelo AlunoPosIC
-        elif agendamento.id_login.perfil == 'user_externo':
-            nome_usuario = UserExterno.objects.get(id_login=agendamento.id_login)  # Supondo que o nome do usuário seja armazenado no campo "primeiro_nome" do modelo UserExterno
-        
-        nomes_usuarios.append(nome_usuario)
-
-
+    
     # Passe os dados relevantes para o template
-    contexto = {
+    contexto.update({
         'equipamento': equipamento,
         'meses': meses,
         'data_atual': data_atual,
@@ -121,8 +124,7 @@ def calendario_equipamento(request, id_equipamento):
         'value': value,
         'agendamento_existente': agendamento_existente,
         'login': login,
-        'nomes_usuarios': nomes_usuarios,
-    }
+    })
 
 
     return render(request, 'agendamentos/calendario_equipamento.html', contexto)    
@@ -139,12 +141,15 @@ def realizar_agendamento(request):
     data = request.POST.get('data')
     horaInicio = request.POST.get('horarioInicio')
     horarioTermino = request.POST.get('horarioTermino')
+    nome = request.POST.get('nome')
+    orientador = request.POST.get('orientador')
     informacao_adicional = request.POST.get('informacao_adicional')
-
+    
     # Verifica se já existe um agendamento para a data e horário fornecidos
     agendamento_existente = Agendamento.objects.filter(
         data_agendada=data,
-        hora_inicio_agendamento=horaInicio
+        hora_inicio_agendamento=horaInicio,
+        status="pendente"
     ).exists()
 
     if agendamento_existente:
@@ -159,6 +164,9 @@ def realizar_agendamento(request):
         additional_info=informacao_adicional,
         data_solicitacao_agendamento = datetime.now().date(),
         hora_solicitacao_agendamento = datetime.now().time(),
+        status = "pendente",
+        nome_orientador=orientador,
+        nome_usuario=nome,
         id_equipamento = equipamento,
         id_login = login
     )
@@ -226,3 +234,43 @@ def dados_user(request, email):
     except Exception as e:
         # Se ocorrer qualquer outro erro, retorne uma mensagem de erro genérica
         return HttpResponse(f'Ocorreu um erro: {e}')
+
+def cancelar_agendamento(request):
+    if request.method == 'GET':
+
+        chave = request.session['chave']
+        if request.session['perfil'] == 'tecnico':
+        
+            email = request.GET.get('email')
+            data = request.GET.get('data')
+            horario_inicio = request.GET.get('horarioInicio')
+            horario_termino = request.GET.get('horarioTermino')
+            usuario = request.GET.get('nome')
+            orientador = request.GET.get('orientador')
+            equipamento = request.GET.get('equipamento')
+        # Faça o que for necessário com esses dados, como cancelar o agendamento
+        # Por exemplo, você pode usar esses dados para encontrar e cancelar o agendamento no seu banco de dados
+        
+        # Realiza a consulta ao banco de dados para encontrar o agendamento
+        try:
+            agendamento = Agendamento.objects.get(
+                data_agendada=data,
+                hora_inicio_agendamento=horario_inicio,
+                hora_termino_agendamento=horario_termino,
+                id_login__email_inst=email,
+                nome_orientador=orientador,
+                nome_usuario=usuario,
+                id_equipamento__nome=equipamento
+            )
+            
+            # Agora você pode fazer o que for necessário com o agendamento, como cancelá-lo
+            agendamento.status="cancelado"
+            agendamento.save()  # Exemplo de como cancelar o agendamento (eliminar do banco de dados)
+            
+            return redirect(agendamentos)  # ou redirecione para onde for necessário
+        except Agendamento.DoesNotExist:
+            return HttpResponse("Agendamento não encontrado.")
+        
+    else:
+        return HttpResponse("Método de requisição inválido.")
+    
